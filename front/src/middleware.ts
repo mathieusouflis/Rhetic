@@ -1,0 +1,1 @@
+// Middleware Next.js global
