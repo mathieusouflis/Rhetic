@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subrhetics",
+  "info": {
+    "singularName": "subrhetic",
+    "pluralName": "subrhetics",
+    "displayName": "Subrhetic"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "moderator": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "created_subrhetics"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "created_subrhetic"
+    },
+    "name": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "content": {
+      "type": "text"
+    },
+    "post": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::post.post",
+      "mappedBy": "subrhetic"
+    }
+  }
+}

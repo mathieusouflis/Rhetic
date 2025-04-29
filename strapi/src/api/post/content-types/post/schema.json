@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "posts",
+  "info": {
+    "singularName": "post",
+    "pluralName": "posts",
+    "displayName": "Post",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "isPublished": {
+      "type": "boolean",
+      "default": true
+    },
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Content": {
+      "type": "text",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "upVote": {
+      "type": "integer",
+      "default": 0
+    },
+    "downVote": {
+      "type": "integer",
+      "default": 0
+    },
+    "date": {
+      "type": "datetime"
+    },
+    "comment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::comment.comment",
+      "mappedBy": "post"
+    },
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "post"
+    }
+  }
+}
