@@ -1,24 +1,35 @@
 /**
- * Custom routes for subrhetic moderator management
+ * Routes for subrhetic administration
+ * These routes require moderator permissions
  */
 
 export default {
     routes: [
       {
-        method: 'POST',
-        path: '/subrhetics/:id/moderators',
-        handler: 'moderator.addModerator',
+        method: 'PUT',
+        path: '/subrhetics/:id',
+        handler: 'subrhetic.update',
         config: {
-          policies: [],
+          policies: ['api::subrhetic.is-moderator'],
           middlewares: [],
         },
       },
       {
         method: 'DELETE',
-        path: '/subrhetics/:id/moderators',
-        handler: 'moderator.removeModerator',
+        path: '/subrhetics/:id',
+        handler: 'subrhetic.delete',
         config: {
-          policies: [],
+          policies: ['api::subrhetic.is-moderator'],
+          middlewares: [],
+        },
+      },
+      // Gérer les posts du subrhetic (suppression/modération)
+      {
+        method: 'DELETE',
+        path: '/subrhetics/:id/posts/:postId',
+        handler: 'subrhetic.deletePost',
+        config: {
+          policies: ['api::subrhetic.is-moderator'],
           middlewares: [],
         },
       },
