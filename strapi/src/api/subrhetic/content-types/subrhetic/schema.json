@@ -4,23 +4,24 @@
   "info": {
     "singularName": "subrhetic",
     "pluralName": "subrhetics",
-    "displayName": "Subrhetic"
+    "displayName": "Subrhetic",
+    "description": "Community groups similar to subreddits"
   },
   "options": {
     "draftAndPublish": true
   },
   "attributes": {
-    "moderator": {
+    "moderators": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "created_subrhetics"
+      "inversedBy": "moderatedSubrhetics"
     },
-    "users_permissions_user": {
+    "creator": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "created_subrhetic"
+      "inversedBy": "createdSubrhetics"
     },
     "name": {
       "type": "string",
@@ -32,12 +33,12 @@
       "required": true,
       "unique": true
     },
-    "content": {
+    "description": {
       "type": "text"
     },
-    "post": {
+    "posts": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::post.post",
       "mappedBy": "subrhetic"
     }

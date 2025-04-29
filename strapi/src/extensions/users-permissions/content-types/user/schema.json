@@ -65,23 +65,29 @@
       "inversedBy": "users",
       "configurable": false
     },
-    "comment": {
+    "comments": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::comment.comment",
-      "mappedBy": "Author"
+      "mappedBy": "author"
     },
-    "created_subrhetics": {
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "author"
+    },
+    "moderatedSubrhetics": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
-      "mappedBy": "moderator"
+      "mappedBy": "moderators"
     },
-    "created_subrhetic": {
+    "createdSubrhetics": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::subrhetic.subrhetic",
-      "mappedBy": "users_permissions_user"
+      "mappedBy": "creator"
     }
   }
 }

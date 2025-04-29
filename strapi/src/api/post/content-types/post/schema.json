@@ -5,21 +5,17 @@
     "singularName": "post",
     "pluralName": "posts",
     "displayName": "Post",
-    "description": ""
+    "description": "Posts created by users in specific subrhetics"
   },
   "options": {
     "draftAndPublish": true
   },
   "attributes": {
-    "isPublished": {
-      "type": "boolean",
-      "default": true
-    },
-    "Title": {
+    "title": {
       "type": "string",
       "required": true
     },
-    "Content": {
+    "content": {
       "type": "text",
       "required": true
     },
@@ -28,33 +24,34 @@
       "required": true,
       "unique": true
     },
-    "upVote": {
+    "upvotes": {
       "type": "integer",
       "default": 0
     },
-    "downVote": {
+    "downvotes": {
       "type": "integer",
       "default": 0
     },
-    "date": {
+    "publishedDate": {
       "type": "datetime"
     },
-    "comment": {
+    "comments": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "oneToMany",
       "target": "api::comment.comment",
       "mappedBy": "post"
     },
     "author": {
       "type": "relation",
-      "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "posts"
     },
     "subrhetic": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::subrhetic.subrhetic",
-      "inversedBy": "post"
+      "inversedBy": "posts"
     }
   }
 }

@@ -409,7 +409,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiCommentComment extends Struct.CollectionTypeSchema {
   collectionName: 'comments';
   info: {
-    description: '';
+    description: 'Comments on posts';
     displayName: 'Comment';
     pluralName: 'comments';
     singularName: 'comment';
@@ -418,17 +418,16 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    Author: Schema.Attribute.Relation<
-      'oneToOne',
+    author: Schema.Attribute.Relation<
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
     children: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;
-    Content: Schema.Attribute.Text & Schema.Attribute.Required;
+    content: Schema.Attribute.Text & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    date: Schema.Attribute.DateTime;
-    downVote: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    downvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -436,8 +435,9 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     parent: Schema.Attribute.Relation<'manyToOne', 'api::comment.comment'>;
-    post: Schema.Attribute.Relation<'oneToOne', 'api::post.post'>;
+    post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
+    publishedDate: Schema.Attribute.DateTime;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
@@ -446,14 +446,14 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    upVote: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    upvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
 export interface ApiPostPost extends Struct.CollectionTypeSchema {
   collectionName: 'posts';
   info: {
-    description: '';
+    description: 'Posts created by users in specific subrhetics';
     displayName: 'Post';
     pluralName: 'posts';
     singularName: 'post';
@@ -463,21 +463,20 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     author: Schema.Attribute.Relation<
-      'oneToOne',
+      'manyToOne',
       'plugin::users-permissions.user'
     >;
-    comment: Schema.Attribute.Relation<'oneToOne', 'api::comment.comment'>;
-    Content: Schema.Attribute.Text & Schema.Attribute.Required;
+    comments: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;
+    content: Schema.Attribute.Text & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    date: Schema.Attribute.DateTime;
-    downVote: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    isPublished: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    downvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    publishedDate: Schema.Attribute.DateTime;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -487,20 +486,21 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'plugin::review-workflows.workflow-stage'
     >;
     subrhetic: Schema.Attribute.Relation<
-      'oneToOne',
+      'manyToOne',
       'api::subrhetic.subrhetic'
     >;
-    Title: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    upVote: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    upvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
   };
 }
 
 export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
   collectionName: 'subrhetics';
   info: {
+    description: 'Community groups similar to subreddits';
     displayName: 'Subrhetic';
     pluralName: 'subrhetics';
     singularName: 'subrhetic';
@@ -509,24 +509,28 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    content: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    creator: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    description: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::subrhetic.subrhetic'
     > &
       Schema.Attribute.Private;
-    moderator: Schema.Attribute.Relation<
+    moderators: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'
     >;
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
-    post: Schema.Attribute.Relation<'oneToOne', 'api::post.post'>;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -539,10 +543,6 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    users_permissions_user: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::users-permissions.user'
-    >;
   };
 }
 
@@ -1005,20 +1005,16 @@ export interface PluginUsersPermissionsUser
   };
   attributes: {
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    comment: Schema.Attribute.Relation<'oneToOne', 'api::comment.comment'>;
+    comments: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    created_subrhetic: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::subrhetic.subrhetic'
-    >;
-    created_subrhetics: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::subrhetic.subrhetic'
-    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    createdSubrhetics: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic.subrhetic'
+    >;
     email: Schema.Attribute.Email &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -1030,11 +1026,16 @@ export interface PluginUsersPermissionsUser
       'plugin::users-permissions.user'
     > &
       Schema.Attribute.Private;
+    moderatedSubrhetics: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::subrhetic.subrhetic'
+    >;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;

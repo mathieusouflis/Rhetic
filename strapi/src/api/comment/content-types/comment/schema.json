@@ -5,38 +5,38 @@
     "singularName": "comment",
     "pluralName": "comments",
     "displayName": "Comment",
-    "description": ""
+    "description": "Comments on posts"
   },
   "options": {
     "draftAndPublish": true
   },
   "attributes": {
-    "Author": {
+    "author": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "comment"
+      "inversedBy": "comments"
     },
-    "Content": {
+    "content": {
       "type": "text",
       "required": true
     },
-    "upVote": {
+    "upvotes": {
       "type": "integer",
       "default": 0
     },
-    "downVote": {
+    "downvotes": {
       "type": "integer",
       "default": 0
     },
-    "date": {
+    "publishedDate": {
       "type": "datetime"
     },
     "post": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::post.post",
-      "inversedBy": "comment"
+      "inversedBy": "comments"
     },
     "children": {
       "type": "relation",
