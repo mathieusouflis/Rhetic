@@ -1,1 +1,2 @@
+"use client";
 // Chargement global
