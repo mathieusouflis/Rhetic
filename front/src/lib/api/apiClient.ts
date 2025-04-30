@@ -46,7 +46,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Helper functions pour les requêtes Strapi
 export async function fetchOne<T>(
   endpoint: string,
   id: number,
@@ -90,7 +89,6 @@ export async function remove(endpoint: string, id: number) {
   await apiClient.delete(`${endpoint}/${id}`);
 }
 
-// Upload de fichiers
 export async function upload(
   files: File | File[],
   options?: {
@@ -121,7 +119,6 @@ export async function upload(
   return response.data;
 }
 
-// Recherche avec filtres complexes
 export async function search<T>(
   endpoint: string,
   filters: Record<string, any>,
@@ -137,7 +134,6 @@ export async function search<T>(
   return fetchMany<T>(endpoint, queryParams);
 }
 
-// Compte le nombre d'éléments
 export async function count<T>(
   endpoint: string,
   filters?: Record<string, any>
@@ -152,7 +148,6 @@ export async function count<T>(
   return response.meta.pagination.total;
 }
 
-// Relations et peuplement automatique
 export async function fetchWithRelations<T>(
   endpoint: string,
   id: number,
@@ -163,7 +158,6 @@ export async function fetchWithRelations<T>(
   });
 }
 
-// Mise à jour en masse
 export async function bulkUpdate<T>(
   endpoint: string,
   ids: number[],
@@ -173,7 +167,6 @@ export async function bulkUpdate<T>(
   return Promise.all(updates);
 }
 
-// Suppression en masse
 export async function bulkDelete(endpoint: string, ids: number[]) {
   const deletions = ids.map((id) => remove(endpoint, id));
   return Promise.all(deletions);

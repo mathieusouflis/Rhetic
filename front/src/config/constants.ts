@@ -18,12 +18,10 @@ export const ENV = {
 
 export const ROUTES = {
   HOME: "/",
-  AUTH: {
-    LOGIN: "/auth/login",
-    REGISTER: "/auth/register",
-    // FORGOT_PASSWORD: "/auth/forgot-password",
-    // RESET_PASSWORD: "/auth/reset-password",
-  },
+  LOGIN: "/login",
+  REGISTER: "/register",
+  // FORGOT_PASSWORD: "/forgot-password",
+  // RESET_PASSWORD: "/reset-password",
   POPULAR: "/popular",
   EXPLORE: "/explore",
   NOTIFICATIONS: "/notifications",
