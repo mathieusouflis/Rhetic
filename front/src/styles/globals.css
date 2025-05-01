@@ -16,11 +16,11 @@
 
     /* YELLOW */
     --yellow: rgba(231, 233, 125, 1);
-    --yellow-bg-transparent-active: rgba(231, 233, 125, 0.73);
-    --yellow-bg-transparent: rgba(231, 233, 125, 0.5);
-    --yellow-bg-transparent-alt: rgba(231, 233, 125, 0.25);
-    --yellow-border-transparent-active: rgba(231, 233, 125, 0.16);
-    --yellow-border-transparent: rgba(231, 233, 125, 0.08);
+    --yellow-border-transparent-active: rgba(231, 233, 125, 0.73);
+    --yellow-border-transparent: rgba(231, 233, 125, 0.5);
+    --yellow-border-transparent-alt: rgba(231, 233, 125, 0.25);
+    --yellow-bg-transparent-active: rgba(231, 233, 125, 0.16);
+    --yellow-bg-transparent: rgba(231, 233, 125, 0.08);
 
     /* RED */
     --red: rgba(255, 89, 91, 1);
@@ -42,7 +42,7 @@
     /* WHITE */
     --white: rgba(245, 245, 245, 1);
     --white-border-transparent-active: rgba(245, 245, 245, 0.73);
-    --white-brorder-transparent: rgba(245, 245, 245, 0.5);
+    --white-border-transparent: rgba(245, 245, 245, 0.5);
     --white-bg-transparent-active: rgba(245, 245, 245, 0.16);
     --white-bg-transparent: rgba(245, 245, 245, 0.08);
   }
