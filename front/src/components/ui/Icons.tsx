@@ -97,7 +97,7 @@ export type IconName =
   | "google"
   | "logo"
   | "logo_text";
-export type IconSizes = 12 | 17 | 18 | 20;
+export type IconSizes = 12 | 14 | 17 | 18 | 20;
 
 export const Icon: React.FC<IconProps> = ({
   name,
