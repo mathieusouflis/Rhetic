@@ -26,7 +26,8 @@ const sizeStyles: Record<ButtonSize, string> = {
   default: "",
 };
 
-const baseStyles = "flex flex-row justify-between px-2.5 py-3 gap-2.5";
+const baseStyles =
+  "flex flex-row justify-between items-center px-2.5 py-3 gap-2.5";
 
 const BigButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (
