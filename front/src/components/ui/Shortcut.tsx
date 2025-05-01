@@ -16,7 +16,7 @@ const variantStyles: Record<ShortcutStatus, string> = {
 };
 
 const baseStyles =
-  "flex flex-row gap-1 items-center w-fit justify-center uppercase";
+  "flex flex-row gap-1 items-center w-fit justify-center uppercase text-[var(--black-200)]";
 
 const Shortcut: React.FC<ShortcutProps> = ({
   status = "default",
@@ -25,7 +25,7 @@ const Shortcut: React.FC<ShortcutProps> = ({
   const shortcutClasses = [baseStyles, variantStyles[status]].join(" ");
   return (
     <div className={shortcutClasses}>
-      <Icon name="command" size={14} />
+      <Icon name="command" color="var(--black-200)" size={14} />
       <Small>{children}</Small>
     </div>
   );
