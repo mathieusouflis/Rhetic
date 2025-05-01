@@ -16,6 +16,11 @@ interface BaseTypographyProps {
   className?: string;
 }
 
+export const Display: React.FC<BaseTypographyProps> = ({
+  children,
+  className = "",
+}) => <h1 className={`${typoStyles.display} ${className}`}>{children}</h1>;
+
 export const H1: React.FC<BaseTypographyProps> = ({
   children,
   className = "",
