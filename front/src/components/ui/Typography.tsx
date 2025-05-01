@@ -1,6 +1,6 @@
 import React from "react";
 
-const baseStyle = "tracking-tighter";
+const baseStyle = "";
 
 const typoStyles = {
   display: baseStyle + " text-[36px]",
