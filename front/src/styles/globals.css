@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* BLACK */
+    --black-800: #181818;
+    --black-700: #1a1a1a;
+    --black-600: #232323;
+    --black-500: #303030;
+    --black-400: #323232;
+    --black-300: #777777;
+    --black-200: #8c8c8c;
+    --black-100: #a8a8a8;
+
+    --background: var(--black-800);
+
+    /* YELLOW */
+    --yellow: rgba(231, 233, 125, 1);
+    --yellow-bg-transparent-active: rgba(231, 233, 125, 0.73);
+    --yellow-bg-transparent: rgba(231, 233, 125, 0.5);
+    --yellow-bg-transparent-alt: rgba(231, 233, 125, 0.25);
+    --yellow-border-transparent-active: rgba(231, 233, 125, 0.16);
+    --yellow-border-transparent: rgba(231, 233, 125, 0.08);
+
+    /* RED */
+    --red: rgba(255, 89, 91, 1);
+    --red-border-transparent-alt-plus: rgba(255, 89, 91, 0.8);
+    --red-border-transparent-active: rgba(255, 89, 91, 0.73);
+    --red-border-transparent: rgba(255, 89, 91, 0.5);
+    --red-bg-transparent-active: rgba(255, 89, 91, 0.16);
+    --red-bg-transparent: rgba(255, 89, 91, 0.08);
+
+    /* BLUE */
+    --blue: rgba(255, 89, 91, 0.08);
+    --blue-border-transparent: rgba(125, 150, 233, 0.5);
+    --blue-bg-transparent: rgba(125, 150, 233, 0.08);
+
+    /* GREEN */
+    --green-border-transparent: rgba(125, 233, 145, 0.5);
+    --green-bg-transparent: rgba(125, 233, 145, 0.5);
+
+    /* WHITE */
+    --white: rgba(245, 245, 245, 1);
+    --white-border-transparent-active: rgba(245, 245, 245, 0.73);
+    --white-brorder-transparent: rgba(245, 245, 245, 0.5);
+    --white-bg-transparent-active: rgba(245, 245, 245, 0.16);
+    --white-bg-transparent: rgba(245, 245, 245, 0.08);
+  }
+
+  .white {
+    --background: var(--white);
+  }
+}
+
+@layer base {
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    background: var(--background);
+    color: var(--white);
+  }
+  code {
+    font-family: var(--font-geist-mono), monospace;
+  }
+}
