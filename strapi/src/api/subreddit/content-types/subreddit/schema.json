@@ -1,0 +1,80 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subreddits",
+  "info": {
+    "singularName": "subreddit",
+    "pluralName": "subreddits",
+    "displayName": "Subreddit"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "creator": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "subscriber_count": {
+      "type": "integer",
+      "default": 0,
+      "required": true,
+      "min": 0
+    },
+    "active_user_count": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "default": 0
+    },
+    "rules": {
+      "type": "json"
+    },
+    "theme": {
+      "type": "json"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "is_restricted": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "is_nsfw": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "banner_image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "icon_image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "last_activity_at": {
+      "type": "datetime"
+    }
+  }
+}
