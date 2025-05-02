@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subrhetics",
+  "info": {
+    "singularName": "subrhetic",
+    "pluralName": "subrhetics",
+    "displayName": "Subrhetic",
+    "description": "Community groups similar to subreddits"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "moderators": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "moderatedSubrhetics"
+    },
+    "creator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "createdSubrhetics"
+    },
+    "name": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "subrhetic"
+    }
+  }
+}
