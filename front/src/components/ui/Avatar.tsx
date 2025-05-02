@@ -25,7 +25,7 @@ export const Avatar = ({ src, alt, size = "md", className }: AvatarProps) => {
       className={classNames("relative rounded-full overflow-hidden", className)}
       style={dimensions}
     >
-      <Image src={src} alt={alt} fill className="object-cover" />
+      <Image src={src} alt={alt} fill className="object-cover" unoptimized />
     </div>
   );
 };
