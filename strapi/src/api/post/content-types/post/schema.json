@@ -5,7 +5,7 @@
     "singularName": "post",
     "pluralName": "posts",
     "displayName": "Post",
-    "description": "Posts created by users in specific subrhetics"
+    "description": "Posts créés par les utilisateurs dans des subrhetics spécifiques"
   },
   "options": {
     "draftAndPublish": true
@@ -52,6 +52,12 @@
       "relation": "manyToOne",
       "target": "api::subrhetic.subrhetic",
       "inversedBy": "posts"
+    },
+    "votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::vote.vote",
+      "mappedBy": "post"
     }
   }
 }

@@ -21,7 +21,10 @@
     "@strapi/plugin-seo": "^2.0.8",
     "@strapi/plugin-users-permissions": "5.12.6",
     "@strapi/strapi": "5.12.6",
+    "@types/next": "^8.0.7",
     "censorly": "^1.0.3",
+    "next": "^15.3.1",
+    "next-auth": "^4.24.11",
     "pg": "8.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -29,8 +32,8 @@
     "styled-components": "^6.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/node": "^20.17.32",
+    "@types/react": "^18.3.20",
     "@types/react-dom": "^18",
     "typescript": "^5"
   },

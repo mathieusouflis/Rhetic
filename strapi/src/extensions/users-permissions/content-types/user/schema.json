@@ -66,9 +66,7 @@
       "configurable": false
     },
     "avatar": {
-      "allowedTypes": [
-        "images"
-      ],
+      "allowedTypes": ["images"],
       "type": "media",
       "multiple": false,
       "required": false
@@ -87,6 +85,48 @@
     },
     "two_factor_enabled": {
       "type": "boolean"
+    },
+    "posts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post.post",
+      "mappedBy": "author"
+    },
+    "comments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::comment.comment",
+      "mappedBy": "author"
+    },
+    "moderatedSubrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "moderators"
+    },
+    "createdSubrhetics": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "creator"
+    },
+    "votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::vote.vote",
+      "mappedBy": "user"
+    },
+    "joined_subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "members"
+    },
+    "banned_from_subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "banned_users"
     }
   }
 }

@@ -5,7 +5,7 @@
     "singularName": "comment",
     "pluralName": "comments",
     "displayName": "Comment",
-    "description": "Comments on posts"
+    "description": "Commentaires sur les posts"
   },
   "options": {
     "draftAndPublish": true
@@ -49,6 +49,12 @@
       "relation": "manyToOne",
       "target": "api::comment.comment",
       "inversedBy": "children"
+    },
+    "votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::vote.vote",
+      "mappedBy": "comment"
     }
   }
 }

@@ -1,123 +1,99 @@
-/**
- * Comment vote controller 
- */
-
 import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
   async upvote(ctx) {
     try {
       const { id } = ctx.params;
+      const userId = ctx.state.user.id;
       
-      // @ts-ignore 
-      const comment = await strapi.entityService.findOne('api::comment.comment', id, {
-        populate: '*',
-      });
+      const comment = await strapi.entityService.findOne(
+        'api::comment.comment',
+        id,
+        { populate: ['votes'] }
+      );
       
       if (!comment) {
-        return ctx.notFound('Comment not found');
+        return ctx.notFound("Commentaire introuvable");
       }
       
-      console.log('Comment structure:', JSON.stringify(comment, null, 2));
+      const existingVote = comment.votes?.find(vote => 
+        vote.user === userId && vote.type === 'upvote'
+      );
       
-      const commentAny = comment as any;
-      
-      let authorField = 'author';
-      if (commentAny.Author !== undefined) {
-        authorField = 'Author';
+      if (existingVote) {
+        return ctx.badRequest("Vous avez déjà upvoté ce commentaire");
       }
       
-      let upvoteFieldValue = 0;
-      let upvoteFieldName = '';
-      
-      if (typeof commentAny.upvotes === 'number') {
-        upvoteFieldName = 'upvotes';
-        upvoteFieldValue = commentAny.upvotes;
-      } else if (typeof commentAny.upVote === 'number') {
-        upvoteFieldName = 'upVote';
-        upvoteFieldValue = commentAny.upVote;
-      } else if (typeof commentAny.Upvotes === 'number') {
-        upvoteFieldName = 'Upvotes';
-        upvoteFieldValue = commentAny.Upvotes;
-      } else if (typeof commentAny.UpVote === 'number') {
-        upvoteFieldName = 'UpVote';
-        upvoteFieldValue = commentAny.UpVote;
-      } else {
-        upvoteFieldName = 'upvotes';
-        console.warn(`No upvote field found in comment, defaulting to '${upvoteFieldName}'`);
-      }
-      
-      const updateData = {};
-      // @ts-ignore 
-      updateData[upvoteFieldName] = upvoteFieldValue + 1;
-      
-      // @ts-ignore 
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
-        data: updateData,
+      const vote = await strapi.entityService.create('api::vote.vote', {
+        data: {
+          type: 'upvote',
+          user: userId,
+          comment: id
+        }
       });
       
-      return this.sanitizeOutput(updatedComment, ctx);
+      const updatedComment = await strapi.entityService.update(
+        'api::comment.comment',
+        id,
+        {
+          data: {
+            upvotes: (comment.upvotes || 0) + 1
+          }
+        }
+      );
+      
+      return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Error in comment upvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message}`);
+      console.error('Erreur dans comment upvote:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
     }
   },
   
   async downvote(ctx) {
     try {
       const { id } = ctx.params;
+      const userId = ctx.state.user.id;
       
-      // @ts-ignore 
-      const comment = await strapi.entityService.findOne('api::comment.comment', id, {
-        populate: '*',
-      });
+      const comment = await strapi.entityService.findOne(
+        'api::comment.comment',
+        id,
+        { populate: ['votes'] }
+      );
       
       if (!comment) {
-        return ctx.notFound('Comment not found');
+        return ctx.notFound("Commentaire introuvable");
       }
       
-      console.log('Comment structure:', JSON.stringify(comment, null, 2));
+      const existingVote = comment.votes?.find(vote => 
+        vote.user === userId && vote.type === 'downvote'
+      );
       
-      const commentAny = comment as any;
-      
-      let authorField = 'author';
-      if (commentAny.Author !== undefined) {
-        authorField = 'Author';
+      if (existingVote) {
+        return ctx.badRequest("Vous avez déjà downvoté ce commentaire");
       }
       
-      let downvoteFieldValue = 0;
-      let downvoteFieldName = '';
-      
-      if (typeof commentAny.downvotes === 'number') {
-        downvoteFieldName = 'downvotes';
-        downvoteFieldValue = commentAny.downvotes;
-      } else if (typeof commentAny.downVote === 'number') {
-        downvoteFieldName = 'downVote';
-        downvoteFieldValue = commentAny.downVote;
-      } else if (typeof commentAny.Downvotes === 'number') {
-        downvoteFieldName = 'Downvotes';
-        downvoteFieldValue = commentAny.Downvotes;
-      } else if (typeof commentAny.DownVote === 'number') {
-        downvoteFieldName = 'DownVote';
-        downvoteFieldValue = commentAny.DownVote;
-      } else {
-        downvoteFieldName = 'downvotes';
-        console.warn(`No downvote field found in comment, defaulting to '${downvoteFieldName}'`);
-      }
-      
-      const updateData = {};
-      // @ts-ignore 
-      updateData[downvoteFieldName] = downvoteFieldValue + 1;
-      
-      // @ts-ignore 
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
-        data: updateData,
+      const vote = await strapi.entityService.create('api::vote.vote', {
+        data: {
+          type: 'downvote',
+          user: userId,
+          comment: id
+        }
       });
       
-      return this.sanitizeOutput(updatedComment, ctx);
+      const updatedComment = await strapi.entityService.update(
+        'api::comment.comment',
+        id,
+        {
+          data: {
+            downvotes: (comment.downvotes || 0) + 1
+          }
+        }
+      );
+      
+      return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Error in comment downvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message}`);
+      console.error('Erreur dans comment downvote:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
     }
   },
-}));
+});

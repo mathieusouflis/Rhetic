@@ -1,0 +1,38 @@
+{
+    "kind": "collectionType",
+    "collectionName": "votes",
+    "info": {
+      "singularName": "vote",
+      "pluralName": "votes",
+      "displayName": "Vote",
+      "description": "Votes sur les posts et commentaires"
+    },
+    "options": {
+      "draftAndPublish": false
+    },
+    "attributes": {
+      "type": {
+        "type": "enumeration",
+        "enum": ["upvote", "downvote"],
+        "required": true
+      },
+      "user": {
+        "type": "relation",
+        "relation": "manyToOne",
+        "target": "plugin::users-permissions.user",
+        "inversedBy": "votes"
+      },
+      "post": {
+        "type": "relation",
+        "relation": "manyToOne",
+        "target": "api::post.post",
+        "inversedBy": "votes"
+      },
+      "comment": {
+        "type": "relation",
+        "relation": "manyToOne",
+        "target": "api::comment.comment",
+        "inversedBy": "votes"
+      }
+    }
+  }

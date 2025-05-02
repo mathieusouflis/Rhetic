@@ -1,26 +1,22 @@
-/**
- * Custom routes for comment voting
- */
-
 export default {
-    routes: [
-      {
-        method: 'POST',
-        path: '/comments/:id/upvote',
-        handler: 'vote.upvote',
-        config: {
-          policies: [],
-          middlewares: [],
-        },
+  routes: [
+    {
+      method: 'POST',
+      path: '/comments/:id/upvote',
+      handler: 'vote.upvote',
+      config: {
+        policies: [],
+        middlewares: ['api::comment.vote-validator'],
       },
-      {
-        method: 'POST',
-        path: '/comments/:id/downvote',
-        handler: 'vote.downvote',
-        config: {
-          policies: [],
-          middlewares: [],
-        },
+    },
+    {
+      method: 'POST',
+      path: '/comments/:id/downvote',
+      handler: 'vote.downvote',
+      config: {
+        policies: [],
+        middlewares: ['api::comment.vote-validator'],
       },
-    ],
-  };
+    },
+  ],
+};
