@@ -41,6 +41,18 @@
       "relation": "oneToMany",
       "target": "api::post.post",
       "mappedBy": "subrhetic"
+    },
+    "members": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "joined_subrhetics"
+    },
+    "banned_users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "banned_from_subrhetics"
     }
   }
 }
