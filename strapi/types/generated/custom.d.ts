@@ -1,16 +1,18 @@
 import { Schema, Attribute } from '@strapi/strapi';
 
 declare module '@strapi/strapi' {
-  export interface Core {
-    Strapi: {
-      entityService: {
-        findOne: <T>(uid: string, id: string | number, params?: any) => Promise<T>;
-        find: <T>(uid: string, params?: any) => Promise<T[]>;
-        create: <T>(uid: string, params: { data: any }) => Promise<T>;
-        update: <T>(uid: string, id: string | number, params: { data: any }) => Promise<T>;
-        delete: <T>(uid: string, id: string | number) => Promise<T>;
-      };
-    };
+  export namespace Core {
+    interface Strapi {
+      entityService: EntityService;
+    }
+    
+    interface EntityService {
+      findOne: <T>(uid: string, id: string | number, params?: any) => Promise<T>;
+      find: <T>(uid: string, params?: any) => Promise<T[]>;
+      create: <T>(uid: string, params: { data: any, populate?: any }) => Promise<T>;
+      update: <T>(uid: string, id: string | number, params: { data: any, populate?: any }) => Promise<T>;
+      delete: <T>(uid: string, id: string | number, params?: any) => Promise<T>;
+    }
   }
 }
 
@@ -20,13 +22,17 @@ export interface StrapiContext {
     [key: string]: any;
   };
   request: {
-    body: any;
+    body: {
+      data?: any;
+      [key: string]: any;
+    };
     url: string;
     query: any;
+    [key: string]: any;
   };
   state: {
-    user?: any;
-    vote?: any;
+    user?: User;
+    vote?: VoteInfo;
     [key: string]: any;
   };
   unauthorized: (message: string) => any;
@@ -34,12 +40,17 @@ export interface StrapiContext {
   notFound: (message: string) => any;
   forbidden: (message: string) => any;
   internalServerError: (message: string) => any;
+  [key: string]: any;
 }
 
 export interface User {
   id: number;
   username: string;
   email: string;
+  provider?: string;
+  confirmed?: boolean;
+  blocked?: boolean;
+  role?: any;
   [key: string]: any;
 }
 
@@ -50,8 +61,9 @@ export interface Post {
   slug: string;
   upvotes: number;
   downvotes: number;
-  author?: User;
-  subrhetic?: Subrhetic;
+  publishedDate?: Date;
+  author?: User | number;
+  subrhetic?: Subrhetic | number;
   comments?: Comment[];
   votes?: Vote[];
   [key: string]: any;
@@ -62,9 +74,10 @@ export interface Comment {
   content: string;
   upvotes: number;
   downvotes: number;
-  author?: User;
-  post?: Post;
-  parent?: Comment;
+  publishedDate?: Date;
+  author?: User | number;
+  post?: Post | number;
+  parent?: Comment | number;
   children?: Comment[];
   votes?: Vote[];
   [key: string]: any;
@@ -75,19 +88,27 @@ export interface Subrhetic {
   name: string;
   slug: string;
   description?: string;
-  creator?: User;
-  moderators?: User[];
-  members?: User[];
-  banned_users?: User[];
-  posts?: Post[];
+  creator?: User | number;
+  moderators?: User[] | number[];
+  members?: User[] | number[];
+  banned_users?: User[] | number[];
+  posts?: Post[] | number[];
+  is_private?: boolean;
   [key: string]: any;
 }
 
 export interface Vote {
   id: number;
   type: 'upvote' | 'downvote';
-  user: number | User;
-  post?: number | Post;
-  comment?: number | Comment;
+  user: User | number;
+  post?: Post | number;
+  comment?: Comment | number;
   [key: string]: any;
+}
+
+export interface VoteInfo {
+  postId?: string | number;
+  commentId?: string | number;
+  userId: number;
+  type: 'upvote' | 'downvote';
 }

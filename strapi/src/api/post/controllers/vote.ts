@@ -1,15 +1,8 @@
 import { factories } from '@strapi/strapi';
-import { StrapiContext, Post, Vote } from '../../../types/generated/custom';
-
-interface VoteControllerContext extends StrapiContext {
-  params: {
-    id: string;
-    [key: string]: any;
-  };
-}
+import { StrapiContext, Post, Vote } from '../../../../types/generated/custom';
 
 export default factories.createCoreController('api::post.post', ({ strapi }) => ({
-  async upvote(ctx: VoteControllerContext) {
+  async upvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -28,9 +21,10 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.notFound("Post introuvable");
       }
       
-      const existingVote = post.votes?.find((vote: Vote) => 
-        vote.user === userId
-      );
+      const existingVote = post.votes?.find((vote: Vote) => {
+        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+        return voteUserId === userId;
+      });
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
@@ -99,13 +93,13 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       );
       
       return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur dans post upvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
-  async downvote(ctx: VoteControllerContext) {
+  async downvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -124,9 +118,10 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.notFound("Post introuvable");
       }
       
-      const existingVote = post.votes?.find((vote: Vote) => 
-        vote.user === userId
-      );
+      const existingVote = post.votes?.find((vote: Vote) => {
+        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+        return voteUserId === userId;
+      });
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
@@ -195,9 +190,9 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       );
       
       return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur dans post downvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 }));

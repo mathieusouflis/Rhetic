@@ -1,6 +1,11 @@
-import { StrapiContext } from '../../../../types/generated/custom';
+import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
-export default (policyContext: any, config: any, { strapi }: any) => {
+interface PolicyContext {
+  strapi: any;
+  [key: string]: any;
+}
+
+export default (policyContext: PolicyContext, config: any, { strapi }: { strapi: any }) => {
   return async (ctx: StrapiContext, next: () => Promise<any>) => {
     try {
       const user = ctx.state.user;
@@ -14,7 +19,7 @@ export default (policyContext: any, config: any, { strapi }: any) => {
         return ctx.badRequest("ID du Subrhetic requis");
       }
 
-      const subrhetic = await strapi.entityService.findOne(
+      const subrhetic = await strapi.entityService.findOne<Subrhetic>(
         'api::subrhetic.subrhetic', 
         subId, 
         { populate: ['moderators', 'creator'] }
@@ -24,21 +29,33 @@ export default (policyContext: any, config: any, { strapi }: any) => {
         return ctx.notFound("Subrhetic non trouvé");
       }
 
-      if (subrhetic.creator && subrhetic.creator.id === user.id) {
-        return await next();
+      if (subrhetic.creator) {
+        const creatorId = typeof subrhetic.creator === 'object' 
+          ? subrhetic.creator.id 
+          : subrhetic.creator;
+        
+        if (creatorId === user.id) {
+          return await next();
+        }
       }
 
-      const isModerator = subrhetic.moderators?.some(
-        (moderator: any) => moderator.id === user.id
-      );
+      if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
+        const isModerator = subrhetic.moderators.some((moderator) => {
+          const moderatorId = typeof moderator === 'object' 
+            ? moderator.id 
+            : moderator;
+          
+          return moderatorId === user.id;
+        });
 
-      if (!isModerator) {
-        return ctx.forbidden("Vous n'êtes pas modérateur de ce subrhetic");
+        if (isModerator) {
+          return await next();
+        }
       }
 
-      return await next();
-    } catch (error: any) {
-      ctx.internalServerError(`Erreur dans la politique de modérateur: ${error.message}`);
+      return ctx.forbidden("Vous n'êtes pas modérateur de ce subrhetic");
+    } catch (error) {
+      return ctx.internalServerError(`Erreur dans la politique de modérateur: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 };

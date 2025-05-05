@@ -1,22 +1,8 @@
 import { factories } from '@strapi/strapi';
-import { StrapiContext, Subrhetic, User } from '../../../types/generated/custom';
-
-interface MembershipControllerContext extends StrapiContext {
-  params: {
-    id: string;
-    [key: string]: any;
-  };
-  request: {
-    body: {
-      userId?: string;
-      [key: string]: any;
-    };
-    [key: string]: any;
-  };
-}
+import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
 export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi }) => ({
-  async join(ctx: MembershipControllerContext) {
+  async join(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -35,16 +21,26 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.notFound("Subrhetic introuvable");
       }
       
-      const isBanned = subrhetic.banned_users?.some((user: User) => user.id === userId);
-      
-      if (isBanned) {
-        return ctx.forbidden("Vous êtes banni de ce subrhetic");
+      if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+        const isBanned = subrhetic.banned_users.some((user) => {
+          const bannedId = typeof user === 'object' ? user.id : user;
+          return bannedId === userId;
+        });
+        
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic");
+        }
       }
       
-      const isMember = subrhetic.members?.some((user: User) => user.id === userId);
-      
-      if (isMember) {
-        return ctx.badRequest("Vous êtes déjà membre de ce subrhetic");
+      if (subrhetic.members && Array.isArray(subrhetic.members)) {
+        const isMember = subrhetic.members.some((user) => {
+          const memberId = typeof user === 'object' ? user.id : user;
+          return memberId === userId;
+        });
+        
+        if (isMember) {
+          return ctx.badRequest("Vous êtes déjà membre de ce subrhetic");
+        }
       }
       
       const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
@@ -59,13 +55,13 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
       );
       
       return this.sanitizeOutput(updatedSubrhetic, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur lors de l\'adhésion au subrhetic:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
-  async leave(ctx: MembershipControllerContext) {
+  async leave(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -84,14 +80,25 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.notFound("Subrhetic introuvable");
       }
       
-      if (subrhetic.creator && subrhetic.creator.id === userId) {
-        return ctx.badRequest("Le créateur ne peut pas quitter son subrhetic");
+      if (subrhetic.creator) {
+        const creatorId = typeof subrhetic.creator === 'object' 
+          ? subrhetic.creator.id 
+          : subrhetic.creator;
+          
+        if (creatorId === userId) {
+          return ctx.badRequest("Le créateur ne peut pas quitter son subrhetic");
+        }
       }
       
-      const isMember = subrhetic.members?.some((user: User) => user.id === userId);
-      
-      if (!isMember) {
-        return ctx.badRequest("Vous n'êtes pas membre de ce subrhetic");
+      if (subrhetic.members && Array.isArray(subrhetic.members)) {
+        const isMember = subrhetic.members.some((user) => {
+          const memberId = typeof user === 'object' ? user.id : user;
+          return memberId === userId;
+        });
+        
+        if (!isMember) {
+          return ctx.badRequest("Vous n'êtes pas membre de ce subrhetic");
+        }
       }
       
       const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
@@ -106,19 +113,25 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
       );
       
       return this.sanitizeOutput(updatedSubrhetic, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur lors du départ du subrhetic:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
-  async banUser(ctx: MembershipControllerContext) {
+  async banUser(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
-      const { userId } = ctx.request.body;
+      const { userId } = ctx.request.body?.data || ctx.request.body || {};
       
       if (!userId) {
         return ctx.badRequest("ID utilisateur requis");
+      }
+      
+      const userIdNumber = parseInt(userId);
+      
+      if (isNaN(userIdNumber)) {
+        return ctx.badRequest("ID utilisateur invalide");
       }
       
       const subrhetic = await strapi.entityService.findOne<Subrhetic>(
@@ -131,24 +144,38 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.notFound("Subrhetic introuvable");
       }
       
-      if (subrhetic.creator && subrhetic.creator.id === parseInt(userId)) {
-        return ctx.badRequest("Impossible de bannir le créateur du subrhetic");
+      if (subrhetic.creator) {
+        const creatorId = typeof subrhetic.creator === 'object' 
+          ? subrhetic.creator.id 
+          : subrhetic.creator;
+          
+        if (creatorId === userIdNumber) {
+          return ctx.badRequest("Impossible de bannir le créateur du subrhetic");
+        }
       }
       
-      const isModerator = subrhetic.moderators?.some(
-        (mod: User) => mod.id === parseInt(userId)
-      );
-      
-      if (isModerator) {
-        return ctx.badRequest("Impossible de bannir un modérateur");
+      // Vérifier si l'utilisateur à bannir est modérateur
+      if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
+        const isModerator = subrhetic.moderators.some((mod) => {
+          const modId = typeof mod === 'object' ? mod.id : mod;
+          return modId === userIdNumber;
+        });
+        
+        if (isModerator) {
+          return ctx.badRequest("Impossible de bannir un modérateur");
+        }
       }
       
-      const isBanned = subrhetic.banned_users?.some(
-        (user: User) => user.id === parseInt(userId)
-      );
-      
-      if (isBanned) {
-        return ctx.badRequest("Cet utilisateur est déjà banni");
+      // Vérifier si l'utilisateur est déjà banni
+      if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+        const isBanned = subrhetic.banned_users.some((user) => {
+          const bannedId = typeof user === 'object' ? user.id : user;
+          return bannedId === userIdNumber;
+        });
+        
+        if (isBanned) {
+          return ctx.badRequest("Cet utilisateur est déjà banni");
+        }
       }
       
       const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
@@ -156,27 +183,33 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         id, 
         {
           data: {
-            banned_users: { connect: [userId] },
-            members: { disconnect: [userId] }
+            banned_users: { connect: [userIdNumber] },
+            members: { disconnect: [userIdNumber] }
           },
           populate: ['banned_users', 'members']
         }
       );
       
       return this.sanitizeOutput(updatedSubrhetic, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur lors du bannissement:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
-  async unbanUser(ctx: MembershipControllerContext) {
+  async unbanUser(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
-      const { userId } = ctx.request.body;
+      const { userId } = ctx.request.body?.data || ctx.request.body || {};
       
       if (!userId) {
         return ctx.badRequest("ID utilisateur requis");
+      }
+      
+      const userIdNumber = parseInt(userId);
+      
+      if (isNaN(userIdNumber)) {
+        return ctx.badRequest("ID utilisateur invalide");
       }
       
       const subrhetic = await strapi.entityService.findOne<Subrhetic>(
@@ -189,12 +222,15 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.notFound("Subrhetic introuvable");
       }
       
-      const isBanned = subrhetic.banned_users?.some(
-        (user: User) => user.id === parseInt(userId)
-      );
-      
-      if (!isBanned) {
-        return ctx.badRequest("Cet utilisateur n'est pas banni");
+      if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+        const isBanned = subrhetic.banned_users.some((user) => {
+          const bannedId = typeof user === 'object' ? user.id : user;
+          return bannedId === userIdNumber;
+        });
+        
+        if (!isBanned) {
+          return ctx.badRequest("Cet utilisateur n'est pas banni");
+        }
       }
       
       const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
@@ -202,16 +238,16 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         id, 
         {
           data: {
-            banned_users: { disconnect: [userId] }
+            banned_users: { disconnect: [userIdNumber] }
           },
           populate: ['banned_users']
         }
       );
       
       return this.sanitizeOutput(updatedSubrhetic, ctx);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Erreur lors du débannissement:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }));

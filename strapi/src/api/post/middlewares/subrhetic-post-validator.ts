@@ -1,5 +1,7 @@
+import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
+
 export default () => {
-  return async (ctx, next) => {
+  return async (ctx: StrapiContext, next: () => Promise<any>) => {
     try {
       const { data } = ctx.request.body;
       
@@ -26,53 +28,54 @@ export default () => {
         return ctx.badRequest("Le contenu est obligatoire");
       }
       
-      // @ts-ignore 
-      const subData = await strapi.entityService.findOne('api::subrhetic.subrhetic', subrhetic, {
-        populate: ['banned_users', 'members']
-      });
+      const subData = await strapi.entityService.findOne<Subrhetic>(
+        'api::subrhetic.subrhetic',
+        subrhetic,
+        {
+          populate: ['banned_users', 'members']
+        }
+      );
       
       if (!subData) {
         return ctx.notFound("Subrhetic introuvable");
       }
       
-      const isBanned = subData.banned_users?.some(
-        bannedUser => bannedUser.id === user.id
-      );
+      const isBanned = subData.banned_users?.some((bannedUser) => {
+        const bannedId = typeof bannedUser === 'object' ? bannedUser.id : bannedUser;
+        return bannedId === user.id;
+      });
       
       if (isBanned) {
         return ctx.forbidden("Vous êtes banni de ce subrhetic");
       }
       
       if (subData.is_private && subData.members) {
-        const isMember = subData.members.some(
-          member => member.id === user.id
-        );
+        const isMember = subData.members.some((member) => {
+          const memberId = typeof member === 'object' ? member.id : member;
+          return memberId === user.id;
+        });
         
         if (!isMember) {
           return ctx.forbidden("Vous devez être membre de ce subrhetic privé pour publier");
         }
       }
       
-      // Générer un slug à partir du titre si ce n'est pas fourni
       if (!data.slug) {
         ctx.request.body.data.slug = title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)/g, '');
           
-        // Ajouter un timestamp pour éviter les doublons
         ctx.request.body.data.slug += '-' + Date.now().toString(36);
       }
       
-      // Définir l'auteur comme l'utilisateur actuel
       ctx.request.body.data.author = user.id;
       
-      // Définir la date de publication
       ctx.request.body.data.publishedDate = new Date();
       
       return await next();
     } catch (error) {
-      ctx.internalServerError(`Erreur lors de la validation du post: ${error.message}`);
+      return ctx.internalServerError(`Erreur lors de la validation du post: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 };

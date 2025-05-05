@@ -1,5 +1,5 @@
 // strapi/src/api/post/middlewares/vote-validator.ts
-import { StrapiContext } from '../../../../types/generated/custom';
+import { StrapiContext, Vote, Post } from '../../../../types/generated/custom';
 
 export default () => {
   return async (ctx: StrapiContext, next: () => Promise<any>) => {
@@ -11,23 +11,41 @@ export default () => {
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne(
+      const post = await strapi.entityService.findOne<Post>(
         'api::post.post',
         id,
-        { populate: ['votes'] }
+        { 
+          populate: ['votes', 'subrhetic.banned_users']
+        }
       );
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
+      // Vérifier si l'utilisateur est banni du subrhetic
+      if (post.subrhetic && typeof post.subrhetic === 'object' && post.subrhetic.banned_users) {
+        const isBanned = post.subrhetic.banned_users.some(
+          (banned: any) => {
+            const bannedId = typeof banned === 'object' ? banned.id : banned;
+            return bannedId === user.id;
+          }
+        );
+        
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+        }
+      }
+      
       const isUpvote = ctx.request.url.includes('/upvote');
       const isDownvote = ctx.request.url.includes('/downvote');
       
-      const userVoteExists = post.votes?.some((vote: any) => 
-        vote.user === user.id && 
-        ((isUpvote && vote.type === 'upvote') || (isDownvote && vote.type === 'downvote'))
-      );
+      const userVoteExists = post.votes?.some((vote: Vote) => {
+        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+        return voteUserId === user.id && 
+          ((isUpvote && vote.type === 'upvote') || 
+           (isDownvote && vote.type === 'downvote'));
+      });
       
       if (userVoteExists) {
         return ctx.badRequest(`Vous avez déjà ${isUpvote ? 'upvoté' : 'downvoté'} ce post`);
@@ -40,8 +58,8 @@ export default () => {
       };
       
       return await next();
-    } catch (error: any) {
-      ctx.internalServerError(`Erreur lors de la validation du vote: ${error.message}`);
+    } catch (error) {
+      return ctx.internalServerError(`Erreur lors de la validation du vote: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 };
