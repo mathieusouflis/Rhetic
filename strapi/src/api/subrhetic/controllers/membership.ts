@@ -1,7 +1,7 @@
 import { factories } from '@strapi/strapi';
 import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi }) => ({
+export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi, nexus }) => ({
   async join(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -54,7 +54,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Erreur lors de l\'adhésion au subrhetic:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -112,7 +112,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Erreur lors du départ du subrhetic:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -190,7 +190,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Erreur lors du bannissement:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -244,7 +244,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Erreur lors du débannissement:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);

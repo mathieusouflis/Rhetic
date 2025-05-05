@@ -1,7 +1,7 @@
 import { factories } from '@strapi/strapi';
 import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi }) => ({
+export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi, nexus }) => ({
   async addModerator(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -60,7 +60,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Error in addModerator:', error);
       return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
@@ -128,7 +128,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       );
       
-      return this.sanitizeOutput(updatedSubrhetic, ctx);
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
       console.error('Error in removeModerator:', error);
       return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);

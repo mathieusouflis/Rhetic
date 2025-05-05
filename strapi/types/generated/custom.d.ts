@@ -14,6 +14,17 @@ declare module '@strapi/strapi' {
       delete: <T>(uid: string, id: string | number, params?: any) => Promise<T>;
     }
   }
+
+  export namespace factories {
+    interface StrapiController {
+      sanitizeOutput: (data: any, ctx: any) => any;
+      sanitizeQuery: (ctx: any) => any;
+    }
+
+    function createCoreController(uid: string, config?: any): StrapiController;
+    function createCoreRouter(uid: string, config?: any): any;
+    function createCoreService(uid: string, config?: any): any;
+  }
 }
 
 export interface StrapiContext {

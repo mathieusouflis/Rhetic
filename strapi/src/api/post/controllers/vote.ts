@@ -1,7 +1,7 @@
 import { factories } from '@strapi/strapi';
 import { StrapiContext, Post, Vote } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::post.post', ({ strapi }) => ({
+export default factories.createCoreController('api::post.post', ({ strapi, nexus }) => ({
   async upvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -43,7 +43,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           ) as Post;
           
-          return this.sanitizeOutput(updatedPost, ctx);
+          return nexus.sanitizeOutput(updatedPost, ctx);
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -67,7 +67,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           ) as Post;
           
-          return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+          return nexus.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
         }
       }
       
@@ -92,7 +92,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         }
       ) as Post;
       
-      return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
+      return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {
       console.error('Erreur dans post upvote:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -140,7 +140,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           ) as Post;
           
-          return this.sanitizeOutput(updatedPost, ctx);
+          return nexus.sanitizeOutput(updatedPost, ctx);
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -164,7 +164,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           ) as Post;
           
-          return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+          return nexus.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
         }
       }
       
@@ -189,7 +189,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         }
       ) as Post;
       
-      return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
+      return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {
       console.error('Erreur dans post downvote:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);

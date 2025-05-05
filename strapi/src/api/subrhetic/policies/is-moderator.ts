@@ -19,11 +19,11 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("ID du Subrhetic requis");
       }
 
-      const subrhetic = await strapi.entityService.findOne<Subrhetic>(
+      const subrhetic = await strapi.entityService.findOne(
         'api::subrhetic.subrhetic', 
         subId, 
         { populate: ['moderators', 'creator'] }
-      );
+      ) as Subrhetic;
 
       if (!subrhetic) {
         return ctx.notFound("Subrhetic non trouvé");

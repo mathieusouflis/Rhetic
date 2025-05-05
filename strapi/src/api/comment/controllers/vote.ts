@@ -1,7 +1,7 @@
 import { factories } from '@strapi/strapi';
 import { StrapiContext, Comment, Vote } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
+export default factories.createCoreController('api::comment.comment', ({ strapi, nexus }) => ({
   async upvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -43,7 +43,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             }
           ) as Comment;
           
-          return this.sanitizeOutput(updatedComment, ctx);
+          return nexus.sanitizeOutput(updatedComment, ctx);
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -67,7 +67,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             }
           ) as Comment;
           
-          return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
         }
       }
       
@@ -92,7 +92,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         }
       ) as Comment;
       
-      return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
+      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
       console.error('Erreur dans comment upvote:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -140,7 +140,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             }
           ) as Comment;
           
-          return this.sanitizeOutput(updatedComment, ctx);
+          return nexus.sanitizeOutput(updatedComment, ctx);
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -164,7 +164,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             }
           ) as Comment;
           
-          return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
         }
       }
       
@@ -189,7 +189,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         }
       ) as Comment;
       
-      return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
+      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
       console.error('Erreur dans comment downvote:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
