@@ -1,4 +1,3 @@
-// strapi/src/api/comment/policies/is-author.ts
 import { StrapiContext, Comment, User } from '../../../../types/generated/custom';
 
 interface PolicyContext {
@@ -20,11 +19,11 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("ID du commentaire requis");
       }
 
-      const comment = await strapi.entityService.findOne<Comment>(
+      const comment = await strapi.entityService.findOne(
         'api::comment.comment', 
         commentId, 
         { populate: ['author'] }
-      );
+      ) as Comment;
 
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");

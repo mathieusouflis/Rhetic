@@ -28,13 +28,13 @@ export default () => {
         return ctx.badRequest("Le contenu est obligatoire");
       }
       
-      const subData = await strapi.entityService.findOne<Subrhetic>(
+      const subData = await strapi.entityService.findOne(
         'api::subrhetic.subrhetic',
         subrhetic,
         {
           populate: ['banned_users', 'members']
         }
-      );
+      ) as Subrhetic;
       
       if (!subData) {
         return ctx.notFound("Subrhetic introuvable");

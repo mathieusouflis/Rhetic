@@ -1,4 +1,3 @@
-// strapi/src/api/post/policies/is-author.ts
 import { StrapiContext, Post, User } from '../../../../types/generated/custom';
 
 interface PolicyContext {
@@ -20,11 +19,11 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("ID du post requis");
       }
 
-      const post = await strapi.entityService.findOne<Post>(
+      const post = await strapi.entityService.findOne(
         'api::post.post', 
         postId, 
         { populate: ['author'] }
-      );
+      ) as Post;
 
       if (!post) {
         return ctx.notFound("Post introuvable");

@@ -11,11 +11,11 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne<Post>(
+      const post = await strapi.entityService.findOne(
         'api::post.post',
         id,
         { populate: ['votes'] }
-      );
+      ) as Post;
       
       if (!post) {
         return ctx.notFound("Post introuvable");
@@ -28,12 +28,12 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
-          await strapi.entityService.delete<Vote>(
+          await strapi.entityService.delete(
             'api::vote.vote', 
             existingVote.id
           );
           
-          const updatedPost = await strapi.entityService.update<Post>(
+          const updatedPost = await strapi.entityService.update(
             'api::post.post',
             id,
             {
@@ -41,12 +41,12 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 upvotes: Math.max((post.upvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Post;
           
           return this.sanitizeOutput(updatedPost, ctx);
         } 
         else {
-          const updatedVote = await strapi.entityService.update<Vote>(
+          const updatedVote = await strapi.entityService.update(
             'api::vote.vote', 
             existingVote.id, 
             {
@@ -54,9 +54,9 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 type: 'upvote'
               }
             }
-          );
+          ) as Vote;
           
-          const updatedPost = await strapi.entityService.update<Post>(
+          const updatedPost = await strapi.entityService.update(
             'api::post.post',
             id,
             {
@@ -65,13 +65,13 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 downvotes: Math.max((post.downvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Post;
           
           return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
         }
       }
       
-      const vote = await strapi.entityService.create<Vote>(
+      const vote = await strapi.entityService.create(
         'api::vote.vote', 
         {
           data: {
@@ -80,9 +80,9 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             post: id
           }
         }
-      );
+      ) as Vote;
       
-      const updatedPost = await strapi.entityService.update<Post>(
+      const updatedPost = await strapi.entityService.update(
         'api::post.post',
         id,
         {
@@ -90,7 +90,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             upvotes: (post.upvotes || 0) + 1
           }
         }
-      );
+      ) as Post;
       
       return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {
@@ -108,11 +108,11 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne<Post>(
+      const post = await strapi.entityService.findOne(
         'api::post.post',
         id,
         { populate: ['votes'] }
-      );
+      ) as Post;
       
       if (!post) {
         return ctx.notFound("Post introuvable");
@@ -125,12 +125,12 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
-          await strapi.entityService.delete<Vote>(
+          await strapi.entityService.delete(
             'api::vote.vote', 
             existingVote.id
           );
           
-          const updatedPost = await strapi.entityService.update<Post>(
+          const updatedPost = await strapi.entityService.update(
             'api::post.post',
             id,
             {
@@ -138,12 +138,12 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 downvotes: Math.max((post.downvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Post;
           
           return this.sanitizeOutput(updatedPost, ctx);
         } 
         else {
-          const updatedVote = await strapi.entityService.update<Vote>(
+          const updatedVote = await strapi.entityService.update(
             'api::vote.vote', 
             existingVote.id, 
             {
@@ -151,9 +151,9 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 type: 'downvote'
               }
             }
-          );
+          ) as Vote;
           
-          const updatedPost = await strapi.entityService.update<Post>(
+          const updatedPost = await strapi.entityService.update(
             'api::post.post',
             id,
             {
@@ -162,13 +162,13 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
                 upvotes: Math.max((post.upvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Post;
           
           return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
         }
       }
       
-      const vote = await strapi.entityService.create<Vote>(
+      const vote = await strapi.entityService.create(
         'api::vote.vote', 
         {
           data: {
@@ -177,9 +177,9 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             post: id
           }
         }
-      );
+      ) as Vote;
       
-      const updatedPost = await strapi.entityService.update<Post>(
+      const updatedPost = await strapi.entityService.update(
         'api::post.post',
         id,
         {
@@ -187,7 +187,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             downvotes: (post.downvotes || 0) + 1
           }
         }
-      );
+      ) as Post;
       
       return this.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {

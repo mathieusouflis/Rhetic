@@ -1,4 +1,3 @@
-// strapi/src/api/post/middlewares/vote-validator.ts
 import { StrapiContext, Vote, Post } from '../../../../types/generated/custom';
 
 export default () => {
@@ -11,19 +10,18 @@ export default () => {
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne<Post>(
+      const post = await strapi.entityService.findOne(
         'api::post.post',
         id,
         { 
           populate: ['votes', 'subrhetic.banned_users']
         }
-      );
+      ) as Post;
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      // Vérifier si l'utilisateur est banni du subrhetic
       if (post.subrhetic && typeof post.subrhetic === 'object' && post.subrhetic.banned_users) {
         const isBanned = post.subrhetic.banned_users.some(
           (banned: any) => {

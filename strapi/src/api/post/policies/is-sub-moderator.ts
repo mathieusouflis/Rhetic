@@ -1,4 +1,3 @@
-// strapi/src/api/post/policies/is-sub-moderator.ts
 import { StrapiContext, Post, Subrhetic, User } from '../../../../types/generated/custom';
 
 interface PolicyContext {
@@ -20,7 +19,7 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("ID du post requis");
       }
 
-      const post = await strapi.entityService.findOne<Post>(
+      const post = await strapi.entityService.findOne(
         'api::post.post', 
         postId, 
         { 
@@ -30,7 +29,7 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
             }
           }
         }
-      );
+      ) as Post;
 
       if (!post) {
         return ctx.notFound("Post introuvable");
@@ -46,7 +45,6 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("Information du subrhetic manquante");
       }
 
-      // Vérifier si l'utilisateur est le créateur
       if (subrhetic.creator) {
         const creatorId = typeof subrhetic.creator === 'object' 
           ? subrhetic.creator.id 
@@ -57,7 +55,6 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         }
       }
 
-      // Vérifier si l'utilisateur est modérateur
       if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
         const isModerator = subrhetic.moderators.some((moderator) => {
           const moderatorId = typeof moderator === 'object' 

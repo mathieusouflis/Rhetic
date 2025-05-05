@@ -1,4 +1,3 @@
-// strapi/src/api/comment/middlewares/vote-validator.ts
 import { StrapiContext, Comment, Vote } from '../../../../types/generated/custom';
 
 export default () => {
@@ -11,7 +10,7 @@ export default () => {
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const comment = await strapi.entityService.findOne<Comment>(
+      const comment = await strapi.entityService.findOne(
         'api::comment.comment',
         id,
         { 
@@ -26,13 +25,12 @@ export default () => {
             votes: true
           }
         }
-      );
+      ) as Comment;
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      // Vérifier si l'utilisateur est banni du subrhetic
       if (comment.post && 
           typeof comment.post === 'object' && 
           comment.post.subrhetic && 
@@ -54,7 +52,6 @@ export default () => {
       const isUpvote = ctx.request.url.includes('/upvote');
       const isDownvote = ctx.request.url.includes('/downvote');
       
-      // Vérifier si l'utilisateur a déjà voté ce type de vote
       const userVoteExists = comment.votes?.some((vote: Vote) => {
         const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
         return voteUserId === user.id && 

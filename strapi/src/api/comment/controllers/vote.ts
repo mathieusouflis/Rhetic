@@ -11,11 +11,11 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const comment = await strapi.entityService.findOne<Comment>(
+      const comment = await strapi.entityService.findOne(
         'api::comment.comment',
         id,
         { populate: ['votes'] }
-      );
+      ) as Comment;
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
@@ -28,13 +28,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
-          // Annuler le vote
-          await strapi.entityService.delete<Vote>(
+          await strapi.entityService.delete(
             'api::vote.vote', 
             existingVote.id
           );
           
-          const updatedComment = await strapi.entityService.update<Comment>(
+          const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
             id,
             {
@@ -42,12 +41,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 upvotes: Math.max((comment.upvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Comment;
           
           return this.sanitizeOutput(updatedComment, ctx);
         } 
         else {
-          const updatedVote = await strapi.entityService.update<Vote>(
+          const updatedVote = await strapi.entityService.update(
             'api::vote.vote', 
             existingVote.id, 
             {
@@ -55,9 +54,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 type: 'upvote'
               }
             }
-          );
+          ) as Vote;
           
-          const updatedComment = await strapi.entityService.update<Comment>(
+          const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
             id,
             {
@@ -66,13 +65,13 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 downvotes: Math.max((comment.downvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Comment;
           
           return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
         }
       }
       
-      const vote = await strapi.entityService.create<Vote>(
+      const vote = await strapi.entityService.create(
         'api::vote.vote', 
         {
           data: {
@@ -81,9 +80,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             comment: id
           }
         }
-      );
+      ) as Vote;
       
-      const updatedComment = await strapi.entityService.update<Comment>(
+      const updatedComment = await strapi.entityService.update(
         'api::comment.comment',
         id,
         {
@@ -91,7 +90,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             upvotes: (comment.upvotes || 0) + 1
           }
         }
-      );
+      ) as Comment;
       
       return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
@@ -109,11 +108,11 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const comment = await strapi.entityService.findOne<Comment>(
+      const comment = await strapi.entityService.findOne(
         'api::comment.comment',
         id,
         { populate: ['votes'] }
-      );
+      ) as Comment;
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
@@ -126,12 +125,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
-          await strapi.entityService.delete<Vote>(
+          await strapi.entityService.delete(
             'api::vote.vote', 
             existingVote.id
           );
           
-          const updatedComment = await strapi.entityService.update<Comment>(
+          const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
             id,
             {
@@ -139,12 +138,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 downvotes: Math.max((comment.downvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Comment;
           
           return this.sanitizeOutput(updatedComment, ctx);
         } 
         else {
-          const updatedVote = await strapi.entityService.update<Vote>(
+          const updatedVote = await strapi.entityService.update(
             'api::vote.vote', 
             existingVote.id, 
             {
@@ -152,9 +151,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 type: 'downvote'
               }
             }
-          );
+          ) as Vote;
           
-          const updatedComment = await strapi.entityService.update<Comment>(
+          const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
             id,
             {
@@ -163,13 +162,13 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
                 upvotes: Math.max((comment.upvotes || 0) - 1, 0)
               }
             }
-          );
+          ) as Comment;
           
           return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
         }
       }
       
-      const vote = await strapi.entityService.create<Vote>(
+      const vote = await strapi.entityService.create(
         'api::vote.vote', 
         {
           data: {
@@ -178,9 +177,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             comment: id
           }
         }
-      );
+      ) as Vote;
       
-      const updatedComment = await strapi.entityService.update<Comment>(
+      const updatedComment = await strapi.entityService.update(
         'api::comment.comment',
         id,
         {
@@ -188,7 +187,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             downvotes: (comment.downvotes || 0) + 1
           }
         }
-      );
+      ) as Comment;
       
       return this.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
