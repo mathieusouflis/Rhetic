@@ -16,14 +16,53 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         return ctx.notFound("Commentaire introuvable");
       }
       
+      // Vérifier si l'utilisateur a déjà voté
       const existingVote = comment.votes?.find(vote => 
-        vote.user === userId && vote.type === 'upvote'
+        vote.user === userId
       );
       
+      // Si un vote existe déjà
       if (existingVote) {
-        return ctx.badRequest("Vous avez déjà upvoté ce commentaire");
+        // Si c'est le même type de vote (upvote), on le supprime (annulation)
+        if (existingVote.type === 'upvote') {
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput(updatedComment, ctx);
+        } 
+        // Si c'est un type différent (downvote), on le met à jour
+        else {
+          const updatedVote = await strapi.entityService.update('api::vote.vote', existingVote.id, {
+            data: {
+              type: 'upvote'
+            }
+          });
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                upvotes: (comment.upvotes || 0) + 1,
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+        }
       }
       
+      // Si aucun vote n'existe, on en crée un nouveau
       const vote = await strapi.entityService.create('api::vote.vote', {
         data: {
           type: 'upvote',
@@ -65,11 +104,45 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       }
       
       const existingVote = comment.votes?.find(vote => 
-        vote.user === userId && vote.type === 'downvote'
+        vote.user === userId
       );
       
       if (existingVote) {
-        return ctx.badRequest("Vous avez déjà downvoté ce commentaire");
+        if (existingVote.type === 'downvote') {
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput(updatedComment, ctx);
+        } 
+        else {
+          const updatedVote = await strapi.entityService.update('api::vote.vote', existingVote.id, {
+            data: {
+              type: 'downvote'
+            }
+          });
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                downvotes: (comment.downvotes || 0) + 1,
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+        }
       }
       
       const vote = await strapi.entityService.create('api::vote.vote', {
@@ -96,4 +169,4 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
     }
   },
-});
+}));

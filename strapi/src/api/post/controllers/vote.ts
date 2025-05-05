@@ -6,6 +6,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       const { id } = ctx.params;
       const userId = ctx.state.user.id;
       
+      // Vérifier si le post existe
       const post = await strapi.entityService.findOne(
         'api::post.post',
         id,
@@ -16,14 +17,53 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.notFound("Post introuvable");
       }
       
+      // Vérifier si l'utilisateur a déjà voté
       const existingVote = post.votes?.find(vote => 
-        vote.user === userId && vote.type === 'upvote'
+        vote.user === userId
       );
       
+      // Si un vote existe déjà
       if (existingVote) {
-        return ctx.badRequest("Vous avez déjà upvoté ce post");
+        // Si c'est le même type de vote (upvote), on le supprime (annulation)
+        if (existingVote.type === 'upvote') {
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          
+          const updatedPost = await strapi.entityService.update(
+            'api::post.post',
+            id,
+            {
+              data: {
+                upvotes: Math.max((post.upvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput(updatedPost, ctx);
+        } 
+        // Si c'est un type différent (downvote), on le met à jour
+        else {
+          const updatedVote = await strapi.entityService.update('api::vote.vote', existingVote.id, {
+            data: {
+              type: 'upvote'
+            }
+          });
+          
+          const updatedPost = await strapi.entityService.update(
+            'api::post.post',
+            id,
+            {
+              data: {
+                upvotes: (post.upvotes || 0) + 1,
+                downvotes: Math.max((post.downvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+        }
       }
       
+      // Si aucun vote n'existe, on en crée un nouveau
       const vote = await strapi.entityService.create('api::vote.vote', {
         data: {
           type: 'upvote',
@@ -64,14 +104,53 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.notFound("Post introuvable");
       }
       
+      // Vérifier si l'utilisateur a déjà voté
       const existingVote = post.votes?.find(vote => 
-        vote.user === userId && vote.type === 'downvote'
+        vote.user === userId
       );
       
+      // Si un vote existe déjà
       if (existingVote) {
-        return ctx.badRequest("Vous avez déjà downvoté ce post");
+        // Si c'est le même type de vote (downvote), on le supprime (annulation)
+        if (existingVote.type === 'downvote') {
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          
+          const updatedPost = await strapi.entityService.update(
+            'api::post.post',
+            id,
+            {
+              data: {
+                downvotes: Math.max((post.downvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput(updatedPost, ctx);
+        } 
+        // Si c'est un type différent (upvote), on le met à jour
+        else {
+          const updatedVote = await strapi.entityService.update('api::vote.vote', existingVote.id, {
+            data: {
+              type: 'downvote'
+            }
+          });
+          
+          const updatedPost = await strapi.entityService.update(
+            'api::post.post',
+            id,
+            {
+              data: {
+                downvotes: (post.downvotes || 0) + 1,
+                upvotes: Math.max((post.upvotes || 0) - 1, 0)
+              }
+            }
+          );
+          
+          return this.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+        }
       }
       
+      // Si aucun vote n'existe, on en crée un nouveau
       const vote = await strapi.entityService.create('api::vote.vote', {
         data: {
           type: 'downvote',
@@ -96,4 +175,4 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       return ctx.badRequest(`Une erreur est survenue: ${error.message}`);
     }
   },
-});
+}));
