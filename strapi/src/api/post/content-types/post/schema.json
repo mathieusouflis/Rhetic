@@ -58,6 +58,30 @@
       "relation": "oneToMany",
       "target": "api::vote.vote",
       "mappedBy": "post"
+    },
+    "anonymous_post_author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::anonymous-post-author.anonymous-post-author",
+      "mappedBy": "post"
+    },
+    "post_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-flair-assignment.post-flair-assignment",
+      "mappedBy": "post"
+    },
+    "saved_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::saved-item.saved-item",
+      "mappedBy": "post"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "post"
     }
   }
 }

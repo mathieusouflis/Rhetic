@@ -66,7 +66,9 @@
       "configurable": false
     },
     "avatar": {
-      "allowedTypes": ["images"],
+      "allowedTypes": [
+        "images"
+      ],
       "type": "media",
       "multiple": false,
       "required": false
@@ -127,6 +129,96 @@
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
       "mappedBy": "banned_users"
+    },
+    "subrhetic_topics": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-topic.subrhetic-topic",
+      "mappedBy": "users_permissions_user"
+    },
+    "subrhetic_emojis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-emoji.subrhetic-emoji",
+      "mappedBy": "users_permissions_user"
+    },
+    "user_preference": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-preference.user-preference",
+      "inversedBy": "users_permissions_user"
+    },
+    "subrhetic_emoji_reactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-emoji-reaction.subrhetic-emoji-reaction",
+      "mappedBy": "users_permissions_user"
+    },
+    "notifications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::notification.notification",
+      "mappedBy": "users_permissions_user"
+    },
+    "anonymous_post_authors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::anonymous-post-author.anonymous-post-author",
+      "mappedBy": "users_permissions_user"
+    },
+    "post_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-flair-assignment.post-flair-assignment",
+      "mappedBy": "users_permissions_user"
+    },
+    "user_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair-assignment.user-flair-assignment",
+      "mappedBy": "users_permissions_user"
+    },
+    "saved_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::saved-item.saved-item",
+      "mappedBy": "users_permissions_user"
+    },
+    "report": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "reporter"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "reported_user"
+    },
+    "subrhetic_rules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-rule.subrhetic-rule",
+      "mappedBy": "made_by"
+    },
+    "user_activity_logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-activity-log.user-activity-log",
+      "mappedBy": "users_permissions_user"
+    },
+    "user_blocks": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-block.user-block",
+      "mappedBy": "blocked"
+    },
+    "private_messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::private-message.private-message",
+      "mappedBy": "recipient"
     }
   }
 }

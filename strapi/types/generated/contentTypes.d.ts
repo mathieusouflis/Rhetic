@@ -406,6 +406,45 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAnonymousPostAuthorAnonymousPostAuthor
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'anonymous_post_authors';
+  info: {
+    description: '';
+    displayName: 'AnonymousPostAuthor';
+    pluralName: 'anonymous-post-authors';
+    singularName: 'anonymous-post-author';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::anonymous-post-author.anonymous-post-author'
+    > &
+      Schema.Attribute.Private;
+    post: Schema.Attribute.Relation<'oneToOne', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiCommentComment extends Struct.CollectionTypeSchema {
   collectionName: 'comments';
   info: {
@@ -438,6 +477,11 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.DateTime;
+    reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
+    saved_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::saved-item.saved-item'
+    >;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
@@ -447,7 +491,151 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     upvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    user_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair-assignment.user-flair-assignment'
+    >;
     votes: Schema.Attribute.Relation<'oneToMany', 'api::vote.vote'>;
+  };
+}
+
+export interface ApiNotificationNotification
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'notifications';
+  info: {
+    description: '';
+    displayName: 'Notification';
+    pluralName: 'notifications';
+    singularName: 'notification';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Schema.Attribute.JSON & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_read: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notification.notification'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    read_at: Schema.Attribute.DateTime;
+    reference_id: Schema.Attribute.UID;
+    reference_type: Schema.Attribute.String;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    type: Schema.Attribute.Enumeration<
+      ['comment_reply', 'post_reply', 'mention', 'mod_action', 'system']
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiPostFlairAssignmentPostFlairAssignment
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'post_flair_assignments';
+  info: {
+    description: '';
+    displayName: 'PostFlairAssignment';
+    pluralName: 'post-flair-assignments';
+    singularName: 'post-flair-assignment';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair-assignment.post-flair-assignment'
+    > &
+      Schema.Attribute.Private;
+    post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
+    post_flair: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::post-flair.post-flair'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiPostFlairPostFlair extends Struct.CollectionTypeSchema {
+  collectionName: 'post_flairs';
+  info: {
+    description: '';
+    displayName: 'PostFlair';
+    pluralName: 'post-flairs';
+    singularName: 'post-flair';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    background_color: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#FF4500'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emoji: Schema.Attribute.String;
+    is_mod_only: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair.post-flair'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    position: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    post_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair-assignment.post-flair-assignment'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    text_color: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'#FFFFFF'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -463,6 +651,10 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    anonymous_post_author: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::anonymous-post-author.anonymous-post-author'
+    >;
     author: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.user'
@@ -476,8 +668,17 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
+    post_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair-assignment.post-flair-assignment'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     publishedDate: Schema.Attribute.DateTime;
+    reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
+    saved_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::saved-item.saved-item'
+    >;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -496,6 +697,347 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     upvotes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     votes: Schema.Attribute.Relation<'oneToMany', 'api::vote.vote'>;
+  };
+}
+
+export interface ApiPrivateMessagePrivateMessage
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'private_messages';
+  info: {
+    description: '';
+    displayName: 'PrivateMessage';
+    pluralName: 'private-messages';
+    singularName: 'private-message';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Schema.Attribute.Text & Schema.Attribute.Required;
+    content_html: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_read: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::private-message.private-message'
+    > &
+      Schema.Attribute.Private;
+    parent: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::private-message.private-message'
+    >;
+    private_messages: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::private-message.private-message'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    recipient: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    sender: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subject: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiReportReport extends Struct.CollectionTypeSchema {
+  collectionName: 'reports';
+  info: {
+    description: '';
+    displayName: 'Report';
+    pluralName: 'reports';
+    singularName: 'report';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    action_taken: Schema.Attribute.String;
+    comment: Schema.Attribute.Relation<'manyToOne', 'api::comment.comment'>;
+    content_typ: Schema.Attribute.Enumeration<['post', 'comment', 'user']> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    details: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::report.report'
+    > &
+      Schema.Attribute.Private;
+    post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.String & Schema.Attribute.Required;
+    reported_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    reporter: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    reviewed_by: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    statu: Schema.Attribute.Enumeration<['pending', 'reviewed', 'resolve']> &
+      Schema.Attribute.DefaultTo<'pending'>;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSavedItemSavedItem extends Struct.CollectionTypeSchema {
+  collectionName: 'saved_items';
+  info: {
+    description: '';
+    displayName: 'SavedItem';
+    pluralName: 'saved-items';
+    singularName: 'saved-item';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    category: Schema.Attribute.String;
+    comment: Schema.Attribute.Relation<'manyToOne', 'api::comment.comment'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    item_type: Schema.Attribute.Enumeration<['post', 'comment']> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::saved-item.saved-item'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.String;
+    post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiSubrheticEmojiReactionSubrheticEmojiReaction
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'subrhetic_emoji_reactions';
+  info: {
+    description: '';
+    displayName: 'SubrheticEmojiReaction';
+    pluralName: 'subrhetic-emoji-reactions';
+    singularName: 'subrhetic-emoji-reaction';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    subrhetic_emoji: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic-emoji.subrhetic-emoji'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiSubrheticEmojiSubrheticEmoji
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'subrhetic_emojis';
+  info: {
+    description: '';
+    displayName: 'SubrheticEmoji';
+    pluralName: 'subrhetic-emojis';
+    singularName: 'subrhetic-emoji';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emoji: Schema.Attribute.String & Schema.Attribute.Required;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji.subrhetic-emoji'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    subrhetic_emoji_reactions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiSubrheticRuleSubrheticRule
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'subrhetic_rules';
+  info: {
+    description: '';
+    displayName: 'SubrheticRule';
+    pluralName: 'subrhetic-rules';
+    singularName: 'subrhetic-rule';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    is_active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-rule.subrhetic-rule'
+    > &
+      Schema.Attribute.Private;
+    made_by: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    position: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    violation_reason: Schema.Attribute.Text;
+  };
+}
+
+export interface ApiSubrheticTopicSubrheticTopic
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'subrhetic_topics';
+  info: {
+    description: '';
+    displayName: 'SubrheticTopic';
+    pluralName: 'subrhetic-topics';
+    singularName: 'subrhetic-topic';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    a: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-topic.subrhetic-topic'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    topic: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 
@@ -540,8 +1082,13 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    post_flairs: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair.post-flair'
+    >;
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
+    reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -550,9 +1097,304 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::review-workflows.workflow-stage'
     >;
+    subrhetic_emoji_reactions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
+    >;
+    subrhetic_emojis: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji.subrhetic-emoji'
+    >;
+    subrhetic_rules: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-rule.subrhetic-rule'
+    >;
+    subrhetic_topics: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-topic.subrhetic-topic'
+    >;
+    topics: Schema.Attribute.Relation<'manyToMany', 'api::topic.topic'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair-assignment.user-flair-assignment'
+    >;
+    user_flairs: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair.user-flair'
+    >;
+  };
+}
+
+export interface ApiTopicTopic extends Struct.CollectionTypeSchema {
+  collectionName: 'topics';
+  info: {
+    description: '';
+    displayName: 'Topic';
+    pluralName: 'topics';
+    singularName: 'topic';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    icon_url: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::topic.topic'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    parent: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic_topics: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-topic.subrhetic-topic'
+    >;
+    subrhetics: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::subrhetic.subrhetic'
+    >;
+    subscriber_count: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    topics: Schema.Attribute.Relation<'oneToMany', 'api::topic.topic'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiUserActivityLogUserActivityLog
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_activity_logs';
+  info: {
+    description: '';
+    displayName: 'UserActivityLog';
+    pluralName: 'user-activity-logs';
+    singularName: 'user-activity-log';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    activity_type: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    ip_adress: Schema.Attribute.String;
+    item_id: Schema.Attribute.UID;
+    item_type: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-activity-log.user-activity-log'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_agent: Schema.Attribute.Text;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiUserBlockUserBlock extends Struct.CollectionTypeSchema {
+  collectionName: 'user_blocks';
+  info: {
+    description: '';
+    displayName: 'UserBlock';
+    pluralName: 'user-blocks';
+    singularName: 'user-block';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    blocked: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    blocker: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-block.user-block'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.String;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiUserFlairAssignmentUserFlairAssignment
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_flair_assignments';
+  info: {
+    description: '';
+    displayName: 'UserFlairAssignment';
+    pluralName: 'user-flair-assignments';
+    singularName: 'user-flair-assignment';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    comment: Schema.Attribute.Relation<'manyToOne', 'api::comment.comment'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    custom_text: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair-assignment.user-flair-assignment'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_flair: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::user-flair.user-flair'
+    >;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiUserFlairUserFlair extends Struct.CollectionTypeSchema {
+  collectionName: 'user_flairs';
+  info: {
+    description: '';
+    displayName: 'UserFlair';
+    pluralName: 'user-flairs';
+    singularName: 'user-flair';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    background_color: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#0079D3'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emoji: Schema.Attribute.String;
+    is_mod_only: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair.user-flair'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    text_color: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#FFFFFF'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair-assignment.user-flair-assignment'
+    >;
+  };
+}
+
+export interface ApiUserPreferenceUserPreference
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_preferences';
+  info: {
+    description: '';
+    displayName: 'UserPreference';
+    pluralName: 'user-preferences';
+    singularName: 'user-preference';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content_preferences: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email_notifications: Schema.Attribute.JSON;
+    language: Schema.Attribute.String & Schema.Attribute.DefaultTo<'fr'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-preference.user-preference'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    push_notifications: Schema.Attribute.JSON;
+    show_nsfw: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    theme: Schema.Attribute.Enumeration<['auto', 'light', 'dark']> &
+      Schema.Attribute.DefaultTo<'auto'>;
+    timezone: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
   };
 }
 
@@ -1051,6 +1893,10 @@ export interface PluginUsersPermissionsUser
     draftAndPublish: false;
   };
   attributes: {
+    anonymous_post_authors: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::anonymous-post-author.anonymous-post-author'
+    >;
     avatar: Schema.Attribute.Media<'images'>;
     banned_from_subrhetics: Schema.Attribute.Relation<
       'manyToMany',
@@ -1090,28 +1936,78 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+    notifications: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::notification.notification'
+    >;
     password: Schema.Attribute.Password &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    post_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::post-flair-assignment.post-flair-assignment'
+    >;
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
+    private_messages: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::private-message.private-message'
+    >;
     provider: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    report: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
+    reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
     role: Schema.Attribute.Relation<
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    saved_items: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::saved-item.saved-item'
     >;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::review-workflows.workflow-stage'
     >;
+    subrhetic_emoji_reactions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
+    >;
+    subrhetic_emojis: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-emoji.subrhetic-emoji'
+    >;
+    subrhetic_rules: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-rule.subrhetic-rule'
+    >;
+    subrhetic_topics: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::subrhetic-topic.subrhetic-topic'
+    >;
     two_factor_enabled: Schema.Attribute.Boolean;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user_activity_logs: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-activity-log.user-activity-log'
+    >;
+    user_blocks: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-block.user-block'
+    >;
+    user_flair_assignments: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-flair-assignment.user-flair-assignment'
+    >;
+    user_preference: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::user-preference.user-preference'
+    >;
     username: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique &
@@ -1133,9 +2029,26 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::anonymous-post-author.anonymous-post-author': ApiAnonymousPostAuthorAnonymousPostAuthor;
       'api::comment.comment': ApiCommentComment;
+      'api::notification.notification': ApiNotificationNotification;
+      'api::post-flair-assignment.post-flair-assignment': ApiPostFlairAssignmentPostFlairAssignment;
+      'api::post-flair.post-flair': ApiPostFlairPostFlair;
       'api::post.post': ApiPostPost;
+      'api::private-message.private-message': ApiPrivateMessagePrivateMessage;
+      'api::report.report': ApiReportReport;
+      'api::saved-item.saved-item': ApiSavedItemSavedItem;
+      'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction': ApiSubrheticEmojiReactionSubrheticEmojiReaction;
+      'api::subrhetic-emoji.subrhetic-emoji': ApiSubrheticEmojiSubrheticEmoji;
+      'api::subrhetic-rule.subrhetic-rule': ApiSubrheticRuleSubrheticRule;
+      'api::subrhetic-topic.subrhetic-topic': ApiSubrheticTopicSubrheticTopic;
       'api::subrhetic.subrhetic': ApiSubrheticSubrhetic;
+      'api::topic.topic': ApiTopicTopic;
+      'api::user-activity-log.user-activity-log': ApiUserActivityLogUserActivityLog;
+      'api::user-block.user-block': ApiUserBlockUserBlock;
+      'api::user-flair-assignment.user-flair-assignment': ApiUserFlairAssignmentUserFlairAssignment;
+      'api::user-flair.user-flair': ApiUserFlairUserFlair;
+      'api::user-preference.user-preference': ApiUserPreferenceUserPreference;
       'api::vote.vote': ApiVoteVote;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subrhetic_emojis",
+  "info": {
+    "singularName": "subrhetic-emoji",
+    "pluralName": "subrhetic-emojis",
+    "displayName": "SubrheticEmoji",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "emoji": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "subrhetic_emojis"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "subrhetic_emojis"
+    },
+    "subrhetic_emoji_reactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-emoji-reaction.subrhetic-emoji-reaction",
+      "mappedBy": "subrhetic_emoji"
+    }
+  }
+}

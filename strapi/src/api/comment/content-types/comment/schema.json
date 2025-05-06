@@ -55,6 +55,24 @@
       "relation": "oneToMany",
       "target": "api::vote.vote",
       "mappedBy": "comment"
+    },
+    "user_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair-assignment.user-flair-assignment",
+      "mappedBy": "comment"
+    },
+    "saved_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::saved-item.saved-item",
+      "mappedBy": "comment"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "comment"
     }
   }
 }

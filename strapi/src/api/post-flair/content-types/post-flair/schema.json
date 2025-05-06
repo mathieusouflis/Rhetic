@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "post_flairs",
+  "info": {
+    "singularName": "post-flair",
+    "pluralName": "post-flairs",
+    "displayName": "PostFlair",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "text_color": {
+      "type": "string",
+      "required": true,
+      "default": "#FFFFFF"
+    },
+    "background_color": {
+      "type": "string",
+      "default": "#FF4500"
+    },
+    "is_mod_only": {
+      "type": "boolean",
+      "default": false
+    },
+    "emoji": {
+      "type": "string"
+    },
+    "position": {
+      "type": "integer",
+      "default": 0
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "post_flairs"
+    },
+    "post_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-flair-assignment.post-flair-assignment",
+      "mappedBy": "post_flair"
+    }
+  }
+}

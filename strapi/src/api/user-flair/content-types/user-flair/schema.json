@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_flairs",
+  "info": {
+    "singularName": "user-flair",
+    "pluralName": "user-flairs",
+    "displayName": "UserFlair",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "text_color": {
+      "type": "string",
+      "default": "#FFFFFF"
+    },
+    "background_color": {
+      "type": "string",
+      "default": "#0079D3"
+    },
+    "is_mod_only": {
+      "type": "boolean",
+      "default": false
+    },
+    "emoji": {
+      "type": "string"
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "user_flairs"
+    },
+    "user_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair-assignment.user-flair-assignment",
+      "mappedBy": "user_flair"
+    }
+  }
+}
