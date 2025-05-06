@@ -17,22 +17,22 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.badRequest('User ID invalide');
       }
       
-      const user = await strapi.entityService.findOne<User>(
+      const user = await strapi.entityService.findOne(
         'plugin::users-permissions.user', 
         userIdNumber
-      );
+      ) as User;
       
       if (!user) {
         return ctx.notFound('User not found');
       }
       
-      const subrhetic = await strapi.entityService.findOne<Subrhetic>(
+      const subrhetic = await strapi.entityService.findOne(
         'api::subrhetic.subrhetic', 
         id, 
         {
           populate: ['moderators']
         }
-      );
+      ) as Subrhetic;
       
       if (!subrhetic) {
         return ctx.notFound('Subrhetic not found');
@@ -49,7 +49,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       }
       
-      const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
+      const updatedSubrhetic = await strapi.entityService.update(
         'api::subrhetic.subrhetic', 
         id, 
         {
@@ -58,7 +58,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
           },
           populate: ['moderators']
         }
-      );
+      ) as Subrhetic;
       
       return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
@@ -82,13 +82,13 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.badRequest('User ID invalide');
       }
       
-      const subrhetic = await strapi.entityService.findOne<Subrhetic>(
+      const subrhetic = await strapi.entityService.findOne(
         'api::subrhetic.subrhetic', 
         id, 
         {
           populate: ['moderators', 'creator']
         }
-      );
+      ) as Subrhetic;
       
       if (!subrhetic) {
         return ctx.notFound('Subrhetic not found');
@@ -117,7 +117,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.badRequest('User is not a moderator');
       }
       
-      const updatedSubrhetic = await strapi.entityService.update<Subrhetic>(
+      const updatedSubrhetic = await strapi.entityService.update(
         'api::subrhetic.subrhetic', 
         id, 
         {
@@ -126,7 +126,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
           },
           populate: ['moderators']
         }
-      );
+      ) as Subrhetic;
       
       return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
