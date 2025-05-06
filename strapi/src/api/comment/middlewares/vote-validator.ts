@@ -31,36 +31,41 @@ export default () => {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      if (comment.post && 
-          typeof comment.post === 'object' && 
-          comment.post.subrhetic && 
-          typeof comment.post.subrhetic === 'object' && 
-          comment.post.subrhetic.banned_users) {
+      if (comment.post && typeof comment.post === 'object') {
+        const post = comment.post;
         
-        const isBanned = comment.post.subrhetic.banned_users.some(
-          (banned: any) => {
-            const bannedId = typeof banned === 'object' ? banned.id : banned;
-            return bannedId === user.id;
+        if (post.subrhetic && typeof post.subrhetic === 'object') {
+          const subrhetic = post.subrhetic;
+          
+          if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+            const isBanned = subrhetic.banned_users.some(
+              (banned: any) => {
+                const bannedId = typeof banned === 'object' ? banned.id : banned;
+                return bannedId === user.id;
+              }
+            );
+            
+            if (isBanned) {
+              return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+            }
           }
-        );
-        
-        if (isBanned) {
-          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
         }
       }
       
       const isUpvote = ctx.request.url.includes('/upvote');
       const isDownvote = ctx.request.url.includes('/downvote');
       
-      const userVoteExists = comment.votes?.some((vote: Vote) => {
-        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-        return voteUserId === user.id && 
-               ((isUpvote && vote.type === 'upvote') || 
-                (isDownvote && vote.type === 'downvote'));
-      });
-      
-      if (userVoteExists) {
-        return ctx.badRequest(`Vous avez déjà ${isUpvote ? 'upvoté' : 'downvoté'} ce commentaire`);
+      if (comment.votes && Array.isArray(comment.votes)) {
+        const userVoteExists = comment.votes.some((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === user.id && 
+                ((isUpvote && vote.type === 'upvote') || 
+                 (isDownvote && vote.type === 'downvote'));
+        });
+        
+        if (userVoteExists) {
+          return ctx.badRequest(`Vous avez déjà ${isUpvote ? 'upvoté' : 'downvoté'} ce commentaire`);
+        }
       }
       
       ctx.state.vote = {

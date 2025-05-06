@@ -44,14 +44,20 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.badRequest("Ce commentaire n'est pas lié à un post");
       }
 
-      if (comment.post.author && typeof comment.post.author === 'object') {
-        if (comment.post.author.id === user.id) {
+      const post = typeof comment.post === 'object' ? comment.post : null;
+      
+      if (!post) {
+        return ctx.badRequest("Informations du post manquantes");
+      }
+
+      if (post.author && typeof post.author === 'object') {
+        if (post.author.id === user.id) {
           return await next();
         }
       }
 
-      if (comment.post.subrhetic && typeof comment.post.subrhetic === 'object') {
-        const subrhetic = comment.post.subrhetic;
+      if (post.subrhetic && typeof post.subrhetic === 'object') {
+        const subrhetic = post.subrhetic;
         
         if (subrhetic.creator && typeof subrhetic.creator === 'object') {
           if (subrhetic.creator.id === user.id) {

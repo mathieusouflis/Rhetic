@@ -29,14 +29,16 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.notFound("Post introuvable");
       }
 
-      if (post.author) {
-        const authorId = typeof post.author === 'object' 
-          ? post.author.id 
-          : post.author;
-        
-        if (authorId === user.id) {
-          return await next();
-        }
+      if (!post.author) {
+        return ctx.badRequest("Ce post n'a pas d'auteur spécifié");
+      }
+
+      const authorId = typeof post.author === 'object' 
+        ? post.author.id 
+        : post.author;
+      
+      if (authorId === user.id) {
+        return await next();
       }
 
       return ctx.forbidden("Vous n'êtes pas l'auteur de ce post");

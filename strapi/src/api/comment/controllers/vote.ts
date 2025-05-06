@@ -21,10 +21,14 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         return ctx.notFound("Commentaire introuvable");
       }
       
-      const existingVote = comment.votes?.find((vote: Vote) => {
-        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-        return voteUserId === userId;
-      });
+      let existingVote: Vote | undefined;
+      
+      if (comment.votes && Array.isArray(comment.votes)) {
+        existingVote = comment.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
+      }
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
@@ -118,10 +122,14 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         return ctx.notFound("Commentaire introuvable");
       }
       
-      const existingVote = comment.votes?.find((vote: Vote) => {
-        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-        return voteUserId === userId;
-      });
+      let existingVote: Vote | undefined;
+      
+      if (comment.votes && Array.isArray(comment.votes)) {
+        existingVote = comment.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
+      }
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {

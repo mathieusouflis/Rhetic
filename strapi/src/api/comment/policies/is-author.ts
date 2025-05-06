@@ -29,14 +29,16 @@ export default (policyContext: PolicyContext, config: any, { strapi }: { strapi:
         return ctx.notFound("Commentaire introuvable");
       }
 
-      if (comment.author) {
-        const authorId = typeof comment.author === 'object' 
-          ? comment.author.id 
-          : comment.author;
-        
-        if (authorId === user.id) {
-          return await next();
-        }
+      if (!comment.author) {
+        return ctx.badRequest("Ce commentaire n'a pas d'auteur spécifié");
+      }
+
+      const authorId = typeof comment.author === 'object' 
+        ? comment.author.id 
+        : comment.author;
+      
+      if (authorId === user.id) {
+        return await next();
       }
 
       return ctx.forbidden("Vous n'êtes pas l'auteur de ce commentaire");

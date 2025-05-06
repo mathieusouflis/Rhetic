@@ -21,10 +21,14 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         return ctx.notFound("Post introuvable");
       }
       
-      const existingVote = post.votes?.find((vote: Vote) => {
-        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-        return voteUserId === userId;
-      });
+      let existingVote: Vote | undefined;
+      
+      if (post.votes && Array.isArray(post.votes)) {
+        existingVote = post.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
+      }
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
@@ -118,10 +122,14 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         return ctx.notFound("Post introuvable");
       }
       
-      const existingVote = post.votes?.find((vote: Vote) => {
-        const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-        return voteUserId === userId;
-      });
+      let existingVote: Vote | undefined;
+      
+      if (post.votes && Array.isArray(post.votes)) {
+        existingVote = post.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
+      }
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
