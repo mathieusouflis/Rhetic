@@ -668,6 +668,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::post.post'> &
       Schema.Attribute.Private;
+    Media: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
     post_flair_assignments: Schema.Attribute.Relation<
       'oneToMany',
       'api::post-flair-assignment.post-flair-assignment'

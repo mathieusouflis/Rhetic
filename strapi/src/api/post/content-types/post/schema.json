@@ -82,6 +82,16 @@
       "relation": "oneToMany",
       "target": "api::report.report",
       "mappedBy": "post"
+    },
+    "Media": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "type": "media",
+      "multiple": true,
+      "required": false
     }
   }
 }
