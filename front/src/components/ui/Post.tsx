@@ -105,7 +105,9 @@ export const Post = ({
           />
           <Link href={"/posts/" + post.id}>
             <LittleAction iconName="comment">
-              {!Array.isArray(post.comments) && post.comments?.count}
+              {!Array.isArray(post.comments)
+                ? post.comments?.count
+                : post.comments.length}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">

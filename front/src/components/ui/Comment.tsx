@@ -11,6 +11,7 @@ import classNames from "classnames";
 import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { CommentType } from "@/types/post";
+import { VotePannel } from "./VotePannel";
 
 export interface CommentProps {
   id: string;
@@ -34,8 +35,6 @@ export const Comment = ({
   fullPage = false,
   ...props
 }: CommentComponentProps) => {
-  const handleVote = (up: boolean) => {};
-
   const router = useRouter();
 
   const handleCommentClick = () => {
@@ -66,7 +65,7 @@ export const Comment = ({
               {comment.author?.username}
             </Small>
             <Small className="text-[var(--black-100)]">
-              s{/* {formatRelativeTime(comment.publishedAt)} */}
+              {formatRelativeTime(comment.publishedAt)}
             </Small>
           </div>
           <Icon name="ellipsis" size={20} />
@@ -74,22 +73,42 @@ export const Comment = ({
         <div className="flex flex-col gap-1.5 w-full">
           <Small className="text-[var(--black-200)]">{comment.content}</Small>
         </div>
-        {/* TODO: REGARDER S'IL Y A DES IMAGES ET LES FETCH SURTOUT */}
-        {/* <ImageSet></ImageSet> */}
         <div className="flex flex-row justify-between w-full">
+          <VotePannel
+            voteType="comment"
+            downVotes={comment.downvotes}
+            upVotes={comment.upvotes}
+            itemId={comment.documentId}
+            voteId={comment.votes[0]?.documentId}
+            userVote={
+              comment.votes[0]?.type === "downvote"
+                ? -1
+                : comment.votes[0]?.type === "upvote"
+                ? 1
+                : 0
+            }
+          />
           <Link href={"/comments/" + comment.id}>
             <LittleAction iconName="comment" onClick={() => {}}>
-              0
+              {comment.childrens?.length || 0}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white" onClick={() => {}}>
-            0
+            {comment.upvotes + comment.downvotes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark
               bookmarkType="comment"
-              bookmarked={false}
-              itemId={comment.id}
+              bookmarked={
+                Array.isArray(comment.saved_items) &&
+                comment.saved_items.length > 0
+              }
+              bookmarkId={
+                (Array.isArray(comment.saved_items) &&
+                  comment.saved_items[0]?.documentId) ||
+                undefined
+              }
+              itemId={comment.documentId}
             />
             <Share shareType="comment" itemId={comment.id} />
           </div>

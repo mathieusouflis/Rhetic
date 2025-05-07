@@ -38,7 +38,7 @@
       "target": "api::post.post",
       "inversedBy": "comments"
     },
-    "children": {
+    "childrens": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::comment.comment",
@@ -48,7 +48,7 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::comment.comment",
-      "inversedBy": "children"
+      "inversedBy": "childrens"
     },
     "votes": {
       "type": "relation",

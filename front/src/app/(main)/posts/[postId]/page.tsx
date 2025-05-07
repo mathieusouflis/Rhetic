@@ -9,6 +9,7 @@ import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { useAuth } from "@/providers/AuthProvider";
 import { PostType } from "@/types/post";
+import { count } from "console";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -52,7 +53,30 @@ export default function Page() {
               },
             },
             comments: {
-              count: true,
+              populate: {
+                author: {
+                  fields: ["username", "id"],
+                },
+                votes: {
+                  fields: ["type"],
+                  filters: {
+                    user: {
+                      id: {
+                        $eq: user?.id,
+                      },
+                    },
+                  },
+                },
+                saved_items: {
+                  filters: {
+                    users_permissions_user: {
+                      id: {
+                        $eq: user?.id,
+                      },
+                    },
+                  },
+                },
+              },
             },
           },
         });
@@ -79,7 +103,7 @@ export default function Page() {
       </ActionButton>
       {post && <Post post={post} fullPage />}
       <div className="w-full h-px bg-[var(--black-500)]"></div>
-      <PostWriter type="comment" />
+      <PostWriter type="comment" parent_type="post" parent_id={postId} />
       {Array.isArray(post?.comments) &&
       post?.comments &&
       post.comments.length > 0 ? (
