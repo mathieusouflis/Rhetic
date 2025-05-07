@@ -12,6 +12,7 @@ import {
   Bookmark,
   ChartNoAxesColumn,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Code,
   Command,
@@ -97,8 +98,9 @@ export type IconName =
   | "apple"
   | "google"
   | "logo"
+  | "chevron_left"
   | "logo_text";
-export type IconSizes = 12 | 14 | 17 | 18 | 20 | 38 | 62;
+export type IconSizes = 12 | 14 | 17 | 18 | 20 | 24 | 38 | 62;
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -128,6 +130,15 @@ export const Icon: React.FC<IconProps> = ({
     ),
     flame: (
       <Flame
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    chevron_left: (
+      <ChevronLeft
         width={size}
         height={size}
         color={color}

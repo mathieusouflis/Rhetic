@@ -28,6 +28,7 @@ export default function Page() {
       try {
         const response = await fetchOne<PostType>(API_PATHS.POSTS, postId, {
           populate: {
+            Media: true,
             author: {
               fields: ["username"],
             },
@@ -50,11 +51,12 @@ export default function Page() {
                 },
               },
             },
-            comments: true,
+            comments: {
+              count: true,
+            },
           },
         });
 
-        console.log("ONE Post fetched:", response);
         setPost(response.data);
       } catch (error) {
         console.error("Error fetching post:", error);

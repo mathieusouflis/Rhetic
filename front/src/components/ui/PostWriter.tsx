@@ -3,7 +3,9 @@ import { Avatar } from "./Avatar";
 import { TextInput } from "./TextInput";
 import Icon from "./Icons";
 import { ActionButton } from "./ActionButton";
-import { apiClient } from "@/lib/api/apiClient";
+import { create, upload } from "@/lib/api/apiClient";
+import { API_PATHS } from "@/lib/api/config";
+import { useAuth } from "@/providers/AuthProvider";
 
 interface Media {
   type: "image" | "video";
@@ -20,6 +22,7 @@ interface PostWriterProps {
 const PostWriter: React.FC<
   PostWriterProps & Omit<React.HTMLAttributes<HTMLFormElement>, "onSubmit">
 > = ({ type = "post", onSubmit, className = "", ...props }) => {
+  const { user } = useAuth();
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [media, setMedia] = useState<Media[]>([]);
@@ -60,18 +63,14 @@ const PostWriter: React.FC<
 
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
-      media.forEach((m, index) => {
-        formData.append(`media[${index}]`, m.file);
+
+      const uploadedFiles = await upload(media.map((m) => m.file));
+      await create(API_PATHS.POSTS, {
+        content,
+        Media: uploadedFiles.map((file: any) => file.id),
+        author: user?.id,
       });
 
-      await apiClient.post(type === "post" ? "posts" : "comments", {
-        data: {
-          content,
-          media: media.map((m) => ({ type: m.type, url: m.url })),
-          author: "1",
-        },
-      });
       onSubmit?.(content, media);
       setContent("");
       setMedia([]);

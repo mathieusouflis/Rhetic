@@ -86,7 +86,6 @@ export async function fetchMany<T>(
 ) {
   try {
     const query = params ? `?${buildStrapiQuery(params)}` : "";
-    console.log("Debug - Final URL:", `${endpoint}${query}`); // Pour déboguer
 
     const response = await apiClient.get<StrapiResponseStructure<T[]>>(
       `${endpoint}${query}`

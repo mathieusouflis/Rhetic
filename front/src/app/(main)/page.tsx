@@ -20,6 +20,7 @@ export default function Home() {
         setLoading(true);
         const response = await fetchMany<PostType>(API_PATHS.POSTS, {
           populate: {
+            Media: true,
             author: {
               fields: ["username"],
             },
@@ -37,7 +38,7 @@ export default function Home() {
               filters: {
                 users_permissions_user: {
                   id: {
-                    $eq: user?.id, // Replace with actual user ID
+                    $eq: user?.id,
                   },
                 },
               },
@@ -47,7 +48,6 @@ export default function Home() {
             },
           },
         });
-        console.log("Posts fetched:", response);
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);

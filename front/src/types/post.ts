@@ -49,7 +49,7 @@ export type PostType = {
   updatedAt: Date;
   publishedDate: Date | null;
   author?: AuthorType;
-  images?: string[];
+  Media?: any;
   comments?: CommentType[] | CommentsType;
   saved_items?: SavedItemType | SavedItemType[];
   votes?: VoteType | VoteType[];
