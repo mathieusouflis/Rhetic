@@ -15,9 +15,19 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   notification, 
   onMarkAsRead 
 }) => {
-  const content = typeof notification.content === 'string' 
-    ? JSON.parse(notification.content) 
-    : notification.content;
+  const parseContent = () => {
+    try {
+      if (typeof notification.content === 'string') {
+        return JSON.parse(notification.content);
+      }
+      return notification.content;
+    } catch (e) {
+      console.error("Erreur lors du parsing du contenu de la notification:", e);
+      return { message: "Notification", description: "" };
+    }
+  };
+
+  const content = parseContent();
 
   const getIconForType = (): IconName => {
     switch(notification.type) {
@@ -60,9 +70,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         )}
       </div>
       
-      <Body className="mb-1">{content.message || content.title}</Body>
+      <Body className="mb-1">{content?.message || content?.title || "Notification"}</Body>
       
-      {content.description && (
+      {content?.description && (
         <Small className="text-[var(--black-200)]">{content.description}</Small>
       )}
     </div>

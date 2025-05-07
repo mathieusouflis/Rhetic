@@ -6,16 +6,27 @@ import { useLiveblocksNotifications } from "@/providers/LiveblocksNotificationPr
 
 export const useNotifications = () => {
   const { user } = useAuth();
-  const [storedNotifications, setStoredNotifications] = useState<NotificationType[]>([]);
+  const { liveNotifications } = useLiveblocksNotifications();
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   
-  const { notifications: liveNotifications } = useLiveblocksNotifications();
-  
-  const allNotifications = [...liveNotifications, ...storedNotifications]
-    .filter((notification, index, self) => 
-      index === self.findIndex(n => n.id === notification.id))
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  useEffect(() => {
+    if (liveNotifications.length > 0) {
+      setNotifications(prev => {
+        // Fusionner les notifications en évitant les doublons
+        const merged = [...prev];
+        
+        liveNotifications.forEach(newNotif => {
+          if (!merged.some(existingNotif => existingNotif.id === newNotif.id)) {
+            merged.unshift(newNotif);
+          }
+        });
+        
+        return merged;
+      });
+    }
+  }, [liveNotifications]);
 
   const fetchNotifications = async () => {
     if (!user?.id) return;
@@ -25,7 +36,7 @@ export const useNotifications = () => {
     
     try {
       const response = await notificationService.getNotifications(user.id);
-      setStoredNotifications(response.data);
+      setNotifications(response.data);
     } catch (err) {
       console.error('Erreur lors de la récupération des notifications:', err);
       setError(err instanceof Error ? err : new Error('Erreur inconnue'));
@@ -43,7 +54,7 @@ export const useNotifications = () => {
   const markAsRead = async (id: string) => {
     try {
       await notificationService.markAsRead(id);
-      setStoredNotifications(prevNotifications =>
+      setNotifications(prevNotifications =>
         prevNotifications.map(notif =>
           notif.id === id ? { ...notif, is_read: true, read_at: new Date() } : notif
         )
@@ -54,7 +65,7 @@ export const useNotifications = () => {
   };
 
   const markAllAsRead = async () => {
-    const unreadIds = allNotifications
+    const unreadIds = notifications
       .filter(n => !n.is_read)
       .map(n => n.id);
     
@@ -62,8 +73,7 @@ export const useNotifications = () => {
     
     try {
       await notificationService.markAllAsRead(user.id, unreadIds);
-      
-      setStoredNotifications(prevNotifications =>
+      setNotifications(prevNotifications =>
         prevNotifications.map(notif =>
           !notif.is_read ? { ...notif, is_read: true, read_at: new Date() } : notif
         )
@@ -73,10 +83,10 @@ export const useNotifications = () => {
     }
   };
 
-  const unreadCount = allNotifications.filter(n => !n.is_read).length;
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return {
-    notifications: allNotifications,
+    notifications,
     unreadCount,
     loading,
     error,

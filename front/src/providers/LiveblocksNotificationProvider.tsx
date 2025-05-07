@@ -1,91 +1,85 @@
 "use client";
-
-import { createContext, useContext, useEffect, useState } from "react";
-import { liveblocksClient } from "@/lib/liveblocks/liveblocksClient";
-import { useAuth } from "@/providers/AuthProvider";
-import { NotificationType } from "@/types/notification";
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { liveblocksClient, getUserRoomId } from '@/lib/liveblocks/liveblocksClient';
+import { useAuth } from './AuthProvider';
+import { NotificationType } from '@/types/notification';
+import { addToast } from '@/components/ui/Toast';
 
 interface LiveblocksNotificationContextType {
-  notifications: NotificationType[];
-  addNotification: (notification: NotificationType) => void;
+  liveNotifications: NotificationType[];
+  clearLiveNotifications: () => void;
 }
 
-const LiveblocksNotificationContext = createContext<LiveblocksNotificationContextType | null>(null);
+const LiveblocksNotificationContext = createContext<LiveblocksNotificationContextType | undefined>(undefined);
 
-export function LiveblocksNotificationProvider({ children }: { children: React.ReactNode }) {
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
+export const LiveblocksNotificationProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const [sessionId, setSessionId] = useState<string | null>(null);
-
+  const [liveNotifications, setLiveNotifications] = useState<NotificationType[]>([]);
+  
   useEffect(() => {
     if (!user?.id) return;
-
-    const fetchSession = async () => {
+    
+    const roomId = getUserRoomId(user.id);
+    let unsubscribe: (() => void) | null = null;
+    
+    const setupSubscription = async () => {
       try {
-        const response = await fetch('/api/liveblocks/auth', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        unsubscribe = liveblocksClient.subscribe({
+          id: roomId,
+          onEvent: (event) => {
+            if (event.type === 'NOTIFICATION') {
+              const notification = event.data as NotificationType;
+              
+              setLiveNotifications(prev => {
+                // Vérifier si la notification existe déjà
+                if (prev.some(n => n.id === notification.id)) {
+                  return prev;
+                }
+                return [notification, ...prev];
+              });
+              
+              // Afficher un toast pour la nouvelle notification
+              const content = typeof notification.content === 'string' 
+                ? JSON.parse(notification.content) 
+                : notification.content;
+                
+              addToast({
+                title: content.title || 'Nouvelle notification',
+                message: content.message || '',
+                type: 'info',
+                duration: 5000,
+              });
+            }
           },
         });
-
-        if (!response.ok) throw new Error('Failed to authenticate with Liveblocks');
-        
-        const session = await response.json();
-        setSessionId(session.id);
-
-        liveblocksClient.enterRoom(`user-${user.id}`);
       } catch (error) {
-        console.error('Error connecting to Liveblocks:', error);
+        console.error('Erreur lors de la création de la souscription Liveblocks:', error);
       }
     };
-
-    fetchSession();
-
-    return () => {
-      if (user?.id) {
-        liveblocksClient.leaveRoom(`user-${user.id}`);
-      }
-    };
-  }, [user]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-
-    const room = liveblocksClient.getRoom(`user-${user.id}`);
     
-    const unsubscribe = room?.subscribe('event', (event) => {
-      if (event.type === 'NOTIFICATION') {
-        addNotification(event.data);
-      }
-    });
-
+    setupSubscription();
+    
     return () => {
-      unsubscribe?.();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
-  }, [user]);
-
-  const addNotification = (notification: NotificationType) => {
-    setNotifications(prev => [notification, ...prev]);
-    if (Notification.permission === 'granted') {
-      new Notification('Nouvelle notification', {
-        body: typeof notification.content === 'string' 
-          ? JSON.parse(notification.content).message 
-          : notification.content.message,
-      });
-    }
+  }, [user?.id]);
+  
+  const clearLiveNotifications = () => {
+    setLiveNotifications([]);
   };
-
+  
   return (
-    <LiveblocksNotificationContext.Provider value={{ notifications, addNotification }}>
+    <LiveblocksNotificationContext.Provider value={{ liveNotifications, clearLiveNotifications }}>
       {children}
     </LiveblocksNotificationContext.Provider>
   );
-}
+};
 
 export const useLiveblocksNotifications = () => {
   const context = useContext(LiveblocksNotificationContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useLiveblocksNotifications must be used within a LiveblocksNotificationProvider');
   }
   return context;
