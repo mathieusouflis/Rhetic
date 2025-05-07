@@ -6,8 +6,6 @@ type ButtonVariant = "black" | "gray" | "gray2" | "white";
 
 type ButtonStyle = "bold" | "normal";
 
-type ButtonSize = "default";
-
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -58,7 +56,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ButtonProps>(
         className={buttonClasses}
         {...props}
       >
-        <div className="flex flex-row gap-2.5">
+        <div className="flex flex-row items-center gap-2.5">
           {leftIcon && <Icon name={leftIconName} size={18} />}
           <Body className={textStyles[styleText]}>{children}</Body>
         </div>
