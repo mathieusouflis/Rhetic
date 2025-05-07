@@ -17,30 +17,42 @@ export const ENV = {
 } as const;
 
 export const ROUTES = {
-  HOME: "/",
-  LOGIN: "/login",
-  REGISTER: "/register",
-  // FORGOT_PASSWORD: "/forgot-password",
-  // RESET_PASSWORD: "/reset-password",
-  POPULAR: "/popular",
-  EXPLORE: "/explore",
-  NOTIFICATIONS: "/notifications",
-  MESSAGES: "/messages",
-  SAVED: "/saved",
-  PROFILE: "/profile",
-  USER: "/users/:user_id",
-  POST: "/posts/:post_id",
-  RHETIC: "/rhetic/:rhetic_id",
-  RHETIC_SETTINGS: {
-    GENERAL: "/rhetic/:rhetic_id/settings/general",
+  AUTH: {
+    LOGIN: { path: "/login", isPublic: true },
+    SOCIAL: { path: "/auth/socials", isPublic: true },
+    REGISTER: { path: "/register", isPublic: true },
+    FORGOT_PASSWORD: { path: "/forgot-password", isPublic: true },
+    RESET_PASSWORD: { path: "/reset-password", isPublic: true },
   },
-  COMMENT: "/comment/:comment_id",
+
+  HOME: { path: "/", isPublic: false },
+  EXPLORE: { path: "/explore", isPublic: false },
+  POPULAR: { path: "/popular", isPublic: false },
+
+  USER: {
+    PROFILE: { path: "/profile", isPublic: false },
+    NOTIFICATIONS: { path: "/notifications", isPublic: false },
+    MESSAGES: { path: "/messages", isPublic: false },
+    SAVED: { path: "/saved", isPublic: false },
+    DETAILS: { path: "/users/:user_id", isPublic: false },
+  },
+
+  CONTENT: {
+    POST: { path: "/posts/:id", isPublic: false },
+    RHETIC: { path: "/rhetic/:id", isPublic: false },
+    COMMENT: { path: "/comment/:id", isPublic: false },
+  },
+
   SETTINGS: {
-    ACCOUNT: "/settings/account",
-    PROFILE: "/settings/profile",
-    NOTIFICATIONS: "/settings/notifications",
-    SHORTCUTS: "/settings/shortcuts",
-    GENERAL: "/settings/general",
-    LANGUAGE: "/settings/language",
+    ACCOUNT: { path: "/settings/account", isPublic: false },
+    PROFILE: { path: "/settings/profile", isPublic: false },
+    NOTIFICATIONS: { path: "/settings/notifications", isPublic: false },
+    SHORTCUTS: { path: "/settings/shortcuts", isPublic: false },
+    GENERAL: { path: "/settings/general", isPublic: false },
+    LANGUAGE: { path: "/settings/language", isPublic: false },
+  },
+
+  RHETIC_SETTINGS: {
+    GENERAL: { path: "/rhetic/:rhetic_id/settings/general", isPublic: false },
   },
 } as const;
