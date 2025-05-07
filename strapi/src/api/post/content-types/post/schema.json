@@ -84,14 +84,18 @@
       "mappedBy": "post"
     },
     "Media": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images",
         "files",
         "videos"
-      ],
-      "type": "media",
-      "multiple": true,
-      "required": false
+      ]
+    },
+    "total_votes": {
+      "type": "integer",
+      "default": 0
     }
   }
 }

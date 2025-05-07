@@ -499,6 +499,59 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiModerationActionModerationAction
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'moderation_actions';
+  info: {
+    displayName: 'Moderation Action';
+    pluralName: 'moderation-actions';
+    singularName: 'moderation-action';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    action_type: Schema.Attribute.Enumeration<
+      [
+        'post_flagged',
+        'post_removed',
+        'user_warned',
+        'user_banned',
+        'comment_removed',
+      ]
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    details: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::moderation-action.moderation-action'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    subrhetic: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::subrhetic.subrhetic'
+    >;
+    target_id: Schema.Attribute.String;
+    target_type: Schema.Attribute.Enumeration<['post', 'comment', 'user']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiNotificationNotification
   extends Struct.CollectionTypeSchema {
   collectionName: 'notifications';
@@ -693,6 +746,7 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'api::subrhetic.subrhetic'
     >;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    total_votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1076,6 +1130,10 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'manyToMany',
       'plugin::users-permissions.user'
     >;
+    moderation_actions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::moderation-action.moderation-action'
+    >;
     moderators: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'
@@ -1349,6 +1407,45 @@ export interface ApiUserFlairUserFlair extends Struct.CollectionTypeSchema {
     user_flair_assignments: Schema.Attribute.Relation<
       'oneToMany',
       'api::user-flair-assignment.user-flair-assignment'
+    >;
+  };
+}
+
+export interface ApiUserOnlineStatusUserOnlineStatus
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'user_online_statuses';
+  info: {
+    displayName: 'User Online Status';
+    pluralName: 'user-online-statuses';
+    singularName: 'user-online-status';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    is_online: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    last_active: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-online-status.user-online-status'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    users_permissions_user: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
     >;
   };
 }
@@ -1937,6 +2034,10 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+    moderation_actions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::moderation-action.moderation-action'
+    >;
     notifications: Schema.Attribute.Relation<
       'oneToMany',
       'api::notification.notification'
@@ -2005,6 +2106,10 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::user-flair-assignment.user-flair-assignment'
     >;
+    user_online_status: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::user-online-status.user-online-status'
+    >;
     user_preference: Schema.Attribute.Relation<
       'oneToOne',
       'api::user-preference.user-preference'
@@ -2032,6 +2137,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::anonymous-post-author.anonymous-post-author': ApiAnonymousPostAuthorAnonymousPostAuthor;
       'api::comment.comment': ApiCommentComment;
+      'api::moderation-action.moderation-action': ApiModerationActionModerationAction;
       'api::notification.notification': ApiNotificationNotification;
       'api::post-flair-assignment.post-flair-assignment': ApiPostFlairAssignmentPostFlairAssignment;
       'api::post-flair.post-flair': ApiPostFlairPostFlair;
@@ -2049,6 +2155,7 @@ declare module '@strapi/strapi' {
       'api::user-block.user-block': ApiUserBlockUserBlock;
       'api::user-flair-assignment.user-flair-assignment': ApiUserFlairAssignmentUserFlairAssignment;
       'api::user-flair.user-flair': ApiUserFlairUserFlair;
+      'api::user-online-status.user-online-status': ApiUserOnlineStatusUserOnlineStatus;
       'api::user-preference.user-preference': ApiUserPreferenceUserPreference;
       'api::vote.vote': ApiVoteVote;
       'plugin::content-releases.release': PluginContentReleasesRelease;

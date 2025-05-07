@@ -107,6 +107,12 @@
       "relation": "manyToMany",
       "target": "api::topic.topic",
       "mappedBy": "subrhetics"
+    },
+    "moderation_actions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::moderation-action.moderation-action",
+      "mappedBy": "subrhetic"
     }
   }
 }

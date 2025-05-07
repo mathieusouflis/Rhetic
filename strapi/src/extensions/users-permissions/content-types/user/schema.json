@@ -219,6 +219,18 @@
       "relation": "oneToMany",
       "target": "api::private-message.private-message",
       "mappedBy": "recipient"
+    },
+    "user_online_status": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::user-online-status.user-online-status",
+      "mappedBy": "users_permissions_user"
+    },
+    "moderation_actions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::moderation-action.moderation-action",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
