@@ -1,47 +1,61 @@
-/**
- * `is-moderator` policy
- * Checks if the current user is a moderator of the subrhetic being modified
- */
+import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
-export default (policyContext, config, { strapi }) => {
-    return async (ctx, next) => {
-      try {
-        const user = ctx.state.user;
+interface PolicyContext {
+  strapi: any;
+  [key: string]: any;
+}
+
+export default (policyContext: PolicyContext, config: any, { strapi }: { strapi: any }) => {
+  return async (ctx: StrapiContext, next: () => Promise<any>) => {
+    try {
+      const user = ctx.state.user;
+      
+      if (!user) {
+        return ctx.unauthorized("Vous devez être connecté pour effectuer cette action");
+      }
+
+      const subId = ctx.params.id;
+      if (!subId) {
+        return ctx.badRequest("ID du Subrhetic requis");
+      }
+
+      const subrhetic = await strapi.entityService.findOne(
+        'api::subrhetic.subrhetic', 
+        subId, 
+        { populate: ['moderators', 'creator'] }
+      ) as Subrhetic;
+
+      if (!subrhetic) {
+        return ctx.notFound("Subrhetic non trouvé");
+      }
+
+      if (subrhetic.creator) {
+        const creatorId = typeof subrhetic.creator === 'object' 
+          ? subrhetic.creator.id 
+          : subrhetic.creator;
         
-        if (!user) {
-          return ctx.unauthorized("You need to be logged in to perform this action");
-        }
-  
-        const subId = ctx.params.id;
-        if (!subId) {
-          return ctx.badRequest("Subrhetic ID is required");
-        }
-  
-        const subrhetic = await strapi.entityService.findOne(
-          'api::subrhetic.subrhetic', 
-          subId, 
-          { populate: ['moderators', 'creator'] }
-        );
-  
-        if (!subrhetic) {
-          return ctx.notFound("Subrhetic not found");
-        }
-  
-        if (subrhetic.creator && subrhetic.creator.id === user.id) {
+        if (creatorId === user.id) {
           return await next();
         }
-  
-        const isModerator = subrhetic.moderators?.some(
-          moderator => moderator.id === user.id
-        );
-  
-        if (!isModerator) {
-          return ctx.forbidden("You are not a moderator of this subrhetic");
-        }
-  
-        return await next();
-      } catch (error) {
-        ctx.internalServerError(`Error in moderator policy: ${error.message}`);
       }
-    };
+
+      if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
+        const isModerator = subrhetic.moderators.some((moderator) => {
+          const moderatorId = typeof moderator === 'object' 
+            ? moderator.id 
+            : moderator;
+          
+          return moderatorId === user.id;
+        });
+
+        if (isModerator) {
+          return await next();
+        }
+      }
+
+      return ctx.forbidden("Vous n'êtes pas modérateur de ce subrhetic");
+    } catch (error) {
+      return ctx.internalServerError(`Erreur dans la politique de modérateur: ${error instanceof Error ? error.message : String(error)}`);
+    }
   };
+};

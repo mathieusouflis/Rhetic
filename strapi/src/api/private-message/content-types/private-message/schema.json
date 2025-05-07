@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "private_messages",
+  "info": {
+    "singularName": "private-message",
+    "pluralName": "private-messages",
+    "displayName": "PrivateMessage",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "text",
+      "required": true
+    },
+    "content_html": {
+      "type": "string"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false
+    },
+    "sender": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "private_messages"
+    },
+    "recipient": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "private_messages"
+    },
+    "parent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::private-message.private-message",
+      "inversedBy": "private_messages"
+    },
+    "private_messages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::private-message.private-message",
+      "mappedBy": "parent"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_online_statuses",
+  "info": {
+    "singularName": "user-online-status",
+    "pluralName": "user-online-statuses",
+    "displayName": "User Online Status"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "is_online": {
+      "type": "boolean",
+      "default": false
+    },
+    "last_active": {
+      "type": "datetime"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_online_status"
+    }
+  }
+}

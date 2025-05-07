@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "post_flair_assignments",
+  "info": {
+    "singularName": "post-flair-assignment",
+    "pluralName": "post-flair-assignments",
+    "displayName": "PostFlairAssignment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "post": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::post.post",
+      "inversedBy": "post_flair_assignments"
+    },
+    "post_flair": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::post-flair.post-flair",
+      "inversedBy": "post_flair_assignments"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "post_flair_assignments"
+    }
+  }
+}

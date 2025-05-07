@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "topics",
+  "info": {
+    "singularName": "topic",
+    "pluralName": "topics",
+    "displayName": "Topic",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon_url": {
+      "type": "string"
+    },
+    "subscriber_count": {
+      "type": "integer",
+      "default": 0
+    },
+    "subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "topics"
+    },
+    "parent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::topic.topic",
+      "inversedBy": "topics"
+    },
+    "topics": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::topic.topic",
+      "mappedBy": "parent"
+    },
+    "subrhetic_topics": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-topic.subrhetic-topic",
+      "mappedBy": "topic"
+    }
+  }
+}

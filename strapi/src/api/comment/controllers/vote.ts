@@ -1,123 +1,206 @@
-/**
- * Comment vote controller 
- */
-
 import { factories } from '@strapi/strapi';
+import { StrapiContext, Comment, Vote } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
-  async upvote(ctx) {
+export default factories.createCoreController('api::comment.comment', ({ strapi, nexus }) => ({
+  async upvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
+      const userId = ctx.state.user?.id;
       
-      // @ts-ignore 
-      const comment = await strapi.entityService.findOne('api::comment.comment', id, {
-        populate: '*',
-      });
+      if (!userId) {
+        return ctx.unauthorized("Vous devez être connecté pour voter");
+      }
+      
+      const comment = await strapi.entityService.findOne(
+        'api::comment.comment',
+        id,
+        { populate: ['votes'] }
+      ) as Comment;
       
       if (!comment) {
-        return ctx.notFound('Comment not found');
+        return ctx.notFound("Commentaire introuvable");
       }
       
-      console.log('Comment structure:', JSON.stringify(comment, null, 2));
+      let existingVote: Vote | undefined;
       
-      const commentAny = comment as any;
-      
-      let authorField = 'author';
-      if (commentAny.Author !== undefined) {
-        authorField = 'Author';
+      if (comment.votes && Array.isArray(comment.votes)) {
+        existingVote = comment.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
       }
       
-      let upvoteFieldValue = 0;
-      let upvoteFieldName = '';
-      
-      if (typeof commentAny.upvotes === 'number') {
-        upvoteFieldName = 'upvotes';
-        upvoteFieldValue = commentAny.upvotes;
-      } else if (typeof commentAny.upVote === 'number') {
-        upvoteFieldName = 'upVote';
-        upvoteFieldValue = commentAny.upVote;
-      } else if (typeof commentAny.Upvotes === 'number') {
-        upvoteFieldName = 'Upvotes';
-        upvoteFieldValue = commentAny.Upvotes;
-      } else if (typeof commentAny.UpVote === 'number') {
-        upvoteFieldName = 'UpVote';
-        upvoteFieldValue = commentAny.UpVote;
-      } else {
-        upvoteFieldName = 'upvotes';
-        console.warn(`No upvote field found in comment, defaulting to '${upvoteFieldName}'`);
+      if (existingVote) {
+        if (existingVote.type === 'upvote') {
+          await strapi.entityService.delete(
+            'api::vote.vote', 
+            existingVote.id
+          );
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+              }
+            }
+          ) as Comment;
+          
+          return nexus.sanitizeOutput(updatedComment, ctx);
+        } 
+        else {
+          const updatedVote = await strapi.entityService.update(
+            'api::vote.vote', 
+            existingVote.id, 
+            {
+              data: {
+                type: 'upvote'
+              }
+            }
+          ) as Vote;
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                upvotes: (comment.upvotes || 0) + 1,
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+              }
+            }
+          ) as Comment;
+          
+          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+        }
       }
       
-      const updateData = {};
-      // @ts-ignore 
-      updateData[upvoteFieldName] = upvoteFieldValue + 1;
+      const vote = await strapi.entityService.create(
+        'api::vote.vote', 
+        {
+          data: {
+            type: 'upvote',
+            user: userId,
+            comment: id
+          }
+        }
+      ) as Vote;
       
-      // @ts-ignore 
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
-        data: updateData,
-      });
+      const updatedComment = await strapi.entityService.update(
+        'api::comment.comment',
+        id,
+        {
+          data: {
+            upvotes: (comment.upvotes || 0) + 1
+          }
+        }
+      ) as Comment;
       
-      return this.sanitizeOutput(updatedComment, ctx);
+      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Error in comment upvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message}`);
+      console.error('Erreur dans comment upvote:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
-  async downvote(ctx) {
+  async downvote(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
+      const userId = ctx.state.user?.id;
       
-      // @ts-ignore 
-      const comment = await strapi.entityService.findOne('api::comment.comment', id, {
-        populate: '*',
-      });
+      if (!userId) {
+        return ctx.unauthorized("Vous devez être connecté pour voter");
+      }
+      
+      const comment = await strapi.entityService.findOne(
+        'api::comment.comment',
+        id,
+        { populate: ['votes'] }
+      ) as Comment;
       
       if (!comment) {
-        return ctx.notFound('Comment not found');
+        return ctx.notFound("Commentaire introuvable");
       }
       
-      console.log('Comment structure:', JSON.stringify(comment, null, 2));
+      let existingVote: Vote | undefined;
       
-      const commentAny = comment as any;
-      
-      let authorField = 'author';
-      if (commentAny.Author !== undefined) {
-        authorField = 'Author';
+      if (comment.votes && Array.isArray(comment.votes)) {
+        existingVote = comment.votes.find((vote: Vote) => {
+          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
+          return voteUserId === userId;
+        });
       }
       
-      let downvoteFieldValue = 0;
-      let downvoteFieldName = '';
-      
-      if (typeof commentAny.downvotes === 'number') {
-        downvoteFieldName = 'downvotes';
-        downvoteFieldValue = commentAny.downvotes;
-      } else if (typeof commentAny.downVote === 'number') {
-        downvoteFieldName = 'downVote';
-        downvoteFieldValue = commentAny.downVote;
-      } else if (typeof commentAny.Downvotes === 'number') {
-        downvoteFieldName = 'Downvotes';
-        downvoteFieldValue = commentAny.Downvotes;
-      } else if (typeof commentAny.DownVote === 'number') {
-        downvoteFieldName = 'DownVote';
-        downvoteFieldValue = commentAny.DownVote;
-      } else {
-        downvoteFieldName = 'downvotes';
-        console.warn(`No downvote field found in comment, defaulting to '${downvoteFieldName}'`);
+      if (existingVote) {
+        if (existingVote.type === 'downvote') {
+          await strapi.entityService.delete(
+            'api::vote.vote', 
+            existingVote.id
+          );
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+              }
+            }
+          ) as Comment;
+          
+          return nexus.sanitizeOutput(updatedComment, ctx);
+        } 
+        else {
+          const updatedVote = await strapi.entityService.update(
+            'api::vote.vote', 
+            existingVote.id, 
+            {
+              data: {
+                type: 'downvote'
+              }
+            }
+          ) as Vote;
+          
+          const updatedComment = await strapi.entityService.update(
+            'api::comment.comment',
+            id,
+            {
+              data: {
+                downvotes: (comment.downvotes || 0) + 1,
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+              }
+            }
+          ) as Comment;
+          
+          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+        }
       }
       
-      const updateData = {};
-      // @ts-ignore 
-      updateData[downvoteFieldName] = downvoteFieldValue + 1;
+      const vote = await strapi.entityService.create(
+        'api::vote.vote', 
+        {
+          data: {
+            type: 'downvote',
+            user: userId,
+            comment: id
+          }
+        }
+      ) as Vote;
       
-      // @ts-ignore 
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
-        data: updateData,
-      });
+      const updatedComment = await strapi.entityService.update(
+        'api::comment.comment',
+        id,
+        {
+          data: {
+            downvotes: (comment.downvotes || 0) + 1
+          }
+        }
+      ) as Comment;
       
-      return this.sanitizeOutput(updatedComment, ctx);
+      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Error in comment downvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message}`);
+      console.error('Erreur dans comment downvote:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 }));

@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "moderation_actions",
+  "info": {
+    "singularName": "moderation-action",
+    "pluralName": "moderation-actions",
+    "displayName": "Moderation Action"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "action_type": {
+      "type": "enumeration",
+      "enum": [
+        "post_flagged",
+        "post_removed",
+        "user_warned",
+        "user_banned",
+        "comment_removed"
+      ]
+    },
+    "target_id": {
+      "type": "string"
+    },
+    "target_type": {
+      "type": "enumeration",
+      "enum": [
+        "post",
+        "comment",
+        "user"
+      ]
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "moderation_actions"
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "moderation_actions"
+    },
+    "details": {
+      "type": "json"
+    }
+  }
+}

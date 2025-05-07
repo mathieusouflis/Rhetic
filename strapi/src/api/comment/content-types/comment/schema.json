@@ -5,7 +5,7 @@
     "singularName": "comment",
     "pluralName": "comments",
     "displayName": "Comment",
-    "description": "Comments on posts"
+    "description": "Commentaires sur les posts"
   },
   "options": {
     "draftAndPublish": true
@@ -49,6 +49,30 @@
       "relation": "manyToOne",
       "target": "api::comment.comment",
       "inversedBy": "children"
+    },
+    "votes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::vote.vote",
+      "mappedBy": "comment"
+    },
+    "user_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair-assignment.user-flair-assignment",
+      "mappedBy": "comment"
+    },
+    "saved_items": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::saved-item.saved-item",
+      "mappedBy": "comment"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "comment"
     }
   }
 }

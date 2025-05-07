@@ -1,15 +1,10 @@
-/**
- * subrhetic controller
- */
-
 import { factories } from '@strapi/strapi'
 
-export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi }) => ({
+export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi, nexus }) => ({
   async deletePost(ctx) {
     try {
       const { id, postId } = ctx.params;
       
-      // @ts-ignore
       const post = await strapi.entityService.findOne('api::post.post', postId, {
         populate: ['subrhetic'],
       });
@@ -25,10 +20,9 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         return ctx.badRequest('Post does not belong to this subrhetic');
       }
       
-      // @ts-ignore
       const deletedPost = await strapi.entityService.delete('api::post.post', postId);
       
-      return this.sanitizeOutput(deletedPost, ctx);
+      return nexus.sanitizeOutput(deletedPost, ctx);
     } catch (error) {
       console.error('Error in deletePost:', error);
       return ctx.badRequest(`An error occurred: ${error.message}`);

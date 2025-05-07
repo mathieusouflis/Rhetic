@@ -41,6 +41,78 @@
       "relation": "oneToMany",
       "target": "api::post.post",
       "mappedBy": "subrhetic"
+    },
+    "members": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "joined_subrhetics"
+    },
+    "banned_users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "banned_from_subrhetics"
+    },
+    "subrhetic_emoji_reactions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-emoji-reaction.subrhetic-emoji-reaction",
+      "mappedBy": "subrhetic"
+    },
+    "subrhetic_topics": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-topic.subrhetic-topic",
+      "mappedBy": "subrhetic"
+    },
+    "subrhetic_emojis": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-emoji.subrhetic-emoji",
+      "mappedBy": "subrhetic"
+    },
+    "post_flairs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::post-flair.post-flair",
+      "mappedBy": "subrhetic"
+    },
+    "user_flairs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair.user-flair",
+      "mappedBy": "subrhetic"
+    },
+    "user_flair_assignments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-flair-assignment.user-flair-assignment",
+      "mappedBy": "subrhetic"
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::report.report",
+      "mappedBy": "subrhetic"
+    },
+    "subrhetic_rules": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subrhetic-rule.subrhetic-rule",
+      "mappedBy": "subrhetic"
+    },
+    "topics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::topic.topic",
+      "mappedBy": "subrhetics"
+    },
+    "moderation_actions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::moderation-action.moderation-action",
+      "mappedBy": "subrhetic"
     }
   }
 }
