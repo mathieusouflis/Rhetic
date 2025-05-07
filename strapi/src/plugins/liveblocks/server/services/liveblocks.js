@@ -15,7 +15,9 @@ module.exports = ({ strapi }) => ({
     const client = this.getLiveblocksClient();
     
     try {
-      await client.broadcastEvent(`user-${userId}`, {
+      const userIdString = String(userId);
+      
+      await client.broadcastEvent(`user-${userIdString}`, {
         type: 'NOTIFICATION',
         data: notification
       });
@@ -31,10 +33,12 @@ module.exports = ({ strapi }) => ({
     const client = this.getLiveblocksClient();
     
     try {
+      const userIdString = String(userId);
+      
       return client.getAuthorization({
-        userId: userId.toString(),
-        groupIds: [`user-${userId}`],
-        userInfo: { id: userId }
+        userId: userIdString,
+        groupIds: [`user-${userIdString}`],
+        userInfo: { id: userIdString }
       });
     } catch (error) {
       strapi.log.error('Error creating Liveblocks session:', error);

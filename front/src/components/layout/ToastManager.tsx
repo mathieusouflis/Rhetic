@@ -7,16 +7,16 @@ import { useLiveblocksNotifications } from "@/providers/LiveblocksNotificationPr
 
 export const ToastManager: React.FC = () => {
   const [toasts, setToasts] = useState<NotificationType[]>([]);
-  const { notifications } = useLiveblocksNotifications();
+  const { liveNotifications } = useLiveblocksNotifications();
   
   useEffect(() => {
-    if (notifications.length > 0) {
-      const latestNotification = notifications[0];
+    if (liveNotifications.length > 0) {
+      const latestNotification = liveNotifications[0];
       if (!toasts.some(t => t.id === latestNotification.id)) {
         setToasts(prev => [latestNotification, ...prev].slice(0, 5));
       }
     }
-  }, [notifications]);
+  }, [liveNotifications, toasts]);
   
   const removeToast = (id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));

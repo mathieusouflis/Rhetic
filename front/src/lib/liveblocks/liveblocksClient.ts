@@ -30,11 +30,3 @@ export const liveblocksClient = createClient({
     }
   },
 });
-
-export function getRoomId(type: string, id: string): string {
-  return `${type}-${id}`;
-}
-
-export function getUserRoomId(userId: string | number): string {
-  return `user-${userId}`;
-}

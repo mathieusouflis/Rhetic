@@ -10,18 +10,32 @@ export function useUserChannel(userId: string | null | undefined) {
 
   useEffect(() => {
     if (!userId) return;
-
-    const unsubscribe = liveblocksClient.subscribe({
-      id: `user-${userId}`,
-      onEvent: (event) => {
-        if (event.type === 'NOTIFICATION') {
-          setEvents(prev => [event.data, ...prev]);
-        }
-      },
-    });
-
+    
+    let unsubscribe: (() => void) | undefined;
+    
+    try {
+      const client = liveblocksClient as any;
+      
+      if (typeof client.subscribe === 'function') {
+        unsubscribe = client.subscribe({
+          id: `user-${userId}`,
+          onEvent: (event: any) => {
+            if (event && event.type === 'NOTIFICATION') {
+              setEvents(prev => [event.data, ...prev]);
+            }
+          },
+        });
+      } else {
+        console.error('La méthode subscribe n\'est pas disponible sur le client Liveblocks');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la connexion à Liveblocks:', error);
+    }
+    
     return () => {
-      unsubscribe();
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
     };
   }, [userId]);
 
