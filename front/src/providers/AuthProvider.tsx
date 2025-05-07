@@ -1,26 +1,29 @@
 "use client";
+
 import { createContext, useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/features/auth/services/authService";
-import type { User } from "@/features/auth/types/auth.types";
-import { ROUTES } from "@/config/constants";
 import {
   getAuthToken,
   removeAuthToken,
   setAuthToken,
 } from "@/features/auth/utils/authUtils";
+import { ROUTES } from "@/config/constants";
+import { isPublicRoute } from "@/config/routes";
+import type {
+  User,
+  LoginCredentials,
+  RegisterData,
+} from "@/features/auth/types/auth.types";
+import { apiClient } from "@/lib/api/apiClient";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => void;
-  register: (data: {
-    email: string;
-    password: string;
-    username: string;
-  }) => void;
+  login: (credentials: LoginCredentials) => void;
+  register: (data: RegisterData) => void;
   logout: () => void;
 }
 
@@ -28,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const queryClient = useQueryClient();
 
   const { data: user, isLoading } = useQuery({
@@ -37,12 +41,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     retry: false,
   });
 
+  useEffect(() => {
+    if (!isLoading && pathname) {
+      const token = getAuthToken();
+      const isPublic = isPublicRoute(pathname);
+
+      if (!token && !isPublic) {
+        router.push(ROUTES.AUTH.LOGIN.path);
+      }
+    }
+  }, [pathname, isLoading, router]);
+
   const loginMutation = useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
       setAuthToken(data.token);
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      router.push(ROUTES.HOME);
+      router.push(ROUTES.HOME.path);
     },
   });
 
@@ -51,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: (data) => {
       setAuthToken(data.token);
       queryClient.invalidateQueries({ queryKey: ["user"] });
-      router.push(ROUTES.HOME);
+      router.push(ROUTES.HOME.path);
     },
   });
 
@@ -60,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       removeAuthToken();
       queryClient.clear();
-      router.push(ROUTES.LOGIN);
+      router.push(ROUTES.AUTH.LOGIN.path);
     },
   });
 
@@ -70,10 +85,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user: user ?? null,
         isLoading,
         isAuthenticated: !!user,
-        login: (identifier, password) =>
-          loginMutation.mutate({ identifier, password }),
-        register: (data) => registerMutation.mutate(data),
-        logout: () => logoutMutation.mutate(),
+        login: loginMutation.mutate,
+        register: registerMutation.mutate,
+        logout: logoutMutation.mutate,
       }}
     >
       {children}
