@@ -1,7 +1,8 @@
+"use client";
+
 import { Geist, Geist_Mono } from "next/font/google";
-// import { APP_CONFIG } from "@/config/constants";
+import { Providers } from "@/providers/Providers";
 import "@/styles/globals.css";
-// import { AppProvider } from "@/providers/AppProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,23 +14,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// export const metadata = {
-//   title: APP_CONFIG.name,
-//   description: APP_CONFIG.description,
-// };
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="fr">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        {/* <AppProvider>{children}</AppProvider> */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

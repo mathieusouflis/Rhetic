@@ -1,45 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { DropdownSelect } from "@/components/ui/Dropdown";
-import { Body } from "@/components/ui/Typography";
+import { BigButton } from "@/components/ui/BigButton";
+import Icon from "@/components/ui/Icons";
+import { Body, Display, Tiny } from "@/components/ui/Typography";
+import RegisterForm from "@/features/auth/components/RegisterForm";
+import Link from "next/link";
 
-const RegisterPage = () => {
-  const [selectedOption, setSelectedOption] = useState<string>("");
-
-  const options = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-    { label: "Option 4", value: "option4" },
-  ];
-
+const Login = () => {
   return (
-    <div className="flex flex-col gap-4 p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold">Register Page</h1>
-      <p className="mb-4">Welcome to the register page!</p>
-
-      <div className="mb-4">
-        <Body className="mb-2">Select an option:</Body>
-        <DropdownSelect
-          options={options}
-          value={selectedOption}
-          onChange={setSelectedOption}
-          placeholder="Choose an option"
-          searchable={true}
-        />
-      </div>
-
-      {selectedOption && (
-        <div className="mt-4 p-3 bg-[var(--black-700)] rounded-md">
-          <Body>
-            You selected:{" "}
-            {options.find((opt) => opt.value === selectedOption)?.label}
-          </Body>
+    <div className="h-screen flex items-center justify-center">
+      <div className="w-full max-w-sm flex flex-col gap-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center justify-center w-fit aspect-square rounded-[20px] p-2.5 bg-[var(--black-700)] shadow-[var(--shadow-icon)] border border-[var(--black-500)]">
+            <Icon name="logo" size={62} />
+          </div>
+          <div className="flex flex-col items-center gap-1.5">
+            <Display>Welcome aboard</Display>
+            <Body className="text-[var(--black-100)]">
+              Allready have an account ?{" "}
+              <Link href="/login" className="text-[var(--white)]">
+                Sign In
+              </Link>
+            </Body>
+          </div>
         </div>
-      )}
+        <RegisterForm />
+        <div className="flex flex-row items-center gap-2.5 p-2.5">
+          <div className="flex h-px w-full bg-[var(--black-500)]"></div>
+          <Tiny className="text-[var(--black-100)]">OR</Tiny>
+          <div className="flex h-px w-full bg-[var(--black-500)]"></div>
+        </div>
+        <Link href="/auth/socials">
+          <BigButton variant="black" className="w-full">
+            Social media Sign Up
+          </BigButton>
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default RegisterPage;
+export default Login;

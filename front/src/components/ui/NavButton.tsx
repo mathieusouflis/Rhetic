@@ -3,6 +3,7 @@ import Icon, { IconName } from "./Icons";
 import { Body } from "./Typography";
 import Shortcut from "./Shortcut";
 import Notification from "./Notification";
+import classNames from "classnames";
 
 type ButtonVariant = "black" | "hover" | "selected";
 
@@ -40,7 +41,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 const baseStyles =
-  "flex flex-row justify-between items-center px-2.5 py-2 gap-2.5 rounded-[10px]";
+  "flex flex-row justify-between items-center px-2.5 py-2 gap-2.5 rounded-[10px] border border-transparent";
 
 const NavButton = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -61,12 +62,16 @@ const NavButton = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const buttonClasses = [
+    const buttonClasses = classNames(
       baseStyles,
+      {
+        " hover:bg-[var(--black-700)] hover:border hover:border-[var(--black-500)] hover:text-[var(--black-200)]":
+          variant !== "selected",
+      },
       variantStyles[variant],
       sizeStyles[size],
-      className,
-    ].join(" ");
+      className
+    );
 
     return (
       <button
@@ -75,9 +80,14 @@ const NavButton = forwardRef<HTMLButtonElement, ButtonProps>(
         className={buttonClasses}
         {...props}
       >
-        <div className="flex flex-row gap-2.5">
+        <div className="flex flex-row items-center gap-2.5">
           {leftIcon && (
-            <Icon name={leftIconName} color={iconStyles[variant]} size={18} />
+            <Icon
+              name={leftIconName}
+              color={iconStyles[variant]}
+              full={variant === "selected"}
+              size={18}
+            />
           )}
           <Body>{children}</Body>
         </div>

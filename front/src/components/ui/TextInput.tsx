@@ -18,7 +18,8 @@ const variantStyles: Record<TextInputVariants, string> = {
   fill: "border-[var(--black-500)] bg-[var(--black-700)] border rounded-[10px]",
 };
 
-const baseStyles = "flex flex-row items-center gap-2.5 w-full px-2.5 py-2";
+const baseStyles =
+  "flex flex-row items-center gap-2.5 w-full px-2.5 py-2 h-[42px]";
 
 const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   (

@@ -1,3 +1,4 @@
+"use client";
 import { forwardRef, useState } from "react";
 import classNames from "classnames";
 import Icon from "./Icons";
