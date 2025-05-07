@@ -1,58 +1,62 @@
+import { API_PATHS } from "@/lib/api/config";
 import { apiClient } from "@/lib/api/apiClient";
-import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import type {
+  User,
   LoginCredentials,
   RegisterData,
-  User,
   AuthResponse,
-  ResetPasswordData,
 } from "../types/auth.types";
 
-export const authService = {
+class AuthService {
   async login(credentials: LoginCredentials) {
+    console.log("URL" + API_PATHS.AUTH);
+
     const response = await apiClient.post<AuthResponse>(
-      API_ENDPOINTS.AUTH.LOGIN,
+      `${API_PATHS.AUTH}/local`,
       credentials
     );
     return {
       user: response.data.user,
       token: response.data.jwt,
     };
-  },
+  }
 
   async register(data: RegisterData) {
     const response = await apiClient.post<AuthResponse>(
-      API_ENDPOINTS.AUTH.REGISTER,
+      `${API_PATHS.AUTH}/local/register`,
       data
     );
     return {
       user: response.data.user,
       token: response.data.jwt,
     };
-  },
-
-  async logout() {
-    localStorage.removeItem("token");
-  },
+  }
 
   async getProfile() {
-    const response = await apiClient.get<User>(API_ENDPOINTS.AUTH.ME);
+    const response = await apiClient.get<User>(`${API_PATHS.USERS}/me`);
     return response.data;
-  },
+  }
 
-  async updateProfile(id: number, data: Partial<User>) {
-    const response = await apiClient.put<User>(
-      API_ENDPOINTS.USERS.UPDATE(id.toString()),
-      data
-    );
-    return response.data;
-  },
+  async resetPassword(email: string) {
+    return apiClient.post(`${API_PATHS.AUTH}/forgot-password`, { email });
+  }
 
-  async forgotPassword(email: string) {
-    return await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
-  },
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+    confirmPassword: string
+  ) {
+    return apiClient.post(`${API_PATHS.AUTH}/change-password`, {
+      currentPassword,
+      password: newPassword,
+      passwordConfirmation: confirmPassword,
+    });
+  }
 
-  async resetPassword(data: ResetPasswordData) {
-    return await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
-  },
-};
+  async logout() {
+    // Client-side only, no API call needed for Strapi
+    return Promise.resolve();
+  }
+}
+
+export const authService = new AuthService();

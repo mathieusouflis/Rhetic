@@ -1,17 +1,28 @@
+const isBrowser = typeof window !== "undefined";
+
 export const handleUnauthorized = () => {
-  localStorage.removeItem("token");
-  console.log("Token removed from local storage");
-  window.location.href = "/login";
+  if (isBrowser) {
+    localStorage.removeItem("token");
+    console.log("Token removed from local storage");
+    window.location.href = "/login";
+  }
 };
 
 export const setAuthToken = (token: string) => {
-  localStorage.setItem("token", token);
+  if (isBrowser) {
+    localStorage.setItem("token", token);
+  }
 };
 
 export const getAuthToken = () => {
-  return localStorage.getItem("token");
+  if (isBrowser) {
+    return localStorage.getItem("token");
+  }
+  return null;
 };
 
 export const removeAuthToken = () => {
-  localStorage.removeItem("token");
+  if (isBrowser) {
+    localStorage.removeItem("token");
+  }
 };
