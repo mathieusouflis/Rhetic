@@ -2,6 +2,7 @@ import { Sidebar } from "@/components/layout/Sidebar/Sidebar";
 import Icon from "@/components/ui/Icons";
 import { SearchBar } from "@/components/ui/Searchbar";
 import { MAIN_NAV_ITEMS } from "@/config/navigation";
+import { ToastManager } from "@/components/layout/ToastManager";
 
 export default function MainLayout({
   children,
@@ -22,6 +23,8 @@ export default function MainLayout({
           <div className="flex-1 max-w-[650px]">{children}</div>
         </main>
       </div>
+      
+      <ToastManager />
     </>
   );
 }

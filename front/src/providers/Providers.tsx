@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { LiveblocksNotificationProvider } from "@/providers/LiveblocksNotificationProvider";
 import { useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -19,7 +20,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <LiveblocksNotificationProvider>
+          {children}
+        </LiveblocksNotificationProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
