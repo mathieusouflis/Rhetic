@@ -25,7 +25,6 @@ export const LiveblocksNotificationProvider = ({ children }: { children: ReactNo
     
     const setupSubscription = async () => {
       try {
-        // Utilisez "as any" pour contourner temporairement les erreurs de type
         const client = liveblocksClient as any;
         
         if (typeof client.subscribe === 'function') {
