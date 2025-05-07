@@ -1,0 +1,13 @@
+{
+    "name": "strapi-plugin-liveblocks",
+    "version": "0.0.1",
+    "description": "Plugin for Liveblocks real-time notifications",
+    "strapi": {
+      "name": "liveblocks",
+      "description": "Real-time notifications with Liveblocks",
+      "kind": "plugin"
+    },
+    "dependencies": {
+      "@liveblocks/node": "^2.24.1"
+    }
+  }

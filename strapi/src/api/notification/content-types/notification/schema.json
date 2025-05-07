@@ -44,6 +44,10 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "notifications"
+    },
+    "liveblocks_delivered": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
