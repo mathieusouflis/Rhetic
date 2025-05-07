@@ -1,10 +1,10 @@
-import type { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+export interface StrapiDataStructure<T> {
+  id: string;
+  attributes: T;
+}
 
 export interface StrapiResponse<T> {
-  data: {
-    id: number;
-    attributes: T;
-  };
+  data: StrapiDataStructure<T>;
   meta?: {
     pagination?: {
       page: number;
@@ -16,10 +16,7 @@ export interface StrapiResponse<T> {
 }
 
 export interface StrapiCollectionResponse<T> {
-  data: Array<{
-    id: number;
-    attributes: T;
-  }>;
+  data: StrapiDataStructure<T>[];
   meta: {
     pagination: {
       page: number;
@@ -37,13 +34,35 @@ export interface StrapiError {
   details?: Record<string, any>;
 }
 
-export interface ApiConfig extends AxiosRequestConfig {
+export interface ApiConfig {
   baseURL: string;
+  headers: Record<string, string>;
   timeout: number;
 }
 
-export interface ApiError extends AxiosError {
-  status?: number;
-  message: string;
-  details?: Record<string, any>;
+export interface QueryParams {
+  filters?: Record<string, any>;
+  populate?: string | string[] | Record<string, any>;
+  sort?: string[];
+  pagination?: {
+    page?: number;
+    pageSize?: number;
+  };
 }
+
+// Types génériques pour les réponses API
+export interface ApiResponse<T> {
+  data: T;
+  meta?: any;
+}
+
+export interface ApiCollectionResponse<T> {
+  data: T[];
+  meta?: any;
+}
+
+// Type pour mapper les réponses Strapi vers notre format d'API
+export type StrapiToAppData<T> = (strapiData: StrapiDataStructure<T>) => any;
+export type StrapiToAppCollection<T> = (
+  strapiCollection: StrapiDataStructure<T>[]
+) => any[];

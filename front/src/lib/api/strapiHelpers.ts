@@ -1,65 +1,28 @@
-import type { StrapiResponse, StrapiCollectionResponse } from "@/types/api";
+import type { QueryParams, StrapiDataStructure } from "@/types/api";
+import qs from "qs";
 
-export function normalizeStrapiResponse<T>(response: StrapiResponse<T>) {
+export function buildStrapiQuery(params: QueryParams): string {
+  // Strapi v4 specific configuration
+  return qs.stringify(params, {
+    encodeValuesOnly: true, // Encode values only (not keys)
+    addQueryPrefix: false, // Don't add '?' at the beginning
+    arrayFormat: "brackets", // Format arrays with brackets
+    encode: false, // Don't encode already encoded values
+    strictNullHandling: false, // Handle null values properly
+  });
+}
+
+export function normalizeStrapiResponse<T>(
+  response: StrapiDataStructure<T>
+): T & { id: string } {
   return {
-    ...response.data.attributes,
-    id: response.data.id,
-  } as T & { id: number };
+    id: response.id,
+    ...response.attributes,
+  };
 }
 
 export function normalizeStrapiCollection<T>(
-  response: StrapiCollectionResponse<T>
-) {
-  return {
-    data: response.data.map((item) => ({
-      ...item.attributes,
-      id: item.id,
-    })),
-    pagination: response.meta.pagination,
-  };
-}
-
-export function buildStrapiQuery(params?: {
-  populate?: string | string[];
-  filters?: Record<string, any>;
-  sort?: string[];
-  pagination?: {
-    page?: number;
-    pageSize?: number;
-  };
-}) {
-  const queryParams = new URLSearchParams();
-
-  if (params?.populate) {
-    const populate = Array.isArray(params.populate)
-      ? params.populate.join(",")
-      : params.populate;
-    queryParams.append("populate", populate);
-  }
-
-  if (params?.filters) {
-    for (const [key, value] of Object.entries(params.filters)) {
-      queryParams.append(`filters[${key}]`, String(value));
-    }
-  }
-
-  if (params?.sort) {
-    params.sort.forEach((field) => {
-      queryParams.append("sort", field);
-    });
-  }
-
-  if (params?.pagination) {
-    if (params.pagination.page) {
-      queryParams.append("pagination[page]", String(params.pagination.page));
-    }
-    if (params.pagination.pageSize) {
-      queryParams.append(
-        "pagination[pageSize]",
-        String(params.pagination.pageSize)
-      );
-    }
-  }
-
-  return queryParams.toString();
+  collection: StrapiDataStructure<T>[]
+): (T & { id: string })[] {
+  return collection.map(normalizeStrapiResponse);
 }

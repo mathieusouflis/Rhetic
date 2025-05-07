@@ -10,49 +10,71 @@ import type {
 } from "@/types/api";
 import { API_CONFIG } from "@/config";
 
-const config: ApiConfig = {
-  baseURL: API_CONFIG.baseURL,
-  headers: API_CONFIG.headers,
-  timeout: API_CONFIG.timeout,
-};
+interface StrapiResponseStructure<T> {
+  data: T;
+  meta: Record<string, any>;
+}
 
-export const apiClient = axios.create(config);
+class ApiClient {
+  private client;
 
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+  constructor(config: ApiConfig) {
+    this.client = axios.create(config);
+    this.setupInterceptors();
   }
-  return config;
-});
 
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if ([401, 403].includes(error.response?.status)) {
-      handleUnauthorized();
-    }
+  private setupInterceptors() {
+    // Request interceptor
+    this.client.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem("token");
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-    if (error.response?.data?.error) {
-      const strapiError: StrapiError = error.response.data.error;
-      return Promise.reject({
-        ...error,
-        message: strapiError.message,
-        details: strapiError.details,
-        status: strapiError.status,
-      });
-    }
-    return Promise.reject(error);
+    // Response interceptor
+    this.client.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        // Handle unauthorized errors
+        if ([401, 403].includes(error.response?.status)) {
+          handleUnauthorized();
+        }
+
+        // Transform Strapi error format
+        if (error.response?.data?.error) {
+          const strapiError: StrapiError = error.response.data.error;
+          return Promise.reject({
+            ...error,
+            message: strapiError.message,
+            details: strapiError.details,
+            status: strapiError.status,
+          });
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
-);
+
+  public get instance() {
+    return this.client;
+  }
+}
+
+export const apiClient = new ApiClient(API_CONFIG).instance;
 
 export async function fetchOne<T>(
   endpoint: string,
-  id: number,
+  id: string,
   params?: Parameters<typeof buildStrapiQuery>[0]
 ) {
   const query = params ? `?${buildStrapiQuery(params)}` : "";
-  const response = await apiClient.get<StrapiResponse<T>>(
+  const response = await apiClient.get<StrapiResponseStructure<T>>(
     `${endpoint}/${id}${query}`
   );
   return response.data;
@@ -62,11 +84,19 @@ export async function fetchMany<T>(
   endpoint: string,
   params?: Parameters<typeof buildStrapiQuery>[0]
 ) {
-  const query = params ? `?${buildStrapiQuery(params)}` : "";
-  const response = await apiClient.get<StrapiCollectionResponse<T>>(
-    `${endpoint}${query}`
-  );
-  return response.data;
+  try {
+    const query = params ? `?${buildStrapiQuery(params)}` : "";
+    console.log("Debug - Final URL:", `${endpoint}${query}`); // Pour déboguer
+
+    const response = await apiClient.get<StrapiResponseStructure<T[]>>(
+      `${endpoint}${query}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Debug - Request error:", error);
+    console.error("Debug - Request params:", params);
+    throw error;
+  }
 }
 
 export async function create<T>(endpoint: string, data: Partial<T>) {
@@ -76,7 +106,7 @@ export async function create<T>(endpoint: string, data: Partial<T>) {
 
 export async function update<T>(
   endpoint: string,
-  id: number,
+  id: string,
   data: Partial<T>
 ) {
   const response = await apiClient.put<StrapiResponse<T>>(`${endpoint}/${id}`, {
@@ -85,7 +115,7 @@ export async function update<T>(
   return response.data;
 }
 
-export async function remove(endpoint: string, id: number) {
+export async function remove(endpoint: string, id: string) {
   await apiClient.delete(`${endpoint}/${id}`);
 }
 
@@ -93,7 +123,7 @@ export async function upload(
   files: File | File[],
   options?: {
     ref: string;
-    refId: number;
+    refId: string;
     field: string;
   }
 ) {
@@ -150,7 +180,7 @@ export async function count<T>(
 
 export async function fetchWithRelations<T>(
   endpoint: string,
-  id: number,
+  id: string,
   relations: string[]
 ) {
   return fetchOne<T>(endpoint, id, {
@@ -160,14 +190,14 @@ export async function fetchWithRelations<T>(
 
 export async function bulkUpdate<T>(
   endpoint: string,
-  ids: number[],
+  ids: string[],
   data: Partial<T>
 ) {
   const updates = ids.map((id) => update<T>(endpoint, id, data));
   return Promise.all(updates);
 }
 
-export async function bulkDelete(endpoint: string, ids: number[]) {
+export async function bulkDelete(endpoint: string, ids: string[]) {
   const deletions = ids.map((id) => remove(endpoint, id));
   return Promise.all(deletions);
 }
@@ -190,7 +220,7 @@ export async function bulkDelete(endpoint: string, ids: number[]) {
 // Helper pour les locales
 // export async function fetchLocalized<T>(
 //   endpoint: string,
-//   id: number,
+//   id: string,
 //   locale: string
 // ) {
 //   return fetchOne<T>(endpoint, id, {
