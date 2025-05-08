@@ -94,7 +94,7 @@ export const Comment = ({
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white" onClick={() => {}}>
-            {comment.upvotes + comment.downvotes}
+            {comment.total_votes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark

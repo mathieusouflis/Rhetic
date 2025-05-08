@@ -111,7 +111,7 @@ export const Post = ({
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
-            {post.upvotes + post.downvotes}
+            {post.total_votes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark

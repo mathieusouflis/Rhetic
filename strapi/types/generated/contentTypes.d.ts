@@ -487,6 +487,7 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::review-workflows.workflow-stage'
     >;
+    total_votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
