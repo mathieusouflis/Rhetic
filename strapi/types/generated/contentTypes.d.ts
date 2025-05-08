@@ -734,7 +734,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::saved-item.saved-item'
     >;
-    slug: Schema.Attribute.String & Schema.Attribute.Unique;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
@@ -1108,9 +1107,6 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
-    slug: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',

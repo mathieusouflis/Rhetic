@@ -59,16 +59,6 @@ export default () => {
           return ctx.forbidden("Vous devez être membre de ce subrhetic privé pour publier");
         }
       }
-      
-      if (!data.slug) {
-        ctx.request.body.data.slug = title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)/g, '');
-          
-        ctx.request.body.data.slug += '-' + Date.now().toString(36);
-      }
-      
       ctx.request.body.data.author = user.id;
       
       ctx.request.body.data.publishedDate = new Date();

@@ -28,11 +28,6 @@
       "unique": true,
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "description": {
       "type": "text"
     },
@@ -115,11 +110,12 @@
       "inversedBy": "fav_subrhetics"
     },
     "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     }
   }
 }
