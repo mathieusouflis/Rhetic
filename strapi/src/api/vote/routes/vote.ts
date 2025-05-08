@@ -1,7 +1,31 @@
-/**
- * user-preference router
- */
-
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreRouter('api::vote.vote');
+export default {
+    routes: [
+      {
+        method: 'POST',
+        path: '/votes',
+        handler: 'vote.create',
+        config: {
+          policies: [],
+          middlewares: ['api::vote.vote-total-calculator'],
+        },
+      },
+      {
+        method: 'PUT',
+        path: '/votes/:id',
+        handler: 'vote.update',
+        config: {
+          policies: [],
+          middlewares: ['api::vote.vote-total-calculator'],
+        },
+      },
+      {
+        method: 'DELETE',
+        path: '/votes/:id',
+        handler: 'vote.delete',
+        config: {
+          policies: [],
+          middlewares: ['api::vote.vote-total-calculator'],
+        },
+      },
+    ],
+  };

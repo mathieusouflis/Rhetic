@@ -73,6 +73,10 @@
       "relation": "oneToMany",
       "target": "api::report.report",
       "mappedBy": "comment"
+    },
+    "total_votes": {
+   "type": "integer",
+    "default": 0
     }
   }
 }
