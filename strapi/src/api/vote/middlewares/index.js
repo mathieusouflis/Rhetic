@@ -1,5 +1,5 @@
-import voteTotalCalculator from './vote-total-calculator';
+const voteTotalCalculator = require('./vote-total-calculator');
 
-export default {
+module.exports = {
   'vote-total-calculator': voteTotalCalculator,
 };
