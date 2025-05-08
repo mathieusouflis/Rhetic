@@ -94,6 +94,7 @@ export const Post = ({
             itemId={post.id}
             upVotes={post.upvotes}
             downVotes={post.downvotes}
+            totalVotes={post.total_votes}
             voteId={post.votes[0]?.documentId}
             userVote={
               post.votes[0]?.type === "downvote"

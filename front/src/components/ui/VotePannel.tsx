@@ -22,16 +22,17 @@ export interface VotePannelProps {
   upVotes: number;
   downVotes: number;
   userVote: VoteValue;
+  totalVotes?: number;
   onVoteChange?: (newVote: VoteValue) => void;
 }
 
 export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
   (
-    { voteType, itemId, upVotes, downVotes, userVote, voteId, onVoteChange },
+    { voteType, itemId, upVotes, downVotes, userVote, voteId, totalVotes, onVoteChange },
     ref
   ) => {
     const [votes, setVotes] = useState<VoteState>({
-      total: upVotes - downVotes,
+      total: totalVotes !== undefined ? totalVotes : upVotes - downVotes,
       current: userVote,
       pending: false,
     });

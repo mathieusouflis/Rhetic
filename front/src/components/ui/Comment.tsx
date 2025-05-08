@@ -78,6 +78,7 @@ export const Comment = ({
             voteType="comment"
             downVotes={comment.downvotes}
             upVotes={comment.upvotes}
+            totalVotes={comment.total_votes}
             itemId={comment.documentId}
             voteId={comment.votes[0]?.documentId}
             userVote={
