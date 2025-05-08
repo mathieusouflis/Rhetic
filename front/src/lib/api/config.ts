@@ -34,7 +34,7 @@ export const API_PATHS = {
   REPORT: "/reports",
   SAVED_ITEM: "/saved-items",
   SAVED: "/saved",
-  SUBRHETIC: "/subrheics",
+  SUBRHETIC: "/subrhetics",
   SUBRHETIC_EMOJI: "/subrhetic-emojis",
   SUBRHETIC_EMOJI_REACTION: "/subrhetic-emoji-reactions",
   SUBRHETIC_RULE: "/subrhetic-rules",
