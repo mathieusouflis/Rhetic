@@ -75,7 +75,7 @@
       "mappedBy": "comment"
     },
     "total_votes": {
-   "type": "integer",
+    "type": "integer",
     "default": 0
     }
   }
