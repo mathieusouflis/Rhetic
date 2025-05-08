@@ -66,7 +66,9 @@
       "configurable": false
     },
     "avatar": {
-      "allowedTypes": ["images"],
+      "allowedTypes": [
+        "images"
+      ],
       "type": "media",
       "multiple": false,
       "required": false
@@ -127,12 +129,6 @@
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
       "mappedBy": "banned_users"
-    },
-    "subrhetic_topics": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::subrhetic-topic.subrhetic-topic",
-      "mappedBy": "users_permissions_user"
     },
     "subrhetic_emojis": {
       "type": "relation",
@@ -229,6 +225,12 @@
       "relation": "oneToMany",
       "target": "api::moderation-action.moderation-action",
       "mappedBy": "users_permissions_user"
+    },
+    "fav_subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "fav_users"
     }
   }
 }

@@ -1,16 +1,30 @@
 import classNames from "classnames";
-import Image from "next/image";
 import { Body } from "./Typography";
-import Icon from "./Icons";
 import { Avatar } from "./Avatar";
 
 interface CommunityProps {
+  id: number;
   name: string;
   iconUrl: string;
+  isFavorite?: boolean;
+  onToggleFavorite?: (id: number, isFavorite: boolean) => void;
   className?: string;
 }
 
-export const Community = ({ name, iconUrl, className }: CommunityProps) => {
+export const Community = ({
+  id,
+  name,
+  iconUrl,
+  isFavorite = false,
+  onToggleFavorite,
+  className,
+}: CommunityProps) => {
+  const handleFavoriteClick = () => {
+    if (onToggleFavorite) {
+      onToggleFavorite(id, !isFavorite);
+    }
+  };
+
   return (
     <div
       className={classNames(
@@ -22,7 +36,6 @@ export const Community = ({ name, iconUrl, className }: CommunityProps) => {
         <Avatar src={iconUrl} alt={name} size={"sm"} />
         <Body>rh/{name.toLowerCase()}</Body>
       </div>
-      <Icon name="star" size={20} />
     </div>
   );
 };

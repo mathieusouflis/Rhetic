@@ -58,7 +58,9 @@ const ActionButton = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <div className="flex flex-row items-center gap-2.5">
           {leftIcon && <Icon name={leftIconName} size={18} />}
-          <Body className={textStyles[styleText]}>{children}</Body>
+          {children && (
+            <Body className={textStyles[styleText]}>{children}</Body>
+          )}
         </div>
       </button>
     );

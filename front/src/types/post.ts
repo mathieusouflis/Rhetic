@@ -24,9 +24,11 @@ export type CommentType = {
   content: string;
   upvotes: number;
   downvotes: number;
-  publishedAt: Date | null;
+  publishedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  votes: VoteType | VoteType[];
+  saved_items: SavedItemType | SavedItemType[];
   childrens?: CommentType[];
   parent?: CommentType;
   author?: AuthorType;
@@ -49,7 +51,7 @@ export type PostType = {
   updatedAt: Date;
   publishedDate: Date | null;
   author?: AuthorType;
-  images?: string[];
+  Media?: any;
   comments?: CommentType[] | CommentsType;
   saved_items?: SavedItemType | SavedItemType[];
   votes?: VoteType | VoteType[];

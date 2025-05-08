@@ -3,7 +3,10 @@ import { Avatar } from "./Avatar";
 import { TextInput } from "./TextInput";
 import Icon from "./Icons";
 import { ActionButton } from "./ActionButton";
-import { apiClient } from "@/lib/api/apiClient";
+import { create, upload } from "@/lib/api/apiClient";
+import { API_PATHS } from "@/lib/api/config";
+import { useAuth } from "@/providers/AuthProvider";
+import classNames from "classnames";
 
 interface Media {
   type: "image" | "video";
@@ -13,13 +16,23 @@ interface Media {
 
 interface PostWriterProps {
   type?: "post" | "comment";
+  parent_type?: "post" | "comment";
+  parent_id?: string;
   onSubmit?: (content: string, media: Media[]) => void;
   className?: string;
 }
 
 const PostWriter: React.FC<
   PostWriterProps & Omit<React.HTMLAttributes<HTMLFormElement>, "onSubmit">
-> = ({ type = "post", onSubmit, className = "", ...props }) => {
+> = ({
+  type = "post",
+  parent_type,
+  parent_id,
+  onSubmit,
+  className = "",
+  ...props
+}) => {
+  const { user } = useAuth();
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [media, setMedia] = useState<Media[]>([]);
@@ -60,18 +73,21 @@ const PostWriter: React.FC<
 
     try {
       setIsSubmitting(true);
-      const formData = new FormData();
-      media.forEach((m, index) => {
-        formData.append(`media[${index}]`, m.file);
+
+      let mediaIds: string[] = [];
+      if (media.length > 0) {
+        const uploadedFiles = await upload(media.map((m) => m.file));
+        mediaIds = uploadedFiles.map((file: any) => file.id);
+      }
+
+      await create(type === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS, {
+        content,
+        ...(mediaIds.length > 0 && type === "post" && { Media: mediaIds }),
+        author: user?.id,
+        ...(parent_type === "post" && { post: parent_id }),
+        ...(parent_type === "comment" && { parent: parent_id }),
       });
 
-      await apiClient.post(type === "post" ? "posts" : "comments", {
-        data: {
-          content,
-          media: media.map((m) => ({ type: m.type, url: m.url })),
-          author: "1",
-        },
-      });
       onSubmit?.(content, media);
       setContent("");
       setMedia([]);
@@ -134,54 +150,63 @@ const PostWriter: React.FC<
           </div>
         )}
 
-        <div className="flex flex-row gap-2.5 w-full justify-between items-center">
-          <div className="flex flex-row gap-2.5">
-            <input
-              type="file"
-              ref={imageInputRef}
-              className="hidden"
-              accept="image/*"
-              multiple
-              onChange={(e) => handleMediaUpload(e.target.files, "image")}
-              disabled={media.length >= 4}
-            />
-            <input
-              type="file"
-              ref={videoInputRef}
-              className="hidden"
-              accept="video/*"
-              multiple
-              onChange={(e) => handleMediaUpload(e.target.files, "video")}
-              disabled={media.length >= 4}
-            />
-            <button
-              type="button"
-              onClick={() => imageInputRef.current?.click()}
-              disabled={media.length >= 4}
-              className="disabled:opacity-50"
-            >
-              <Icon name="image_plus" size={17} color="var(--yellow)" />
-            </button>
-            <button
-              type="button"
-              onClick={() => videoInputRef.current?.click()}
-              disabled={media.length >= 4}
-              className="disabled:opacity-50"
-            >
-              <Icon name="video" size={17} color="var(--yellow)" />
-            </button>
-            <Icon name="table" size={17} color="var(--yellow)" />
-            <div className="h-auto w-px bg-[var(--black-100)]" />
-            <Icon name="bold" size={17} color="var(--yellow)" />
-            <Icon name="italic" size={17} color="var(--yellow)" />
-            <Icon name="strikethrough" size={17} color="var(--yellow)" />
-            <Icon name="code" size={17} color="var(--yellow)" />
-            <Icon name="eye_off" size={17} color="var(--yellow)" />
-          </div>
+        <div
+          className={classNames("flex flex-row gap-2.5 w-full items-center", {
+            "justify-end": type === "comment",
+            "justify-between": type === "post",
+          })}
+        >
+          {type === "post" && (
+            <div className="flex flex-row gap-2.5">
+              <input
+                type="file"
+                ref={imageInputRef}
+                className="hidden"
+                accept="image/*"
+                multiple
+                onChange={(e) => handleMediaUpload(e.target.files, "image")}
+                disabled={media.length >= 4}
+              />
+              <input
+                type="file"
+                ref={videoInputRef}
+                className="hidden"
+                accept="video/*"
+                multiple
+                onChange={(e) => handleMediaUpload(e.target.files, "video")}
+                disabled={media.length >= 4}
+              />
+
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                disabled={media.length >= 4}
+                className="disabled:opacity-50"
+              >
+                <Icon name="image_plus" size={17} color="var(--yellow)" />
+              </button>
+              <button
+                type="button"
+                onClick={() => videoInputRef.current?.click()}
+                disabled={media.length >= 4}
+                className="disabled:opacity-50"
+              >
+                <Icon name="video" size={17} color="var(--yellow)" />
+              </button>
+              <Icon name="table" size={17} color="var(--yellow)" />
+              <div className="h-auto w-px bg-[var(--black-100)]" />
+              <Icon name="bold" size={17} color="var(--yellow)" />
+              <Icon name="italic" size={17} color="var(--yellow)" />
+              <Icon name="strikethrough" size={17} color="var(--yellow)" />
+              <Icon name="code" size={17} color="var(--yellow)" />
+              <Icon name="eye_off" size={17} color="var(--yellow)" />
+            </div>
+          )}
           <ActionButton
             type="submit"
             leftIcon={false}
             variant="white"
+            className="self-end"
             disabled={isSubmitting || (!content.trim() && media.length === 0)}
           >
             <strong>

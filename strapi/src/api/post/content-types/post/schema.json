@@ -13,7 +13,7 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "content": {
       "type": "text",
@@ -21,7 +21,7 @@
     },
     "slug": {
       "type": "string",
-      "required": true,
+      "required": false,
       "unique": true
     },
     "upvotes": {

@@ -18,6 +18,8 @@ export interface User {
   blocked: boolean;
   createdAt: string;
   updatedAt: string;
+  fav_subrhetics?: number[];
+  joined_subrhetics?: any;
 }
 
 export interface AuthResponse {

@@ -13,13 +13,36 @@ const ModalContext = createContext<ModalContextType | null>(null);
 interface ModalProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-function Modal({ children, defaultOpen = false }: ModalProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+function Modal({
+  children,
+  defaultOpen = false,
+  open,
+  onOpenChange,
+}: ModalProps) {
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  const isControlled = open !== undefined;
+  const isOpen = isControlled ? open : internalOpen;
+
+  const openModal = () => {
+    if (isControlled) {
+      onOpenChange?.(true);
+    } else {
+      setInternalOpen(true);
+    }
+  };
+
+  const closeModal = () => {
+    if (isControlled) {
+      onOpenChange?.(false);
+    } else {
+      setInternalOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {

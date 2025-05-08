@@ -5,7 +5,7 @@ const baseStyle = "";
 const typoStyles = {
   display: baseStyle + " text-[36px]",
   h1: baseStyle + " text-[20px] font-bold",
-  h2: baseStyle + " text-[16px] font-semibold",
+  h2: baseStyle + " text-[16px] font-semibold text-[var(--black-100)]",
   big_body: baseStyle + " text-[16px]",
   body: baseStyle + " text-[14px]",
   small: baseStyle + " text-[13px]",

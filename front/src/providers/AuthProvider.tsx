@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
 import { usePathname, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/features/auth/services/authService";
@@ -20,6 +21,7 @@ import { apiClient } from "@/lib/api/apiClient";
 
 interface AuthContextType {
   user: User | null;
+  setUser: (user: User) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => void;
@@ -33,12 +35,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: authService.getProfile,
     enabled: !!getAuthToken(),
     retry: false,
+    onSuccess: (userData) => {
+      setCurrentUser(userData);
+    },
   });
 
   useEffect(() => {
@@ -74,17 +80,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     mutationFn: authService.logout,
     onSuccess: () => {
       removeAuthToken();
+      setCurrentUser(null);
       queryClient.clear();
       router.push(ROUTES.AUTH.LOGIN.path);
     },
   });
 
+  // Fonction pour mettre à jour l'utilisateur localement
+  const setUser = (updatedUser: User) => {
+    setCurrentUser(updatedUser);
+    queryClient.setQueryData(["user"], updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
-        user: user ?? null,
+        user: currentUser ?? user ?? null,
+        setUser,
         isLoading,
-        isAuthenticated: !!user,
+        isAuthenticated: !!(currentUser ?? user),
         login: loginMutation.mutate,
         register: registerMutation.mutate,
         logout: logoutMutation.mutate,

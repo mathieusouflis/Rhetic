@@ -73,10 +73,13 @@ export async function fetchOne<T>(
   id: string,
   params?: Parameters<typeof buildStrapiQuery>[0]
 ) {
+  if (!params) {
+    params = { status: "published" };
+  } else if (!params["status"]) {
+    params["status"] = "published";
+  }
   const query = params ? `?${buildStrapiQuery(params)}` : "";
-  const response = await apiClient.get<StrapiResponseStructure<T>>(
-    `${endpoint}/${id}${query}`
-  );
+  const response = await apiClient.get<T>(`${endpoint}/${id}${query}`);
   return response.data;
 }
 
@@ -86,7 +89,6 @@ export async function fetchMany<T>(
 ) {
   try {
     const query = params ? `?${buildStrapiQuery(params)}` : "";
-    console.log("Debug - Final URL:", `${endpoint}${query}`); // Pour déboguer
 
     const response = await apiClient.get<StrapiResponseStructure<T[]>>(
       `${endpoint}${query}`

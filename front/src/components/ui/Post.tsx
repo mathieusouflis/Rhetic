@@ -12,6 +12,9 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
+import Image from "next/image";
+import { ImageSet, SetImage } from "./ImageSet";
+import { API_CONFIG } from "@/config";
 
 export interface PostProps {
   id: string;
@@ -76,8 +79,15 @@ export const Post = ({
           <H2>{post.title}</H2>
           <Small className="text-[var(--black-200)]">{post.content}</Small>
         </div>
-        {/* TODO: REGARDER S'IL Y A DES IMAGES ET LES FETCH SURTOUT */}
-        {/* <ImageSet></ImageSet> */}
+        <ImageSet>
+          {post.Media?.map((image, index) => (
+            <SetImage
+              src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+              alt={image.alt || "Post image"}
+              key={index}
+            />
+          ))}
+        </ImageSet>
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="post"
@@ -95,7 +105,9 @@ export const Post = ({
           />
           <Link href={"/posts/" + post.id}>
             <LittleAction iconName="comment">
-              {!Array.isArray(post.comments) && post.comments?.count}
+              {!Array.isArray(post.comments)
+                ? post.comments?.count
+                : post.comments.length}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
@@ -105,7 +117,7 @@ export const Post = ({
             <Bookmark
               bookmarkType="post"
               bookmarked={post.saved_items?.length > 0}
-              bookmarkId={post.saved_items[0]?.documentId}
+              bookmarkId={post.saved_items && post.saved_items[0]?.documentId}
               itemId={post.documentId}
             />
             <Share shareType="post" itemId={post.id} />

@@ -12,10 +12,12 @@ import {
   Bookmark,
   ChartNoAxesColumn,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Code,
   Command,
   Crown,
+  Edit2,
   Ellipsis,
   EyeOff,
   Flame,
@@ -24,6 +26,7 @@ import {
   ImagePlus,
   Italic,
   Languages,
+  Loader2,
   Mail,
   MailOpen,
   MessageCircle,
@@ -37,6 +40,7 @@ import {
   Star,
   Strikethrough,
   Table,
+  Upload,
   UserRound,
   UserRoundPen,
   X,
@@ -91,14 +95,18 @@ export type IconName =
   | "x"
   | "send"
   | "user_edit"
+  | "edit"
+  | "upload"
   | "asterisk"
   | "languages"
+  | "loader"
   | "github"
   | "apple"
   | "google"
   | "logo"
+  | "chevron_left"
   | "logo_text";
-export type IconSizes = 12 | 14 | 17 | 18 | 20 | 38 | 62;
+export type IconSizes = 12 | 14 | 17 | 18 | 20 | 24 | 38 | 62;
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -126,8 +134,44 @@ export const Icon: React.FC<IconProps> = ({
         />
       </svg>
     ),
+    upload: (
+      <Upload
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    loader: (
+      <Loader2
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    edit: (
+      <Edit2
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
     flame: (
       <Flame
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    chevron_left: (
+      <ChevronLeft
         width={size}
         height={size}
         color={color}
