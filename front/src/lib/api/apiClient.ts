@@ -73,6 +73,11 @@ export async function fetchOne<T>(
   id: string,
   params?: Parameters<typeof buildStrapiQuery>[0]
 ) {
+  if (!params) {
+    params = { status: "published" };
+  } else if (!params["status"]) {
+    params["status"] = "published";
+  }
   const query = params ? `?${buildStrapiQuery(params)}` : "";
   const response = await apiClient.get<T>(`${endpoint}/${id}${query}`);
   return response.data;

@@ -44,6 +44,9 @@ export interface QueryParams {
   filters?: Record<string, any>;
   populate?: string | string[] | Record<string, any>;
   sort?: string[];
+  status?: string;
+  fields?: string[];
+  locale?: string;
   pagination?: {
     page?: number;
     pageSize?: number;
