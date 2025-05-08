@@ -17,6 +17,7 @@ import {
   Code,
   Command,
   Crown,
+  Edit2,
   Ellipsis,
   EyeOff,
   Flame,
@@ -25,6 +26,7 @@ import {
   ImagePlus,
   Italic,
   Languages,
+  Loader2,
   Mail,
   MailOpen,
   MessageCircle,
@@ -38,6 +40,7 @@ import {
   Star,
   Strikethrough,
   Table,
+  Upload,
   UserRound,
   UserRoundPen,
   X,
@@ -92,8 +95,11 @@ export type IconName =
   | "x"
   | "send"
   | "user_edit"
+  | "edit"
+  | "upload"
   | "asterisk"
   | "languages"
+  | "loader"
   | "github"
   | "apple"
   | "google"
@@ -127,6 +133,33 @@ export const Icon: React.FC<IconProps> = ({
           strokeLinejoin="round"
         />
       </svg>
+    ),
+    upload: (
+      <Upload
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    loader: (
+      <Loader2
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    edit: (
+      <Edit2
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
     ),
     flame: (
       <Flame
