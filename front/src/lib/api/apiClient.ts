@@ -74,9 +74,7 @@ export async function fetchOne<T>(
   params?: Parameters<typeof buildStrapiQuery>[0]
 ) {
   const query = params ? `?${buildStrapiQuery(params)}` : "";
-  const response = await apiClient.get<StrapiResponseStructure<T>>(
-    `${endpoint}/${id}${query}`
-  );
+  const response = await apiClient.get<T>(`${endpoint}/${id}${query}`);
   return response.data;
 }
 
