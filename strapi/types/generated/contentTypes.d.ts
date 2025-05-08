@@ -1050,50 +1050,6 @@ export interface ApiSubrheticRuleSubrheticRule
   };
 }
 
-export interface ApiSubrheticTopicSubrheticTopic
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'subrhetic_topics';
-  info: {
-    description: '';
-    displayName: 'SubrheticTopic';
-    pluralName: 'subrhetic-topics';
-    singularName: 'subrhetic-topic';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    a: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::subrhetic-topic.subrhetic-topic'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
-    subrhetic: Schema.Attribute.Relation<
-      'manyToOne',
-      'api::subrhetic.subrhetic'
-    >;
-    topic: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    users_permissions_user: Schema.Attribute.Relation<
-      'manyToOne',
-      'plugin::users-permissions.user'
-    >;
-  };
-}
-
 export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
   collectionName: 'subrhetics';
   info: {
@@ -1122,6 +1078,7 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'manyToMany',
       'plugin::users-permissions.user'
     >;
+    icon: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1170,10 +1127,6 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::subrhetic-rule.subrhetic-rule'
     >;
-    subrhetic_topics: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::subrhetic-topic.subrhetic-topic'
-    >;
     topics: Schema.Attribute.Relation<'manyToMany', 'api::topic.topic'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1186,6 +1139,46 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::user-flair.user-flair'
     >;
+  };
+}
+
+export interface ApiTopicCategoryTopicCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'topic_categories';
+  info: {
+    displayName: 'Topic Category';
+    pluralName: 'topic-categories';
+    singularName: 'topic-category';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.String;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::topic-category.topic-category'
+    >;
+    Name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    topics: Schema.Attribute.Relation<'manyToMany', 'api::topic.topic'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1205,28 +1198,24 @@ export interface ApiTopicTopic extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
-    icon_url: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::topic.topic'> &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
-    parent: Schema.Attribute.Relation<'manyToOne', 'api::topic.topic'>;
     publishedAt: Schema.Attribute.DateTime;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
       'plugin::review-workflows.workflow-stage'
     >;
-    subrhetic_topics: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::subrhetic-topic.subrhetic-topic'
-    >;
     subrhetics: Schema.Attribute.Relation<
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
-    subscriber_count: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    topics: Schema.Attribute.Relation<'oneToMany', 'api::topic.topic'>;
+    topic_categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::topic-category.topic-category'
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2092,10 +2081,6 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::subrhetic-rule.subrhetic-rule'
     >;
-    subrhetic_topics: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::subrhetic-topic.subrhetic-topic'
-    >;
     two_factor_enabled: Schema.Attribute.Boolean;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -2154,8 +2139,8 @@ declare module '@strapi/strapi' {
       'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction': ApiSubrheticEmojiReactionSubrheticEmojiReaction;
       'api::subrhetic-emoji.subrhetic-emoji': ApiSubrheticEmojiSubrheticEmoji;
       'api::subrhetic-rule.subrhetic-rule': ApiSubrheticRuleSubrheticRule;
-      'api::subrhetic-topic.subrhetic-topic': ApiSubrheticTopicSubrheticTopic;
       'api::subrhetic.subrhetic': ApiSubrheticSubrhetic;
+      'api::topic-category.topic-category': ApiTopicCategoryTopicCategory;
       'api::topic.topic': ApiTopicTopic;
       'api::user-activity-log.user-activity-log': ApiUserActivityLogUserActivityLog;
       'api::user-block.user-block': ApiUserBlockUserBlock;

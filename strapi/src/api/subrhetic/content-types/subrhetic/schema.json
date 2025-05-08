@@ -60,12 +60,6 @@
       "target": "api::subrhetic-emoji-reaction.subrhetic-emoji-reaction",
       "mappedBy": "subrhetic"
     },
-    "subrhetic_topics": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::subrhetic-topic.subrhetic-topic",
-      "mappedBy": "subrhetic"
-    },
     "subrhetic_emojis": {
       "type": "relation",
       "relation": "oneToMany",

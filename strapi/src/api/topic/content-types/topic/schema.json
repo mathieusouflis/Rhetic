@@ -18,36 +18,17 @@
     "description": {
       "type": "text"
     },
-    "icon_url": {
-      "type": "string"
-    },
-    "subscriber_count": {
-      "type": "integer",
-      "default": 0
-    },
     "subrhetics": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
       "inversedBy": "topics"
     },
-    "parent": {
+    "topic_categories": {
       "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::topic.topic",
-      "inversedBy": "topics"
-    },
-    "topics": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::topic.topic",
-      "mappedBy": "parent"
-    },
-    "subrhetic_topics": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::subrhetic-topic.subrhetic-topic",
-      "mappedBy": "topic"
+      "relation": "manyToMany",
+      "target": "api::topic-category.topic-category",
+      "mappedBy": "topics"
     }
   }
 }

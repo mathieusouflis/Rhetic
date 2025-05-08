@@ -130,12 +130,6 @@
       "target": "api::subrhetic.subrhetic",
       "mappedBy": "banned_users"
     },
-    "subrhetic_topics": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::subrhetic-topic.subrhetic-topic",
-      "mappedBy": "users_permissions_user"
-    },
     "subrhetic_emojis": {
       "type": "relation",
       "relation": "oneToMany",
