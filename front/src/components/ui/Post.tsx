@@ -89,6 +89,7 @@ export const Post = ({
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">
             <Small className="font-semibold text-[var(--black-100)]">
+              {/* TODO: Regarder si ça vient d'un sub ou si c'est un post de profile. */}
               {post.author?.username}
             </Small>
             <Small className="text-[var(--black-100)]">
@@ -101,39 +102,37 @@ export const Post = ({
           <H2>{post.title}</H2>
           <Small className="text-[var(--black-200)]">{post.content}</Small>
         </div>
-        {post.Media && post.Media.length > 0 && (
-          <ImageSet>
-            {post.Media.map((image, index) => (
-              <SetImage
-                src={API_CONFIG.baseURL.split("/api")[0] + image.url}
-                alt={image.alt || "Post image"}
-                key={index}
-              />
-            ))}
-          </ImageSet>
-        )}
+        <ImageSet>
+          {post.Media?.map((image, index) => (
+            <SetImage
+              src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+              alt={image.alt || "Post image"}
+              key={index}
+            />
+          ))}
+        </ImageSet>
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="post"
             itemId={post.id}
-            upVotes={post.upvotes || 0}
-            downVotes={post.downvotes || 0}
-            totalVotes={totalVotes}
-            voteId={post.votes && post.votes[0]?.id?.toString()}
+            upVotes={post.upvotes}
+            downVotes={post.downvotes}
+            voteId={post.votes[0]?.documentId}
             userVote={
-              post.votes && post.votes[0]?.type === "downvote"
+              post.votes[0]?.type === "downvote"
                 ? -1
-                : post.votes && post.votes[0]?.type === "upvote"
+                : post.votes[0]?.type === "upvote"
                 ? 1
                 : 0
             }
+            totalVotes={totalVotes}
             onVoteChange={handleVoteChange}
           />
           <Link href={"/posts/" + post.id}>
             <LittleAction iconName="comment">
               {!Array.isArray(post.comments)
                 ? post.comments?.count
-                : post.comments?.length || 0}
+                : post.comments.length}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
@@ -143,8 +142,8 @@ export const Post = ({
             <Bookmark
               bookmarkType="post"
               bookmarked={post.saved_items?.length > 0}
-              bookmarkId={post.saved_items && post.saved_items[0]?.id?.toString()}
-              itemId={post.id}
+              bookmarkId={post.saved_items && post.saved_items[0]?.documentId}
+              itemId={post.documentId}
             />
             <Share shareType="post" itemId={post.id} />
           </div>
