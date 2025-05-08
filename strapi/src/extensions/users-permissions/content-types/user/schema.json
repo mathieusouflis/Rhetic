@@ -231,6 +231,12 @@
       "relation": "oneToMany",
       "target": "api::moderation-action.moderation-action",
       "mappedBy": "users_permissions_user"
+    },
+    "fav_subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "mappedBy": "fav_users"
     }
   }
 }

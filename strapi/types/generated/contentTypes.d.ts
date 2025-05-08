@@ -1118,6 +1118,10 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'plugin::users-permissions.user'
     >;
     description: Schema.Attribute.Text;
+    fav_users: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -2016,6 +2020,10 @@ export interface PluginUsersPermissionsUser
         minLength: 6;
       }>;
     email_verified: Schema.Attribute.Boolean;
+    fav_subrhetics: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::subrhetic.subrhetic'
+    >;
     is_active: Schema.Attribute.Boolean;
     joined_subrhetics: Schema.Attribute.Relation<
       'manyToMany',

@@ -113,6 +113,19 @@
       "relation": "oneToMany",
       "target": "api::moderation-action.moderation-action",
       "mappedBy": "subrhetic"
+    },
+    "fav_users": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "fav_subrhetics"
+    },
+    "icon": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
