@@ -12,9 +12,9 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
-import Image from "next/image";
 import { ImageSet, SetImage } from "./ImageSet";
 import { API_CONFIG } from "@/config";
+import { useState } from "react";
 
 export interface PostProps {
   id: string;
@@ -28,6 +28,11 @@ export interface PostProps {
   images?: string[];
 }
 
+// Interface locale pour étendre PostType avec notre propriété calculée
+interface LocalPostState extends PostType {
+  _totalVotes?: number; // Utilisation d'un préfixe underscore pour éviter les conflits
+}
+
 interface PostComponentProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostType;
   fullPage?: boolean;
@@ -35,17 +40,35 @@ interface PostComponentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Post = ({
-  post,
+  post: initialPost,
   className,
   fullPage = false,
   ...props
 }: PostComponentProps) => {
+  // Conversion initiale avec la propriété calculée
+  const initialLocalPost: LocalPostState = {
+    ...initialPost,
+    _totalVotes: initialPost.upvotes - initialPost.downvotes
+  };
+  
+  const [post, setPost] = useState<LocalPostState>(initialLocalPost);
   const router = useRouter();
+
   const handlePostClick = () => {
     if (fullPage) return;
-
     router.push(`/posts/${post.documentId}`);
   };
+
+  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number) => {
+    setPost((prevPost) => ({
+      ...prevPost,
+      // Mettre à jour le total calculé
+      _totalVotes: newTotal
+    }));
+  };
+
+  // Calculer le total des votes
+  const totalVotes = post._totalVotes !== undefined ? post._totalVotes : post.upvotes - post.downvotes;
 
   return (
     <div
@@ -66,7 +89,6 @@ export const Post = ({
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">
             <Small className="font-semibold text-[var(--black-100)]">
-              {/* TODO: Regarder si ça vient d'un sub ou si c'est un post de profile. */}
               {post.author?.username}
             </Small>
             <Small className="text-[var(--black-100)]">
@@ -79,47 +101,50 @@ export const Post = ({
           <H2>{post.title}</H2>
           <Small className="text-[var(--black-200)]">{post.content}</Small>
         </div>
-        <ImageSet>
-          {post.Media?.map((image, index) => (
-            <SetImage
-              src={API_CONFIG.baseURL.split("/api")[0] + image.url}
-              alt={image.alt || "Post image"}
-              key={index}
-            />
-          ))}
-        </ImageSet>
+        {post.Media && post.Media.length > 0 && (
+          <ImageSet>
+            {post.Media.map((image, index) => (
+              <SetImage
+                src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+                alt={image.alt || "Post image"}
+                key={index}
+              />
+            ))}
+          </ImageSet>
+        )}
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="post"
             itemId={post.id}
-            upVotes={post.upvotes}
-            downVotes={post.downvotes}
-            totalVotes={post.total_votes}
-            voteId={post.votes[0]?.documentId}
+            upVotes={post.upvotes || 0}
+            downVotes={post.downvotes || 0}
+            totalVotes={totalVotes}
+            voteId={post.votes && post.votes[0]?.id?.toString()}
             userVote={
-              post.votes[0]?.type === "downvote"
+              post.votes && post.votes[0]?.type === "downvote"
                 ? -1
-                : post.votes[0]?.type === "upvote"
+                : post.votes && post.votes[0]?.type === "upvote"
                 ? 1
                 : 0
             }
+            onVoteChange={handleVoteChange}
           />
           <Link href={"/posts/" + post.id}>
             <LittleAction iconName="comment">
               {!Array.isArray(post.comments)
                 ? post.comments?.count
-                : post.comments.length}
+                : post.comments?.length || 0}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
-            {post.total_votes}
+            {totalVotes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark
               bookmarkType="post"
               bookmarked={post.saved_items?.length > 0}
-              bookmarkId={post.saved_items && post.saved_items[0]?.documentId}
-              itemId={post.documentId}
+              bookmarkId={post.saved_items && post.saved_items[0]?.id?.toString()}
+              itemId={post.id}
             />
             <Share shareType="post" itemId={post.id} />
           </div>

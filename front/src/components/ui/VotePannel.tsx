@@ -1,10 +1,11 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import LittleAction from "./LittleAction";
 import { create, remove, update } from "@/lib/api/apiClient";
 import { Body } from "./Typography";
 import { API_PATHS } from "@/lib/api/config";
 import { VoteType } from "@/types/post";
 import { useAuth } from "@/providers/AuthProvider";
+import { StrapiResponse } from "@/types/api";
 
 type TypeVote = "post" | "comment";
 type VoteValue = -1 | 0 | 1;
@@ -22,20 +23,37 @@ export interface VotePannelProps {
   upVotes: number;
   downVotes: number;
   userVote: VoteValue;
-  totalVotes?: number;
-  onVoteChange?: (newVote: VoteValue) => void;
+  totalVotes: number;
+  onVoteChange?: (newVote: VoteValue, newTotal: number) => void;
 }
 
 export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
   (
-    { voteType, itemId, upVotes, downVotes, userVote, voteId, totalVotes, onVoteChange },
+    { 
+      voteType, 
+      itemId, 
+      upVotes, 
+      downVotes, 
+      userVote, 
+      voteId, 
+      totalVotes, 
+      onVoteChange 
+    },
     ref
   ) => {
     const [votes, setVotes] = useState<VoteState>({
-      total: totalVotes !== undefined ? totalVotes : upVotes - downVotes,
+      total: totalVotes,
       current: userVote,
       pending: false,
     });
+    
+    useEffect(() => {
+      setVotes({
+        total: totalVotes,
+        current: userVote,
+        pending: false,
+      });
+    }, [totalVotes, userVote]);
 
     const [_voteId, setVoteId] = useState(voteId);
     const { user } = useAuth();
@@ -62,6 +80,8 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       setVotes((prev) => ({ ...prev, pending: true }));
 
       try {
+        let responseId: string | undefined;
+        
         if (voteToSubmit === 0 && _voteId) {
           await remove(API_PATHS.VOTES, _voteId);
           setVoteId(undefined);
@@ -70,24 +90,31 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
             type: voteToSubmit === 1 ? "upvote" : "downvote",
           });
         } else if (voteToSubmit !== 0) {
-          const response = (await create<VoteType>(API_PATHS.VOTES, {
+          const response = await create<VoteType>(API_PATHS.VOTES, {
             type: voteToSubmit === 1 ? "upvote" : "downvote",
             user: user?.id,
             post: voteType === "post" ? itemId : undefined,
             comment: voteType === "comment" ? itemId : undefined,
-          })) as VoteType;
-          setVoteId(response.data.documentId);
+          });
+          
+          if (response && response.data) {
+            responseId = response.data.id.toString();
+            setVoteId(responseId);
+          }
         }
 
         const delta = calculateVoteDelta(votes.current, voteToSubmit);
+        const newTotal = votes.total + delta;
 
         setVotes((prev) => ({
-          total: prev.total + delta,
+          total: newTotal,
           current: voteToSubmit,
           pending: false,
         }));
 
-        onVoteChange?.(voteToSubmit);
+        if (onVoteChange) {
+          onVoteChange(voteToSubmit, newTotal);
+        }
       } catch (error) {
         console.error("Vote failed:", error);
         setVotes((prev) => ({ ...prev, pending: false }));
