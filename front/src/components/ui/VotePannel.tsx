@@ -53,91 +53,53 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       });
     }, [totalVotes, userVote]);
 
-    const [_voteId, setVoteId] = useState(voteId);
     const { user } = useAuth();
-
-    const calculateVoteDelta = (
-      oldVote: VoteValue,
-      newVote: VoteValue
-    ): number => {
-      if (newVote === 0) {
-        return oldVote === 1 ? -1 : 1;
-      }
-      
-      if (oldVote === 0) {
-        return newVote;
-      }
-      
-      if (oldVote === 1 && newVote === -1) {
-        return -2;
-      }
-      
-      if (oldVote === -1 && newVote === 1) {
-        return 2;
-      }
-      
-      return 0;
-    };
 
     const handleVote = async (
       e: React.MouseEvent<HTMLElement>,
-      newVote: VoteValue
+      newVoteValue: VoteValue
     ) => {
       e.stopPropagation();
       if (votes.pending || !user) return;
 
-      const voteToSubmit = votes.current === newVote ? 0 : newVote;
-
+      // Si on clique sur le même bouton, annuler le vote
+      const sameVote = (newVoteValue === 1 && votes.current === 1) || 
+                       (newVoteValue === -1 && votes.current === -1);
+      
       setVotes((prev) => ({ ...prev, pending: true }));
 
       try {
-        // S'assurer que l'ID est valide
-        if (!itemId) {
-          console.error("ID invalide:", itemId);
-          setVotes((prev) => ({ ...prev, pending: false }));
-          return;
-        }
+        // Déterminer l'endpoint
+        const voteAction = newVoteValue === 1 ? 'upvote' : 'downvote';
+        const endpoint = `${voteType === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS}/${itemId}/${voteAction}`;
 
-        // Utiliser l'itemId tel quel, sans nettoyage
-        // L'API s'attend à recevoir l'ID au format standard (id) et non documentId
-        const endpoint = voteType === "post" 
-          ? `${API_PATHS.POSTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`
-          : `${API_PATHS.COMMENTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`;
-
-        // Log de débogage
-        console.log(`Appel API sur: ${endpoint}`);
-
-        if (voteToSubmit === 0) {
-          await create(endpoint, {});
-          setVoteId(undefined);
-        } else {
-          const response = await create(endpoint, {});
+        // Faire l'appel API
+        const response = await create<any>(endpoint, {});
+        
+        let newTotal = votes.total;
+        let newCurrentVote = votes.current;
+        
+        if (response && response.total_votes !== undefined) {
+          newTotal = response.total_votes;
           
-          if (response?.vote?.id) {
-            setVoteId(response.vote.id.toString());
-          } else if (response?.data?.vote?.id) {
-            setVoteId(response.data.vote.id.toString());
+          if (sameVote) {
+            newCurrentVote = 0;
+          } else {
+            newCurrentVote = newVoteValue;
           }
         }
 
-        const delta = calculateVoteDelta(votes.current, voteToSubmit);
-        const newTotal = votes.total + delta;
-
         setVotes({
           total: newTotal,
-          current: voteToSubmit,
+          current: newCurrentVote,
           pending: false,
         });
 
         if (onVoteChange) {
-          onVoteChange(voteToSubmit, newTotal);
+          onVoteChange(newCurrentVote, newTotal);
         }
       } catch (error) {
         console.error("Vote failed:", error);
-        // Afficher plus d'informations sur l'erreur
-        if (error && typeof error === 'object' && 'response' in error) {
-          console.error("Détails de l'erreur:", error.response);
-        }
         setVotes((prev) => ({ ...prev, pending: false }));
       }
     };
