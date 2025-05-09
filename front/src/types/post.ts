@@ -32,6 +32,7 @@ export type CommentType = {
   childrens?: CommentType[];
   parent?: CommentType;
   author?: AuthorType;
+  total_votes?: number;
 };
 
 export type SavedItemType = any;
@@ -56,4 +57,5 @@ export type PostType = {
   saved_items?: SavedItemType | SavedItemType[];
   votes?: VoteType | VoteType[];
   user?: { id: number | string; username: string; avatarUrl?: string };
+  total_votes?: number;
 };
