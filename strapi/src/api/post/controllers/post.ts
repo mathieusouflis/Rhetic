@@ -96,5 +96,81 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       console.error("Erreur lors de la mise à jour du post:", error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
+  },
+  
+  async delete(ctx) {
+    try {
+      const { id } = ctx.params;
+      const userId = ctx.state.user?.id;
+      
+      if (!userId) {
+        return ctx.unauthorized("Vous devez être connecté pour supprimer un post");
+      }
+      
+      const post = await strapi.entityService.findOne('api::post.post', id, {
+        populate: ['author', 'subrhetic']
+      });
+      
+      if (!post) {
+        return ctx.notFound("Post introuvable");
+      }
+
+      const authorId = typeof post.author === 'object' ? post.author.id : post.author;
+      
+      const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+      
+      if (authorId !== userId) {
+        try {
+          const subrheticName = post.subrhetic && typeof post.subrhetic === 'object' 
+            ? post.subrhetic.name 
+            : 'la plateforme';
+            
+          const title = post.title || 'sans titre';
+
+          await strapi.entityService.create('api::notification.notification', {
+            data: {
+              type: 'mod_action',
+              content: JSON.stringify({
+                action: 'post_deleted',
+                postTitle: title,
+                subrheticName: subrheticName,
+                deletedBy: userId
+              }),
+              is_read: false,
+              users_permissions_user: authorId,
+              reference_type: 'post',
+              reference_id: id
+            }
+          });
+          
+          if (post.subrhetic) {
+            const subrheticId = typeof post.subrhetic === 'object'
+              ? post.subrhetic.id
+              : post.subrhetic;
+              
+            await strapi.entityService.create('api::moderation-action.moderation-action', {
+              data: {
+                action_type: 'post_removed',
+                target_id: id,
+                target_type: 'post',
+                users_permissions_user: userId,
+                subrhetic: subrheticId,
+                details: JSON.stringify({
+                  postTitle: title,
+                  postAuthor: authorId
+                })
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Erreur lors de la création de la notification:', error);
+        }
+      }
+      
+      return deletedEntity;
+    } catch (error) {
+      console.error("Erreur lors de la suppression du post:", error);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 }));
