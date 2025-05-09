@@ -1,8 +1,7 @@
 import { factories } from '@strapi/strapi';
-import { StrapiContext, Comment, Vote } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::comment.comment', ({ strapi, nexus }) => ({
-  async upvote(ctx: StrapiContext) {
+export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
+  async upvote(ctx) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -15,16 +14,16 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         'api::comment.comment',
         id,
         { populate: ['votes'] }
-      ) as Comment;
+      );
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      let existingVote: Vote | undefined;
+      let existingVote;
       
       if (comment.votes && Array.isArray(comment.votes)) {
-        existingVote = comment.votes.find((vote: Vote) => {
+        existingVote = comment.votes.find((vote) => {
           const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
           return voteUserId === userId;
         });
@@ -46,9 +45,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 total_votes: (comment.total_votes || 0) - 1
               }
             }
-          ) as Comment;
+          );
           
-          return nexus.sanitizeOutput(updatedComment, ctx);
+          return { ...updatedComment };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -59,7 +58,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 type: 'upvote'
               }
             }
-          ) as Vote;
+          );
           
           const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
@@ -71,9 +70,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 total_votes: (comment.total_votes || 0) + 2
               }
             }
-          ) as Comment;
+          );
           
-          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+          return { ...updatedComment, vote: updatedVote };
         }
       }
       
@@ -86,7 +85,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             comment: id
           }
         }
-      ) as Vote;
+      );
       
       const updatedComment = await strapi.entityService.update(
         'api::comment.comment',
@@ -97,16 +96,16 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             total_votes: (comment.total_votes || 0) + 1
           }
         }
-      ) as Comment;
+      );
       
-      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
+      return { ...updatedComment, vote };
     } catch (error) {
       console.error('Error in comment upvote:', error);
-      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
+      return ctx.badRequest(`An error occurred: ${error.message || error}`);
     }
   },
   
-  async downvote(ctx: StrapiContext) {
+  async downvote(ctx) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -119,16 +118,16 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         'api::comment.comment',
         id,
         { populate: ['votes'] }
-      ) as Comment;
+      );
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      let existingVote: Vote | undefined;
+      let existingVote;
       
       if (comment.votes && Array.isArray(comment.votes)) {
-        existingVote = comment.votes.find((vote: Vote) => {
+        existingVote = comment.votes.find((vote) => {
           const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
           return voteUserId === userId;
         });
@@ -150,9 +149,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 total_votes: (comment.total_votes || 0) + 1
               }
             }
-          ) as Comment;
+          );
           
-          return nexus.sanitizeOutput(updatedComment, ctx);
+          return { ...updatedComment };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -163,7 +162,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 type: 'downvote'
               }
             }
-          ) as Vote;
+          );
           
           const updatedComment = await strapi.entityService.update(
             'api::comment.comment',
@@ -175,9 +174,9 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
                 total_votes: (comment.total_votes || 0) - 2
               }
             }
-          ) as Comment;
+          );
           
-          return nexus.sanitizeOutput({ ...updatedComment, vote: updatedVote }, ctx);
+          return { ...updatedComment, vote: updatedVote };
         }
       }
       
@@ -190,7 +189,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             comment: id
           }
         }
-      ) as Vote;
+      );
       
       const updatedComment = await strapi.entityService.update(
         'api::comment.comment',
@@ -201,12 +200,12 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             total_votes: (comment.total_votes || 0) - 1
           }
         }
-      ) as Comment;
+      );
       
-      return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
+      return { ...updatedComment, vote };
     } catch (error) {
       console.error('Error in comment downvote:', error);
-      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
+      return ctx.badRequest(`An error occurred: ${error.message || error}`);
     }
   },
 }));

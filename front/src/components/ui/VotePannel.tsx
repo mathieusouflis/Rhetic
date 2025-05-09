@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect } from "react";
 import LittleAction from "./LittleAction";
-import { create, remove, update } from "@/lib/api/apiClient";
+import { create } from "@/lib/api/apiClient";
 import { Body } from "./Typography";
 import { API_PATHS } from "@/lib/api/config";
-import { VoteType } from "@/types/post";
 import { useAuth } from "@/providers/AuthProvider";
 
 type TypeVote = "post" | "comment";
@@ -13,15 +12,6 @@ interface VoteState {
   total: number;
   current: VoteValue;
   pending: boolean;
-}
-
-interface StrapiVoteResponse {
-  data: {
-    id: string;
-    attributes: any;
-    vote?: any;
-  };
-  meta?: any;
 }
 
 export interface VotePannelProps {
@@ -101,24 +91,32 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       setVotes((prev) => ({ ...prev, pending: true }));
 
       try {
+        // S'assurer que l'ID est valide
+        if (!itemId) {
+          console.error("ID invalide:", itemId);
+          setVotes((prev) => ({ ...prev, pending: false }));
+          return;
+        }
+
+        // Utiliser l'itemId tel quel, sans nettoyage
+        // L'API s'attend à recevoir l'ID au format standard (id) et non documentId
         const endpoint = voteType === "post" 
           ? `${API_PATHS.POSTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`
           : `${API_PATHS.COMMENTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`;
+
+        // Log de débogage
+        console.log(`Appel API sur: ${endpoint}`);
 
         if (voteToSubmit === 0) {
           await create(endpoint, {});
           setVoteId(undefined);
         } else {
-          const response = await create<any>(endpoint, {});
+          const response = await create(endpoint, {});
           
           if (response?.vote?.id) {
             setVoteId(response.vote.id.toString());
-          } 
-          else if (response?.data?.vote?.id) {
+          } else if (response?.data?.vote?.id) {
             setVoteId(response.data.vote.id.toString());
-          }
-          else if (response?.data?.attributes?.vote?.id) {
-            setVoteId(response.data.attributes.vote.id.toString());
           }
         }
 
@@ -136,6 +134,10 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
         }
       } catch (error) {
         console.error("Vote failed:", error);
+        // Afficher plus d'informations sur l'erreur
+        if (error && typeof error === 'object' && 'response' in error) {
+          console.error("Détails de l'erreur:", error.response);
+        }
         setVotes((prev) => ({ ...prev, pending: false }));
       }
     };

@@ -1,8 +1,7 @@
 import { factories } from '@strapi/strapi';
-import { StrapiContext, Post, Vote } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::post.post', ({ strapi, nexus }) => ({
-  async upvote(ctx: StrapiContext) {
+export default factories.createCoreController('api::post.post', ({ strapi }) => ({
+  async upvote(ctx) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -15,16 +14,16 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         'api::post.post',
         id,
         { populate: ['votes'] }
-      ) as Post;
+      );
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      let existingVote: Vote | undefined;
+      let existingVote;
       
       if (post.votes && Array.isArray(post.votes)) {
-        existingVote = post.votes.find((vote: Vote) => {
+        existingVote = post.votes.find((vote) => {
           const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
           return voteUserId === userId;
         });
@@ -46,9 +45,9 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 total_votes: (post.total_votes || 0) - 1
               }
             }
-          ) as Post;
+          );
           
-          return nexus.sanitizeOutput(updatedPost, ctx);
+          return { ...updatedPost };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -59,7 +58,7 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 type: 'upvote'
               }
             }
-          ) as Vote;
+          );
           
           const updatedPost = await strapi.entityService.update(
             'api::post.post',
@@ -71,9 +70,9 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 total_votes: (post.total_votes || 0) + 2
               }
             }
-          ) as Post;
+          );
           
-          return nexus.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+          return { ...updatedPost, vote: updatedVote };
         }
       }
       
@@ -86,7 +85,7 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             post: id
           }
         }
-      ) as Vote;
+      );
       
       const updatedPost = await strapi.entityService.update(
         'api::post.post',
@@ -97,16 +96,16 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             total_votes: (post.total_votes || 0) + 1
           }
         }
-      ) as Post;
+      );
       
-      return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
+      return { ...updatedPost, vote };
     } catch (error) {
       console.error('Error in post upvote:', error);
-      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
+      return ctx.badRequest(`An error occurred: ${error.message || error}`);
     }
   },
   
-  async downvote(ctx: StrapiContext) {
+  async downvote(ctx) {
     try {
       const { id } = ctx.params;
       const userId = ctx.state.user?.id;
@@ -119,16 +118,16 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         'api::post.post',
         id,
         { populate: ['votes'] }
-      ) as Post;
+      );
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      let existingVote: Vote | undefined;
+      let existingVote;
       
       if (post.votes && Array.isArray(post.votes)) {
-        existingVote = post.votes.find((vote: Vote) => {
+        existingVote = post.votes.find((vote) => {
           const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
           return voteUserId === userId;
         });
@@ -150,9 +149,9 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 total_votes: (post.total_votes || 0) + 1
               }
             }
-          ) as Post;
+          );
           
-          return nexus.sanitizeOutput(updatedPost, ctx);
+          return { ...updatedPost };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -163,7 +162,7 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 type: 'downvote'
               }
             }
-          ) as Vote;
+          );
           
           const updatedPost = await strapi.entityService.update(
             'api::post.post',
@@ -175,9 +174,9 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
                 total_votes: (post.total_votes || 0) - 2
               }
             }
-          ) as Post;
+          );
           
-          return nexus.sanitizeOutput({ ...updatedPost, vote: updatedVote }, ctx);
+          return { ...updatedPost, vote: updatedVote };
         }
       }
       
@@ -190,7 +189,7 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             post: id
           }
         }
-      ) as Vote;
+      );
       
       const updatedPost = await strapi.entityService.update(
         'api::post.post',
@@ -201,12 +200,12 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             total_votes: (post.total_votes || 0) - 1
           }
         }
-      ) as Post;
+      );
       
-      return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
+      return { ...updatedPost, vote };
     } catch (error) {
       console.error('Error in post downvote:', error);
-      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
+      return ctx.badRequest(`An error occurred: ${error.message || error}`);
     }
   },
 }));
