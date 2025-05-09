@@ -42,7 +42,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             id,
             {
               data: {
-                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0),
+                total_votes: (comment.total_votes || 0) - 1
               }
             }
           ) as Comment;
@@ -66,7 +67,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             {
               data: {
                 upvotes: (comment.upvotes || 0) + 1,
-                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0),
+                total_votes: (comment.total_votes || 0) + 2
               }
             }
           ) as Comment;
@@ -91,7 +93,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         id,
         {
           data: {
-            upvotes: (comment.upvotes || 0) + 1
+            upvotes: (comment.upvotes || 0) + 1,
+            total_votes: (comment.total_votes || 0) + 1
           }
         }
       ) as Comment;
@@ -143,7 +146,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             id,
             {
               data: {
-                downvotes: Math.max((comment.downvotes || 0) - 1, 0)
+                downvotes: Math.max((comment.downvotes || 0) - 1, 0),
+                total_votes: (comment.total_votes || 0) + 1
               }
             }
           ) as Comment;
@@ -167,7 +171,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
             {
               data: {
                 downvotes: (comment.downvotes || 0) + 1,
-                upvotes: Math.max((comment.upvotes || 0) - 1, 0)
+                upvotes: Math.max((comment.upvotes || 0) - 1, 0),
+                total_votes: (comment.total_votes || 0) - 2
               }
             }
           ) as Comment;
@@ -192,7 +197,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
         id,
         {
           data: {
-            downvotes: (comment.downvotes || 0) + 1
+            downvotes: (comment.downvotes || 0) + 1,
+            total_votes: (comment.total_votes || 0) - 1
           }
         }
       ) as Comment;

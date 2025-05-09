@@ -62,10 +62,23 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       oldVote: VoteValue,
       newVote: VoteValue
     ): number => {
-      if (oldVote === newVote) return 0;
-      if (newVote === 0) return -oldVote;
-      if (oldVote === 0) return newVote;
-      return newVote * 2;
+      if (newVote === 0) {
+        return oldVote === 1 ? -1 : 1;
+      }
+      
+      if (oldVote === 0) {
+        return newVote;
+      }
+      
+      if (oldVote === 1 && newVote === -1) {
+        return -2;
+      }
+      
+      if (oldVote === -1 && newVote === 1) {
+        return 2;
+      }
+      
+      return 0;
     };
 
     const handleVote = async (
@@ -106,11 +119,11 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
         const delta = calculateVoteDelta(votes.current, voteToSubmit);
         const newTotal = votes.total + delta;
 
-        setVotes((prev) => ({
+        setVotes({
           total: newTotal,
           current: voteToSubmit,
           pending: false,
-        }));
+        });
 
         if (onVoteChange) {
           onVoteChange(voteToSubmit, newTotal);

@@ -42,7 +42,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             id,
             {
               data: {
-                upvotes: Math.max((post.upvotes || 0) - 1, 0)
+                upvotes: Math.max((post.upvotes || 0) - 1, 0),
+                total_votes: (post.total_votes || 0) - 1
               }
             }
           ) as Post;
@@ -66,7 +67,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             {
               data: {
                 upvotes: (post.upvotes || 0) + 1,
-                downvotes: Math.max((post.downvotes || 0) - 1, 0)
+                downvotes: Math.max((post.downvotes || 0) - 1, 0),
+                total_votes: (post.total_votes || 0) + 2
               }
             }
           ) as Post;
@@ -91,7 +93,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         id,
         {
           data: {
-            upvotes: (post.upvotes || 0) + 1
+            upvotes: (post.upvotes || 0) + 1,
+            total_votes: (post.total_votes || 0) + 1
           }
         }
       ) as Post;
@@ -143,7 +146,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             id,
             {
               data: {
-                downvotes: Math.max((post.downvotes || 0) - 1, 0)
+                downvotes: Math.max((post.downvotes || 0) - 1, 0),
+                total_votes: (post.total_votes || 0) + 1
               }
             }
           ) as Post;
@@ -167,7 +171,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
             {
               data: {
                 downvotes: (post.downvotes || 0) + 1,
-                upvotes: Math.max((post.upvotes || 0) - 1, 0)
+                upvotes: Math.max((post.upvotes || 0) - 1, 0),
+                total_votes: (post.total_votes || 0) - 2
               }
             }
           ) as Post;
@@ -192,7 +197,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
         id,
         {
           data: {
-            downvotes: (post.downvotes || 0) + 1
+            downvotes: (post.downvotes || 0) + 1,
+            total_votes: (post.total_votes || 0) - 1
           }
         }
       ) as Post;
