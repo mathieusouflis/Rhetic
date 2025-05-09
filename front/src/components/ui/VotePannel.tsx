@@ -47,11 +47,11 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
     
     useEffect(() => {
       if (!votes.pending) {
-        setVotes({
+        setVotes(prev => ({
+          ...prev,
           total: totalVotes || 0,
           current: userVote || 0,
-          pending: false,
-        });
+        }));
       }
     }, [totalVotes, userVote]);
 
@@ -59,7 +59,7 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
 
     const handleVote = async (
       e: React.MouseEvent<HTMLElement>,
-      newVoteValue: VoteValue
+      voteDirection: 'upvote' | 'downvote'
     ) => {
       e.stopPropagation();
       
@@ -70,19 +70,21 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       
       if (votes.pending) return;
 
-      const sameVote = (newVoteValue === 1 && votes.current === 1) || 
-                       (newVoteValue === -1 && votes.current === -1);
+      const newVoteValue: VoteValue = voteDirection === 'upvote' ? 1 : -1;
+      const isRemovingVote = (newVoteValue === 1 && votes.current === 1) || 
+                            (newVoteValue === -1 && votes.current === -1);
+      const isChangingVote = votes.current !== 0 && votes.current !== newVoteValue;
       
       let optimisticTotal = votes.total;
       let optimisticCurrent = votes.current;
       
-      if (sameVote) {
+      if (isRemovingVote) {
         optimisticTotal = newVoteValue === 1 ? optimisticTotal - 1 : optimisticTotal + 1;
         optimisticCurrent = 0;
       } else if (votes.current === 0) {
         optimisticTotal = newVoteValue === 1 ? optimisticTotal + 1 : optimisticTotal - 1;
         optimisticCurrent = newVoteValue;
-      } else {
+      } else if (isChangingVote) {
         optimisticTotal = newVoteValue === 1 
           ? optimisticTotal + 2
           : optimisticTotal - 2;
@@ -100,20 +102,18 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       }
 
       try {
-        const voteAction = newVoteValue === 1 ? 'upvote' : 'downvote';
-        const endpoint = `${voteType === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS}/${itemId}/${voteAction}`;
-
+        const endpoint = `${voteType === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS}/${itemId}/${voteDirection}`;
         const response = await create<any>(endpoint, {});
         
         if (response && response.total_votes !== undefined) {
           setVotes({
             total: response.total_votes,
-            current: sameVote ? 0 : newVoteValue,
+            current: isRemovingVote ? 0 : newVoteValue,
             pending: false,
           });
           
           if (onVoteChange) {
-            onVoteChange(sameVote ? 0 : newVoteValue, response.total_votes);
+            onVoteChange(isRemovingVote ? 0 : newVoteValue, response.total_votes);
           }
         } else {
           setVotes(prev => ({...prev, pending: false}));
@@ -138,7 +138,7 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
           full={votes.current === 1}
           iconName="arrow_big_up"
           color="blue"
-          onClick={(e) => handleVote(e, 1)}
+          onClick={(e) => handleVote(e, 'upvote')}
           aria-label="Upvote"
           disabled={votes.pending}
         />
@@ -147,7 +147,7 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
           full={votes.current === -1}
           iconName="arrow_big_down"
           color="red"
-          onClick={(e) => handleVote(e, -1)}
+          onClick={(e) => handleVote(e, 'downvote')}
           aria-label="Downvote"
           disabled={votes.pending}
         />
