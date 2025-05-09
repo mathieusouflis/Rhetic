@@ -48,10 +48,16 @@ export const Post = ({
     router.push(`/posts/${post.documentId}`);
   };
 
-  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number) => {
+  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number, newScore: number) => {
     setPost((prevPost) => ({
       ...prevPost,
-      total_votes: newTotal
+      upvotes: newVote === 1 
+        ? (prevPost.current === 1 ? prevPost.upvotes : prevPost.upvotes + 1)
+        : (prevPost.current === 1 ? prevPost.upvotes - 1 : prevPost.upvotes),
+      downvotes: newVote === -1 
+        ? (prevPost.current === -1 ? prevPost.downvotes : prevPost.downvotes + 1)
+        : (prevPost.current === -1 ? prevPost.downvotes - 1 : prevPost.downvotes),
+      total_votes: newScore
     }));
   };
 
@@ -122,7 +128,7 @@ export const Post = ({
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
-            {post.total_votes || 0}
+            {post.upvotes + post.downvotes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark

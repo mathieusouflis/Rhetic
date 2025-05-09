@@ -9,7 +9,7 @@ type TypeVote = "post" | "comment";
 type VoteValue = -1 | 0 | 1;
 
 interface VoteState {
-  total: number;
+  score: number;
   current: VoteValue;
   pending: boolean;
 }
@@ -22,7 +22,7 @@ export interface VotePannelProps {
   downVotes: number;
   userVote: VoteValue;
   totalVotes: number;
-  onVoteChange?: (newVote: VoteValue, newTotal: number) => void;
+  onVoteChange?: (newVote: VoteValue, newTotal: number, newScore: number) => void;
 }
 
 export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
@@ -40,7 +40,7 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
     ref
   ) => {
     const [votes, setVotes] = useState<VoteState>({
-      total: totalVotes || 0,
+      score: upVotes - downVotes,
       current: userVote || 0,
       pending: false,
     });
@@ -49,11 +49,11 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       if (!votes.pending) {
         setVotes(prev => ({
           ...prev,
-          total: totalVotes || 0,
+          score: upVotes - downVotes,
           current: userVote || 0,
         }));
       }
-    }, [totalVotes, userVote]);
+    }, [upVotes, downVotes, userVote]);
 
     const { user } = useAuth();
 
@@ -75,45 +75,69 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
                             (newVoteValue === -1 && votes.current === -1);
       const isChangingVote = votes.current !== 0 && votes.current !== newVoteValue;
       
-      let optimisticTotal = votes.total;
+      let optimisticScore = votes.score;
       let optimisticCurrent = votes.current;
+      let optimisticTotal = upVotes + downVotes;
       
       if (isRemovingVote) {
-        optimisticTotal = newVoteValue === 1 ? optimisticTotal - 1 : optimisticTotal + 1;
+        if (newVoteValue === 1) {
+          optimisticScore -= 1;
+          optimisticTotal -= 1;
+        } else {
+          optimisticScore += 1;
+          optimisticTotal -= 1;
+        }
         optimisticCurrent = 0;
       } else if (votes.current === 0) {
-        optimisticTotal = newVoteValue === 1 ? optimisticTotal + 1 : optimisticTotal - 1;
+        if (newVoteValue === 1) {
+          optimisticScore += 1;
+          optimisticTotal += 1;
+        } else {
+          optimisticScore -= 1;
+          optimisticTotal += 1;
+        }
         optimisticCurrent = newVoteValue;
       } else if (isChangingVote) {
-        optimisticTotal = newVoteValue === 1 
-          ? optimisticTotal + 2
-          : optimisticTotal - 2;
+        if (newVoteValue === 1) {
+          optimisticScore += 2;
+        } else {
+          optimisticScore -= 2;
+        }
         optimisticCurrent = newVoteValue;
       }
       
       setVotes({
-        total: optimisticTotal,
+        score: optimisticScore,
         current: optimisticCurrent,
         pending: true,
       });
       
       if (onVoteChange) {
-        onVoteChange(optimisticCurrent, optimisticTotal);
+        onVoteChange(optimisticCurrent, optimisticTotal, optimisticScore);
       }
 
       try {
         const endpoint = `${voteType === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS}/${itemId}/${voteDirection}`;
         const response = await create<any>(endpoint, {});
         
-        if (response && response.total_votes !== undefined) {
+        if (response) {
+          const serverUpvotes = response.upvotes || 0;
+          const serverDownvotes = response.downvotes || 0;
+          const serverTotal = serverUpvotes + serverDownvotes;
+          const serverScore = serverUpvotes - serverDownvotes;
+          
           setVotes({
-            total: response.total_votes,
+            score: serverScore,
             current: isRemovingVote ? 0 : newVoteValue,
             pending: false,
           });
           
           if (onVoteChange) {
-            onVoteChange(isRemovingVote ? 0 : newVoteValue, response.total_votes);
+            onVoteChange(
+              isRemovingVote ? 0 : newVoteValue, 
+              serverTotal,
+              serverScore
+            );
           }
         } else {
           setVotes(prev => ({...prev, pending: false}));
@@ -121,13 +145,13 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       } catch (error) {
         console.error("Vote failed:", error);
         setVotes({
-          total: totalVotes,
+          score: upVotes - downVotes,
           current: userVote,
           pending: false,
         });
         
         if (onVoteChange) {
-          onVoteChange(userVote, totalVotes);
+          onVoteChange(userVote, upVotes + downVotes, upVotes - downVotes);
         }
       }
     };
@@ -142,7 +166,7 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
           aria-label="Upvote"
           disabled={votes.pending}
         />
-        <Body aria-live="polite">{votes.total}</Body>
+        <Body aria-live="polite">{votes.score}</Body>
         <LittleAction
           full={votes.current === -1}
           iconName="arrow_big_down"

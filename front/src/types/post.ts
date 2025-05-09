@@ -33,11 +33,16 @@ export type CommentType = {
   parent?: CommentType;
   author?: AuthorType;
   total_votes?: number;
+  current?: -1 | 0 | 1;
 };
 
 export type SavedItemType = any;
 
-export type VoteType = any;
+export type VoteType = {
+  id: string;
+  type: 'upvote' | 'downvote';
+  user?: any;
+};
 
 export type PostType = {
   id: string;
@@ -58,4 +63,5 @@ export type PostType = {
   votes?: VoteType | VoteType[];
   user?: { id: number | string; username: string; avatarUrl?: string };
   total_votes?: number;
+  current?: -1 | 0 | 1;
 };

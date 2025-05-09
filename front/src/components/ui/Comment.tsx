@@ -44,10 +44,16 @@ export const Comment = ({
     router.push(`/comments/${comment.id}`);
   };
 
-  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number) => {
+  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number, newScore: number) => {
     setComment((prevComment) => ({
       ...prevComment,
-      total_votes: newTotal
+      upvotes: newVote === 1 
+        ? (prevComment.current === 1 ? prevComment.upvotes : prevComment.upvotes + 1)
+        : (prevComment.current === 1 ? prevComment.upvotes - 1 : prevComment.upvotes),
+      downvotes: newVote === -1 
+        ? (prevComment.current === -1 ? prevComment.downvotes : prevComment.downvotes + 1)
+        : (prevComment.current === -1 ? prevComment.downvotes - 1 : prevComment.downvotes),
+      total_votes: newScore
     }));
   };
 
@@ -104,7 +110,7 @@ export const Comment = ({
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white" onClick={(e) => e.stopPropagation()}>
-            {comment.total_votes || 0}
+            {comment.upvotes + comment.downvotes}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark

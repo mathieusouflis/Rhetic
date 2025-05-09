@@ -36,7 +36,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
           const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
             data: {
               upvotes: Math.max((comment.upvotes || 0) - 1, 0),
-              total_votes: (comment.total_votes || 0) - 1
+              total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) - 1
             }
           });
           
@@ -53,7 +53,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             data: {
               upvotes: (comment.upvotes || 0) + 1,
               downvotes: Math.max((comment.downvotes || 0) - 1, 0),
-              total_votes: (comment.total_votes || 0) + 2
+              total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) + 2
             }
           });
           
@@ -72,7 +72,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
         data: {
           upvotes: (comment.upvotes || 0) + 1,
-          total_votes: (comment.total_votes || 0) + 1
+          total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) + 1
         }
       });
       
@@ -118,7 +118,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
           const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
             data: {
               downvotes: Math.max((comment.downvotes || 0) - 1, 0),
-              total_votes: (comment.total_votes || 0) + 1
+              total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) + 1
             }
           });
           
@@ -135,7 +135,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
             data: {
               downvotes: (comment.downvotes || 0) + 1,
               upvotes: Math.max((comment.upvotes || 0) - 1, 0),
-              total_votes: (comment.total_votes || 0) - 2
+              total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) - 2
             }
           });
           
@@ -154,7 +154,7 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
         data: {
           downvotes: (comment.downvotes || 0) + 1,
-          total_votes: (comment.total_votes || 0) - 1
+          total_votes: (comment.upvotes || 0) - (comment.downvotes || 0) - 1
         }
       });
       

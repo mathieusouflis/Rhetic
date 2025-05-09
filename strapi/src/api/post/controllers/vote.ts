@@ -36,7 +36,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
           const updatedPost = await strapi.entityService.update('api::post.post', id, {
             data: {
               upvotes: Math.max((post.upvotes || 0) - 1, 0),
-              total_votes: (post.total_votes || 0) - 1
+              total_votes: (post.upvotes || 0) - (post.downvotes || 0) - 1
             }
           });
           
@@ -53,7 +53,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             data: {
               upvotes: (post.upvotes || 0) + 1,
               downvotes: Math.max((post.downvotes || 0) - 1, 0),
-              total_votes: (post.total_votes || 0) + 2
+              total_votes: (post.upvotes || 0) - (post.downvotes || 0) + 2
             }
           });
           
@@ -72,7 +72,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       const updatedPost = await strapi.entityService.update('api::post.post', id, {
         data: {
           upvotes: (post.upvotes || 0) + 1,
-          total_votes: (post.total_votes || 0) + 1
+          total_votes: (post.upvotes || 0) - (post.downvotes || 0) + 1
         }
       });
       
@@ -118,7 +118,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
           const updatedPost = await strapi.entityService.update('api::post.post', id, {
             data: {
               downvotes: Math.max((post.downvotes || 0) - 1, 0),
-              total_votes: (post.total_votes || 0) + 1
+              total_votes: (post.upvotes || 0) - (post.downvotes || 0) + 1
             }
           });
           
@@ -135,7 +135,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             data: {
               downvotes: (post.downvotes || 0) + 1,
               upvotes: Math.max((post.upvotes || 0) - 1, 0),
-              total_votes: (post.total_votes || 0) - 2
+              total_votes: (post.upvotes || 0) - (post.downvotes || 0) - 2
             }
           });
           
@@ -154,7 +154,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       const updatedPost = await strapi.entityService.update('api::post.post', id, {
         data: {
           downvotes: (post.downvotes || 0) + 1,
-          total_votes: (post.total_votes || 0) - 1
+          total_votes: (post.upvotes || 0) - (post.downvotes || 0) - 1
         }
       });
       
