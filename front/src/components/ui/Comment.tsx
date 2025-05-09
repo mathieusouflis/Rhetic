@@ -24,11 +24,6 @@ export interface CommentProps {
   user?: { id: number; username: string; avatarUrl?: string };
 }
 
-// Interface locale pour étendre CommentType avec notre propriété calculée
-interface LocalCommentState extends CommentType {
-  _totalVotes?: number; // Utilisation d'un préfixe underscore pour éviter les conflits
-}
-
 interface CommentComponentProps extends React.HTMLAttributes<HTMLDivElement> {
   comment: CommentType;
   fullPage?: boolean;
@@ -41,13 +36,7 @@ export const Comment = ({
   fullPage = false,
   ...props
 }: CommentComponentProps) => {
-  // Conversion initiale avec la propriété calculée
-  const initialLocalComment: LocalCommentState = {
-    ...initialComment,
-    _totalVotes: initialComment.upvotes - initialComment.downvotes
-  };
-
-  const [comment, setComment] = useState<LocalCommentState>(initialLocalComment);
+  const [comment, setComment] = useState<CommentType>(initialComment);
   const router = useRouter();
 
   const handleCommentClick = () => {
@@ -58,15 +47,9 @@ export const Comment = ({
   const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number) => {
     setComment((prevComment) => ({
       ...prevComment,
-      // Mettre à jour le total calculé
-      _totalVotes: newTotal
+      total_votes: newTotal
     }));
   };
-
-  // Calculer le total des votes
-  const totalVotes = comment._totalVotes !== undefined 
-    ? comment._totalVotes 
-    : comment.upvotes - comment.downvotes;
 
   return (
     <div
@@ -103,7 +86,7 @@ export const Comment = ({
             voteType="comment"
             downVotes={comment.downvotes || 0}
             upVotes={comment.upvotes || 0}
-            totalVotes={totalVotes}
+            totalVotes={comment.total_votes || 0}
             itemId={comment.id}
             voteId={comment.votes && comment.votes[0]?.id?.toString()}
             userVote={
@@ -121,7 +104,7 @@ export const Comment = ({
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white" onClick={(e) => e.stopPropagation()}>
-            {totalVotes}
+            {comment.total_votes || 0}
           </LittleAction>
           <div className="flex flex-row gap-2">
             <Bookmark
