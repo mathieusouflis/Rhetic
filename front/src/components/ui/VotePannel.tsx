@@ -5,7 +5,6 @@ import { Body } from "./Typography";
 import { API_PATHS } from "@/lib/api/config";
 import { VoteType } from "@/types/post";
 import { useAuth } from "@/providers/AuthProvider";
-import { StrapiResponse } from "@/types/api";
 
 type TypeVote = "post" | "comment";
 type VoteValue = -1 | 0 | 1;
@@ -86,33 +85,25 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       newVote: VoteValue
     ) => {
       e.stopPropagation();
-      if (votes.pending) return;
+      if (votes.pending || !user) return;
 
       const voteToSubmit = votes.current === newVote ? 0 : newVote;
 
       setVotes((prev) => ({ ...prev, pending: true }));
 
       try {
-        let responseId: string | undefined;
-        
-        if (voteToSubmit === 0 && _voteId) {
-          await remove(API_PATHS.VOTES, _voteId);
+        const endpoint = voteType === "post" 
+          ? `${API_PATHS.POSTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`
+          : `${API_PATHS.COMMENTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`;
+
+        if (voteToSubmit === 0) {
+          const response = await create<any>(endpoint, {});
           setVoteId(undefined);
-        } else if (_voteId && voteToSubmit !== 0) {
-          await update(API_PATHS.VOTES, _voteId, {
-            type: voteToSubmit === 1 ? "upvote" : "downvote",
-          });
-        } else if (voteToSubmit !== 0) {
-          const response = await create<VoteType>(API_PATHS.VOTES, {
-            type: voteToSubmit === 1 ? "upvote" : "downvote",
-            user: user?.id,
-            post: voteType === "post" ? itemId : undefined,
-            comment: voteType === "comment" ? itemId : undefined,
-          });
+        } else {
+          const response = await create<any>(endpoint, {});
           
-          if (response && response.data) {
-            responseId = response.data.id.toString();
-            setVoteId(responseId);
+          if (response && response.vote) {
+            setVoteId(response.vote.id.toString());
           }
         }
 

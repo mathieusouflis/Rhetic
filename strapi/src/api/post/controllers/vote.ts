@@ -101,8 +101,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
       
       return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {
-      console.error('Erreur dans post upvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error in post upvote:', error);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
@@ -205,8 +205,8 @@ export default factories.createCoreController('api::post.post', ({ strapi, nexus
       
       return nexus.sanitizeOutput({ ...updatedPost, vote }, ctx);
     } catch (error) {
-      console.error('Erreur dans post downvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error in post downvote:', error);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 }));

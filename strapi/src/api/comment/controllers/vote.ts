@@ -101,8 +101,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
       
       return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Erreur dans comment upvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error in comment upvote:', error);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
@@ -205,8 +205,8 @@ export default factories.createCoreController('api::comment.comment', ({ strapi,
       
       return nexus.sanitizeOutput({ ...updatedComment, vote }, ctx);
     } catch (error) {
-      console.error('Erreur dans comment downvote:', error);
-      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+      console.error('Error in comment downvote:', error);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 }));
