@@ -15,26 +15,35 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
     
     if (entity && entity.id) {
       const subrhetic = await strapi.entityService.findOne('api::subrhetic.subrhetic', entity.id, {
-        populate: ['members']
+        populate: ['members', 'moderators']
       });
       
       const currentMembers = subrhetic.members?.map(member => 
         typeof member === 'object' ? member.id : member
       ) || [];
       
+      const currentModerators = subrhetic.moderators?.map(moderator => 
+        typeof moderator === 'object' ? moderator.id : moderator
+      ) || [];
+      
       if (!currentMembers.includes(creatorId)) {
         currentMembers.push(creatorId);
-        
-        await strapi.entityService.update('api::subrhetic.subrhetic', entity.id, {
-          data: {
-            members: currentMembers
-          }
-        });
       }
+      
+      if (!currentModerators.includes(creatorId)) {
+        currentModerators.push(creatorId);
+      }
+      
+      await strapi.entityService.update('api::subrhetic.subrhetic', entity.id, {
+        data: {
+          members: currentMembers,
+          moderators: currentModerators
+        }
+      });
     }
     
     const updatedEntity = await strapi.entityService.findOne('api::subrhetic.subrhetic', entity.id, {
-      populate: ['members', 'creator']
+      populate: ['members', 'creator', 'moderators']
     });
     
     return updatedEntity;
