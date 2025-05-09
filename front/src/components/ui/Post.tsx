@@ -103,7 +103,7 @@ export const Post = ({
             itemId={post.id}
             upVotes={post.upvotes}
             downVotes={post.downvotes}
-            voteId={post.votes && post.votes[0]?.documentId}
+            voteId={post.votes && post.votes[0]?.id?.toString()}
             userVote={
               post.votes && post.votes[0]?.type === "downvote"
                 ? -1

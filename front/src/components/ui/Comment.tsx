@@ -84,10 +84,10 @@ export const Comment = ({
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="comment"
+            itemId={comment.id}
             downVotes={comment.downvotes || 0}
             upVotes={comment.upvotes || 0}
             totalVotes={comment.total_votes || 0}
-            itemId={comment.id}
             voteId={comment.votes && comment.votes[0]?.id?.toString()}
             userVote={
               comment.votes && comment.votes[0]?.type === "downvote"
