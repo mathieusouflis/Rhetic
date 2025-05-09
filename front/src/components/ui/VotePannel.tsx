@@ -15,6 +15,15 @@ interface VoteState {
   pending: boolean;
 }
 
+interface StrapiVoteResponse {
+  data: {
+    id: string;
+    attributes: any;
+    vote?: any;
+  };
+  meta?: any;
+}
+
 export interface VotePannelProps {
   voteType: TypeVote;
   itemId: string;
@@ -97,13 +106,19 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
           : `${API_PATHS.COMMENTS}/${itemId}/${voteToSubmit === 1 ? 'upvote' : 'downvote'}`;
 
         if (voteToSubmit === 0) {
-          const response = await create<any>(endpoint, {});
+          await create(endpoint, {});
           setVoteId(undefined);
         } else {
           const response = await create<any>(endpoint, {});
           
-          if (response && response.vote) {
+          if (response?.vote?.id) {
             setVoteId(response.vote.id.toString());
+          } 
+          else if (response?.data?.vote?.id) {
+            setVoteId(response.data.vote.id.toString());
+          }
+          else if (response?.data?.attributes?.vote?.id) {
+            setVoteId(response.data.attributes.vote.id.toString());
           }
         }
 
