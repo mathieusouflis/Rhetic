@@ -40,17 +40,19 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
     ref
   ) => {
     const [votes, setVotes] = useState<VoteState>({
-      total: totalVotes,
-      current: userVote,
+      total: totalVotes || 0,
+      current: userVote || 0,
       pending: false,
     });
     
     useEffect(() => {
-      setVotes({
-        total: totalVotes,
-        current: userVote,
-        pending: false,
-      });
+      if (!votes.pending) {
+        setVotes({
+          total: totalVotes || 0,
+          current: userVote || 0,
+          pending: false,
+        });
+      }
     }, [totalVotes, userVote]);
 
     const { user } = useAuth();
@@ -60,47 +62,73 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       newVoteValue: VoteValue
     ) => {
       e.stopPropagation();
-      if (votes.pending || !user) return;
+      
+      if (!user) {
+        alert("Vous devez être connecté pour voter");
+        return;
+      }
+      
+      if (votes.pending) return;
 
-      // Si on clique sur le même bouton, annuler le vote
       const sameVote = (newVoteValue === 1 && votes.current === 1) || 
                        (newVoteValue === -1 && votes.current === -1);
       
-      setVotes((prev) => ({ ...prev, pending: true }));
+      let optimisticTotal = votes.total;
+      let optimisticCurrent = votes.current;
+      
+      if (sameVote) {
+        optimisticTotal = newVoteValue === 1 ? optimisticTotal - 1 : optimisticTotal + 1;
+        optimisticCurrent = 0;
+      } else if (votes.current === 0) {
+        optimisticTotal = newVoteValue === 1 ? optimisticTotal + 1 : optimisticTotal - 1;
+        optimisticCurrent = newVoteValue;
+      } else {
+        optimisticTotal = newVoteValue === 1 
+          ? optimisticTotal + 2
+          : optimisticTotal - 2;
+        optimisticCurrent = newVoteValue;
+      }
+      
+      setVotes({
+        total: optimisticTotal,
+        current: optimisticCurrent,
+        pending: true,
+      });
+      
+      if (onVoteChange) {
+        onVoteChange(optimisticCurrent, optimisticTotal);
+      }
 
       try {
-        // Déterminer l'endpoint
         const voteAction = newVoteValue === 1 ? 'upvote' : 'downvote';
         const endpoint = `${voteType === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS}/${itemId}/${voteAction}`;
 
-        // Faire l'appel API
         const response = await create<any>(endpoint, {});
         
-        let newTotal = votes.total;
-        let newCurrentVote = votes.current;
-        
         if (response && response.total_votes !== undefined) {
-          newTotal = response.total_votes;
+          setVotes({
+            total: response.total_votes,
+            current: sameVote ? 0 : newVoteValue,
+            pending: false,
+          });
           
-          if (sameVote) {
-            newCurrentVote = 0;
-          } else {
-            newCurrentVote = newVoteValue;
+          if (onVoteChange) {
+            onVoteChange(sameVote ? 0 : newVoteValue, response.total_votes);
           }
-        }
-
-        setVotes({
-          total: newTotal,
-          current: newCurrentVote,
-          pending: false,
-        });
-
-        if (onVoteChange) {
-          onVoteChange(newCurrentVote, newTotal);
+        } else {
+          setVotes(prev => ({...prev, pending: false}));
         }
       } catch (error) {
         console.error("Vote failed:", error);
-        setVotes((prev) => ({ ...prev, pending: false }));
+        setVotes({
+          total: totalVotes,
+          current: userVote,
+          pending: false,
+        });
+        
+        if (onVoteChange) {
+          onVoteChange(userVote, totalVotes);
+        }
       }
     };
 

@@ -47,7 +47,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           );
           
-          return { ...updatedPost };
+          return { ...updatedPost, vote: null };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
@@ -151,7 +151,7 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
             }
           );
           
-          return { ...updatedPost };
+          return { ...updatedPost, vote: null };
         } 
         else {
           const updatedVote = await strapi.entityService.update(
