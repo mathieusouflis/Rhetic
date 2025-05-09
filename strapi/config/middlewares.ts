@@ -9,8 +9,5 @@ export default [
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
-  {
-    name: 'global::login-timestamp',
-    config: {},
-  },
+//  'login-timestamp',
 ];
