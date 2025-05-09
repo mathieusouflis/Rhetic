@@ -9,4 +9,5 @@ export default [
   'strapi::session',
   'strapi::favicon',
   'strapi::public',
+  'api::login-timestamp',
 ];
