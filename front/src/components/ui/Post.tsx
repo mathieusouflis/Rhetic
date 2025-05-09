@@ -12,9 +12,9 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
+import Image from "next/image";
 import { ImageSet, SetImage } from "./ImageSet";
 import { API_CONFIG } from "@/config";
-import { useState } from "react";
 
 export interface PostProps {
   id: string;
@@ -35,30 +35,16 @@ interface PostComponentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Post = ({
-  post: initialPost,
+  post,
   className,
   fullPage = false,
   ...props
 }: PostComponentProps) => {
-  const [post, setPost] = useState<PostType>(initialPost);
   const router = useRouter();
-
   const handlePostClick = () => {
     if (fullPage) return;
-    router.push(`/posts/${post.documentId}`);
-  };
 
-  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number, newScore: number) => {
-    setPost((prevPost) => ({
-      ...prevPost,
-      upvotes: newVote === 1 
-        ? (prevPost.current === 1 ? prevPost.upvotes : prevPost.upvotes + 1)
-        : (prevPost.current === 1 ? prevPost.upvotes - 1 : prevPost.upvotes),
-      downvotes: newVote === -1 
-        ? (prevPost.current === -1 ? prevPost.downvotes : prevPost.downvotes + 1)
-        : (prevPost.current === -1 ? prevPost.downvotes - 1 : prevPost.downvotes),
-      total_votes: newScore
-    }));
+    router.push(`/posts/${post.documentId}`);
   };
 
   return (
@@ -80,6 +66,7 @@ export const Post = ({
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">
             <Small className="font-semibold text-[var(--black-100)]">
+              {/* TODO: Regarder si ça vient d'un sub ou si c'est un post de profile. */}
               {post.author?.username}
             </Small>
             <Small className="text-[var(--black-100)]">
@@ -92,39 +79,35 @@ export const Post = ({
           <H2>{post.title}</H2>
           <Small className="text-[var(--black-200)]">{post.content}</Small>
         </div>
-        {post.Media && post.Media.length > 0 && (
-          <ImageSet>
-            {post.Media.map((image, index) => (
-              <SetImage
-                src={API_CONFIG.baseURL.split("/api")[0] + image.url}
-                alt={image.alt || "Post image"}
-                key={index}
-              />
-            ))}
-          </ImageSet>
-        )}
+        <ImageSet>
+          {post.Media?.map((image, index) => (
+            <SetImage
+              src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+              alt={image.alt || "Post image"}
+              key={index}
+            />
+          ))}
+        </ImageSet>
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="post"
             itemId={post.id}
             upVotes={post.upvotes}
             downVotes={post.downvotes}
-            voteId={post.votes && post.votes[0]?.id?.toString()}
+            voteId={post.votes[0]?.documentId}
             userVote={
-              post.votes && post.votes[0]?.type === "downvote"
+              post.votes[0]?.type === "downvote"
                 ? -1
-                : post.votes && post.votes[0]?.type === "upvote"
+                : post.votes[0]?.type === "upvote"
                 ? 1
                 : 0
             }
-            totalVotes={post.total_votes || 0}
-            onVoteChange={handleVoteChange}
           />
           <Link href={"/posts/" + post.id}>
             <LittleAction iconName="comment">
               {!Array.isArray(post.comments)
                 ? post.comments?.count
-                : post.comments?.length || 0}
+                : post.comments.length}
             </LittleAction>
           </Link>
           <LittleAction iconName="chart" color="white">
@@ -133,7 +116,7 @@ export const Post = ({
           <div className="flex flex-row gap-2">
             <Bookmark
               bookmarkType="post"
-              bookmarked={post.saved_items && post.saved_items.length > 0}
+              bookmarked={post.saved_items?.length > 0}
               bookmarkId={post.saved_items && post.saved_items[0]?.documentId}
               itemId={post.documentId}
             />

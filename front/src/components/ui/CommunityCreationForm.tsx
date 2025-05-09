@@ -136,6 +136,7 @@ export const CommunityCreationForm: React.FC<CommunityCreationFormProps> = ({
     setIsLoading(true);
 
     try {
+      const slug = communityName.toLowerCase().replace(/\s+/g, "-");
 
       const communityData: Record<string, any> = {
         creator: user.id,
@@ -145,6 +146,11 @@ export const CommunityCreationForm: React.FC<CommunityCreationFormProps> = ({
       if (communityDescription) {
         communityData.description = communityDescription;
       }
+
+      if (slug) {
+        communityData.slug = slug;
+      }
+
       if (selectedIconFile) {
         setIsUploading(true);
         try {

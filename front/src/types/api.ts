@@ -1,7 +1,6 @@
 export interface StrapiDataStructure<T> {
   id: string;
   attributes: T;
-  vote?: any;
 }
 
 export interface StrapiResponse<T> {
@@ -14,7 +13,6 @@ export interface StrapiResponse<T> {
       total: number;
     };
   };
-  vote?: any;
 }
 
 export interface StrapiCollectionResponse<T> {
@@ -55,10 +53,10 @@ export interface QueryParams {
   };
 }
 
+// Types génériques pour les réponses API
 export interface ApiResponse<T> {
   data: T;
   meta?: any;
-  vote?: any;
 }
 
 export interface ApiCollectionResponse<T> {
@@ -66,6 +64,7 @@ export interface ApiCollectionResponse<T> {
   meta?: any;
 }
 
+// Type pour mapper les réponses Strapi vers notre format d'API
 export type StrapiToAppData<T> = (strapiData: StrapiDataStructure<T>) => any;
 export type StrapiToAppCollection<T> = (
   strapiCollection: StrapiDataStructure<T>[]

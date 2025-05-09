@@ -12,7 +12,6 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { CommentType } from "@/types/post";
 import { VotePannel } from "./VotePannel";
-import { useState } from "react";
 
 export interface CommentProps {
   id: string;
@@ -31,30 +30,17 @@ interface CommentComponentProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const Comment = ({
-  comment: initialComment,
+  comment,
   className,
   fullPage = false,
   ...props
 }: CommentComponentProps) => {
-  const [comment, setComment] = useState<CommentType>(initialComment);
   const router = useRouter();
 
   const handleCommentClick = () => {
     if (fullPage) return;
-    router.push(`/comments/${comment.id}`);
-  };
 
-  const handleVoteChange = (newVote: -1 | 0 | 1, newTotal: number, newScore: number) => {
-    setComment((prevComment) => ({
-      ...prevComment,
-      upvotes: newVote === 1 
-        ? (prevComment.current === 1 ? prevComment.upvotes : prevComment.upvotes + 1)
-        : (prevComment.current === 1 ? prevComment.upvotes - 1 : prevComment.upvotes),
-      downvotes: newVote === -1 
-        ? (prevComment.current === -1 ? prevComment.downvotes : prevComment.downvotes + 1)
-        : (prevComment.current === -1 ? prevComment.downvotes - 1 : prevComment.downvotes),
-      total_votes: newScore
-    }));
+    router.push(`/comments/${comment.documentId}`);
   };
 
   return (
@@ -90,26 +76,24 @@ export const Comment = ({
         <div className="flex flex-row justify-between w-full">
           <VotePannel
             voteType="comment"
-            itemId={comment.id}
-            downVotes={comment.downvotes || 0}
-            upVotes={comment.upvotes || 0}
-            totalVotes={comment.total_votes || 0}
-            voteId={comment.votes && comment.votes[0]?.id?.toString()}
+            downVotes={comment.downvotes}
+            upVotes={comment.upvotes}
+            itemId={comment.documentId}
+            voteId={comment.votes[0]?.documentId}
             userVote={
-              comment.votes && comment.votes[0]?.type === "downvote"
+              comment.votes[0]?.type === "downvote"
                 ? -1
-                : comment.votes && comment.votes[0]?.type === "upvote"
+                : comment.votes[0]?.type === "upvote"
                 ? 1
                 : 0
             }
-            onVoteChange={handleVoteChange}
           />
           <Link href={"/comments/" + comment.id}>
-            <LittleAction iconName="comment" onClick={(e) => e.stopPropagation()}>
+            <LittleAction iconName="comment" onClick={() => {}}>
               {comment.childrens?.length || 0}
             </LittleAction>
           </Link>
-          <LittleAction iconName="chart" color="white" onClick={(e) => e.stopPropagation()}>
+          <LittleAction iconName="chart" color="white" onClick={() => {}}>
             {comment.upvotes + comment.downvotes}
           </LittleAction>
           <div className="flex flex-row gap-2">
@@ -121,10 +105,10 @@ export const Comment = ({
               }
               bookmarkId={
                 (Array.isArray(comment.saved_items) &&
-                  comment.saved_items[0]?.id?.toString()) ||
+                  comment.saved_items[0]?.documentId) ||
                 undefined
               }
-              itemId={comment.id}
+              itemId={comment.documentId}
             />
             <Share shareType="comment" itemId={comment.id} />
           </div>

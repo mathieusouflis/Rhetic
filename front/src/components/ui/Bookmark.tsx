@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import LittleAction from "./LittleAction";
 import { create, remove } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
+import { H1 } from "./Typography";
 import { SavedItemType } from "@/types/post";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -37,9 +38,7 @@ export const Bookmark: React.FC<BookmarkProps> = ({
           post: bookmarkType === "post" ? itemId : undefined,
           comment: bookmarkType === "comment" ? itemId : undefined,
         })) as SavedItemType;
-        
-        // Assurez-vous d'utiliser le bon chemin pour l'ID dans le retour de l'API
-        setBookmarkId(response.data.id);
+        setBookmarkId(response.data.documentId);
       }
       setBookmarkStatus((old) => !old);
     } catch (error) {
@@ -51,11 +50,14 @@ export const Bookmark: React.FC<BookmarkProps> = ({
   };
 
   return (
-    <LittleAction
-      full={bookmarkStatus}
-      iconName="bookmark"
-      color="yellow"
-      onClick={handleClick}
-    />
+    <>
+      <LittleAction
+        full={bookmarkStatus}
+        iconName="bookmark"
+        color="yellow"
+        onClick={handleClick}
+      />
+      <H1>{bookmarkStatus}</H1>
+    </>
   );
 };
