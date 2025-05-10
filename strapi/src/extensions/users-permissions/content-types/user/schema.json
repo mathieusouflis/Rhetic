@@ -66,12 +66,10 @@
       "configurable": false
     },
     "avatar": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": false
+      "required": false,
+      "allowedTypes": ["images"]
     },
     "bio": {
       "type": "text"
@@ -231,6 +229,12 @@
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
       "mappedBy": "fav_users"
+    },
+    "following": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::anonymous-post-author.anonymous-post-author",
+      "inversedBy": "followers"
     }
   }
 }

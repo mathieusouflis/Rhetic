@@ -34,7 +34,8 @@
       "unique": true
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "maxLength": 300
     },
     "posts": {
       "type": "relation",
@@ -115,11 +116,12 @@
       "inversedBy": "fav_subrhetics"
     },
     "icon": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     }
   }
 }

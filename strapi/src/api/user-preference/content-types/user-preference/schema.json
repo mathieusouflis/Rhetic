@@ -44,7 +44,7 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "user_preference"
+      "mappedBy": "user_preference"
     }
   }
 }
