@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Post } from "@/components/ui/Post";
 import PostWriter from "@/components/ui/PostWriter";
 import { Body, H1 } from "@/components/ui/Typography";
-import { fetchOne } from "@/lib/api/apiClient";
+import { fetchOne, remove } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { useAuth } from "@/providers/AuthProvider";
 import { PostType } from "@/types/post";
@@ -24,6 +24,7 @@ interface Subrhetic extends BaseSubrhetic {
 export default function Page() {
   const { subId }: { subId: string } = useParams();
   const [sub, setSub] = useState<Subrhetic | null>(null);
+  const [userJoined, setUserJoined] = useState(false);
   const router = useRouter();
 
   const { user } = useAuth();
@@ -83,6 +84,7 @@ export default function Page() {
         )) as any;
 
         setSub(response.data);
+        setUserJoined(response.data.members.length > 0);
       } catch (error) {
         console.error("Error fetching sub:", error);
       }
@@ -90,6 +92,15 @@ export default function Page() {
 
     fetchPostAndComments();
   }, [subId]);
+
+  const handleSubrheticJoin = async () => {
+    if (userJoined) {
+      // remove(
+      //   API_PATHS.SUBRHETIC + "/" + subId + "/members",
+      //   user?.id as string
+      // );
+    }
+  };
 
   return (
     <div className="flex flex-col gap-[21px]">
@@ -136,8 +147,15 @@ export default function Page() {
                 </Modal.Content>
               </Modal>
 
-              <ActionButton variant="white" leftIcon={false} className="h-fit">
-                <span className="font-semibold">Join</span>
+              <ActionButton
+                variant={userJoined ? "gray2" : "white"}
+                leftIcon={false}
+                className="h-fit"
+                onClick={handleSubrheticJoin}
+              >
+                <span className="font-semibold">
+                  {userJoined ? "Joined" : "Join"}
+                </span>
               </ActionButton>
             </div>
           </div>

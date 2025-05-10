@@ -2020,9 +2020,13 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
-    following: Schema.Attribute.Relation<
+    followers: Schema.Attribute.Relation<
       'manyToMany',
-      'api::anonymous-post-author.anonymous-post-author'
+      'plugin::users-permissions.user'
+    >;
+    followings: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
     >;
     is_active: Schema.Attribute.Boolean;
     joined_subrhetics: Schema.Attribute.Relation<

@@ -38,6 +38,13 @@ export type SavedItemType = any;
 
 export type VoteType = any;
 
+export type SubrheticType = {
+  id: string;
+  name: string;
+  documentId: string;
+  icon?: string;
+};
+
 export type PostType = {
   id: string;
   documentId: string;
@@ -51,9 +58,10 @@ export type PostType = {
   updatedAt: Date;
   publishedDate: Date | null;
   author?: AuthorType;
-  Media?: any;
+  Media?: any[];
   comments?: CommentType[] | CommentsType;
   saved_items?: SavedItemType | SavedItemType[];
   votes?: VoteType | VoteType[];
   user?: { id: number | string; username: string; avatarUrl?: string };
+  subrhetic?: SubrheticType;
 };

@@ -20,6 +20,7 @@ import {
   Edit2,
   Ellipsis,
   EyeOff,
+  Flag,
   Flame,
   Github,
   Globe,
@@ -40,6 +41,7 @@ import {
   Star,
   Strikethrough,
   Table,
+  Trash,
   Upload,
   UserRound,
   UserRoundPen,
@@ -55,7 +57,6 @@ interface IconProps {
   className?: string;
 }
 
-// Add more icon names as needed
 export type IconName =
   | "home"
   | "flame"
@@ -99,6 +100,8 @@ export type IconName =
   | "upload"
   | "asterisk"
   | "languages"
+  | "trash"
+  | "flag"
   | "loader"
   | "github"
   | "apple"
@@ -106,7 +109,7 @@ export type IconName =
   | "logo"
   | "chevron_left"
   | "logo_text";
-export type IconSizes = 12 | 14 | 17 | 18 | 20 | 24 | 38 | 62;
+export type IconSizes = 12 | 14 | 16 | 17 | 18 | 20 | 24 | 38 | 62;
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -116,6 +119,24 @@ export const Icon: React.FC<IconProps> = ({
   className = "",
 }) => {
   const icons = {
+    trash: (
+      <Trash
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
+    flag: (
+      <Flag
+        width={size}
+        height={size}
+        color={color}
+        fill={full ? color : "none"}
+        className={className}
+      />
+    ),
     home: (
       <svg
         width={size}
