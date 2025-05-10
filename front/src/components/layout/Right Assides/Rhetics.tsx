@@ -12,6 +12,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import Link from "next/link";
+import { ICONS } from "@/config";
 
 interface SidebarProps {
   className?: string;
@@ -42,7 +43,7 @@ export function Rhetics({ className = "" }: SidebarProps) {
         {
           populate: {
             joined_subrhetics: {
-              fields: ["id", "name"],
+              fields: ["id", "name", "documentId"],
               populate: { icon: { fields: ["url"] } },
             },
           },
@@ -77,7 +78,7 @@ export function Rhetics({ className = "" }: SidebarProps) {
 
   return (
     <div className={`flex flex-col gap-2.5 w-[505px] ${className}`}>
-      <div className="w-full flex flex-col gap-3 p-2.5">
+      <div className="w-full flex flex-col gap-3 p-2.5 border border-[var(--black-500)] rounded-[10px]">
         <div className="flex flex-row justify-between items-center">
           <Body className="font-semibold">Mes communautés</Body>
         </div>
@@ -117,13 +118,13 @@ export function Rhetics({ className = "" }: SidebarProps) {
         ) : filteredCommunities.length > 0 ? (
           filteredCommunities.map((community) => (
             <Link
-              href={`/communities/${community.id}`}
-              key={community.id}
+              href={`/communities/${community.documentId}`}
+              key={community.documentId}
               className="block"
             >
               <Community
-                id={community.id}
-                iconUrl="/placeholder.png"
+                id={community.documentId}
+                iconUrl={ICONS.default_rhetic}
                 name={community.name}
               />
             </Link>

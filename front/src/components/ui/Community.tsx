@@ -1,23 +1,31 @@
 import classNames from "classnames";
-import { Body } from "./Typography";
+import { Body, Small } from "./Typography";
 import { Avatar } from "./Avatar";
+import { formatNumber } from "@/lib/utils/format";
+import Link from "next/link";
 
 interface CommunityProps {
-  id: number;
+  id: string;
   name: string;
   iconUrl: string;
+  desciption?: string;
   isFavorite?: boolean;
-  onToggleFavorite?: (id: number, isFavorite: boolean) => void;
+  onToggleFavorite?: (id: string, isFavorite: boolean) => void;
   className?: string;
+  variant?: "simple" | "developed";
+  membersCount?: number;
 }
 
 export const Community = ({
   id,
   name,
   iconUrl,
+  desciption = "",
   isFavorite = false,
   onToggleFavorite,
   className,
+  membersCount = 0,
+  variant = "simple",
 }: CommunityProps) => {
   const handleFavoriteClick = () => {
     if (onToggleFavorite) {
@@ -26,16 +34,38 @@ export const Community = ({
   };
 
   return (
-    <div
+    <Link
+      href={`/communities/${id}`}
       className={classNames(
-        "flex flex-row w-full justify-between gap-2.5 items-center",
+        "flex flex-row w-ful justify-between gap-2.5 items-center",
         className
       )}
     >
-      <div className={classNames("flex flex-row gap-2.5 items-center")}>
-        <Avatar src={iconUrl} alt={name} size={"sm"} />
-        <Body>rh/{name.toLowerCase()}</Body>
+      <div
+        className={classNames("flex flex-row gap-2.5", {
+          "items-center py-2 px-2.5": variant !== "developed",
+          "items-start p-2.5 border border-[var(--black-500)] bg-[var(--black-700)] rounded-[10px] w-full":
+            variant === "developed",
+        })}
+      >
+        <Avatar
+          src={iconUrl}
+          alt={name}
+          size={variant === "developed" ? "lg" : "sm"}
+        />
+        {variant === "developed" && (
+          <div className="flex flex-col gap-1.5 w-full">
+            <Body>rh/{name.toLowerCase()}</Body>
+            <Small className="text-[var(--black-100)]">
+              {formatNumber(membersCount)} members
+            </Small>
+            <Small className="text-[var(--black-100)] overflow-hidden text-ellipsis line-clamp-1 max-w-full min-h-[1.25rem]">
+              {desciption || "\u00A0"}
+            </Small>
+          </div>
+        )}
+        {variant !== "developed" && <Body>rh/{name.toLowerCase()}</Body>}
       </div>
-    </div>
+    </Link>
   );
 };
