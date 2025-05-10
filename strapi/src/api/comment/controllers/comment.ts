@@ -1,7 +1,25 @@
 import { factories } from '@strapi/strapi';
 
 export default factories.createCoreController('api::comment.comment', ({ strapi }) => ({
-  ...factories.createCoreController('api::comment.comment', ({ strapi }) => ({})),
+  async create(ctx) {
+    const { data } = ctx.request.body;
+    const userId = ctx.state.user?.id;
+    
+    if (!userId) {
+      return ctx.unauthorized("Vous devez être connecté pour créer un commentaire");
+    }
+    
+    const entity = await strapi.entityService.create('api::comment.comment', {
+      data: {
+        ...data,
+        author: userId,
+        publishedDate: new Date(),
+      },
+      populate: ['author']
+    });
+    
+    return entity;
+  },
   
   async delete(ctx) {
     try {
