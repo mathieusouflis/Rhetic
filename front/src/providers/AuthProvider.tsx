@@ -86,7 +86,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // Fonction pour mettre à jour l'utilisateur localement
   const setUser = (updatedUser: User) => {
     setCurrentUser(updatedUser);
     queryClient.setQueryData(["user"], updatedUser);

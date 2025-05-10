@@ -14,7 +14,7 @@ const sizeMap: Record<AvatarSize, { minWidth: number; height: number }> = {
   sm: { minWidth: 24, height: 24 },
   md: { minWidth: 35, height: 35 },
   lg: { minWidth: 40, height: 40 },
-  xl: { minWidth: 70, height: 70 }, // Changed back to 70px for proper display
+  xl: { minWidth: 70, height: 70 },
 };
 
 export const Avatar = ({ src, alt, size = "md", className }: AvatarProps) => {

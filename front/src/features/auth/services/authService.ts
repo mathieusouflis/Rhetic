@@ -54,7 +54,6 @@ class AuthService {
   }
 
   async logout() {
-    // Client-side only, no API call needed for Strapi
     return Promise.resolve();
   }
 }

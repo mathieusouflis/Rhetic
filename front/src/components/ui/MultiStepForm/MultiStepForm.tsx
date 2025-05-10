@@ -41,7 +41,6 @@ export function MultiStepForm({
   const handleNext = async () => {
     const currentStep = steps[currentStepIndex];
 
-    // Validate current step if validator exists
     if (currentStep.validator) {
       const isValid = await currentStep.validator();
       if (!isValid) return;

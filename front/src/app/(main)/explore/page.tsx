@@ -48,11 +48,10 @@ interface TopicCategory {
   topics: Topic[];
 }
 
-// Interface pour suivre les communautés supplémentaires par topic
 interface TopicCommunitiesState {
   [topicId: number]: {
-    displayedInitial: number; // Nombre de communautés affichées initialement
-    extraCommunities: Subrhetic[]; // Communautés supplémentaires chargées
+    displayedInitial: number;
+    extraCommunities: Subrhetic[];
     page: number;
     hasMore: boolean;
     isLoading: boolean;

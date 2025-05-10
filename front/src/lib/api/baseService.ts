@@ -14,25 +14,17 @@ export abstract class BaseService<TStrapi, TApp> {
     protected transformData?: (data: StrapiDataStructure<TStrapi>) => TApp
   ) {}
 
-  /**
-   * Transforme les données Strapi en format d'application
-   * Cette méthode peut être surchargée par les services enfants
-   */
   protected transformStrapiData(data: StrapiDataStructure<TStrapi>): TApp {
     if (this.transformData) {
       return this.transformData(data);
     }
 
-    // Transformation par défaut si aucune fonction de transformation n'est fournie
     return {
       id: data.id,
       ...data.attributes,
     } as unknown as TApp;
   }
 
-  /**
-   * Récupère tous les éléments
-   */
   async findAll(
     params?: PaginationParams
   ): Promise<ApiCollectionResponse<TApp>> {
@@ -61,9 +53,6 @@ export abstract class BaseService<TStrapi, TApp> {
     };
   }
 
-  /**
-   * Crée un nouvel élément
-   */
   async create(data: Partial<TStrapi>): Promise<ApiResponse<TApp>> {
     const response = await apiClient.post<StrapiResponse<TStrapi>>(
       this.endpoint,
@@ -76,9 +65,6 @@ export abstract class BaseService<TStrapi, TApp> {
     };
   }
 
-  /**
-   * Met à jour un élément existant
-   */
   async update(id: string, data: Partial<TStrapi>): Promise<ApiResponse<TApp>> {
     const response = await apiClient.put<StrapiResponse<TStrapi>>(
       `${this.endpoint}/${id}`,
@@ -91,17 +77,11 @@ export abstract class BaseService<TStrapi, TApp> {
     };
   }
 
-  /**
-   * Supprime un élément
-   */
   async delete(id: string): Promise<any> {
     const response = await apiClient.delete(`${this.endpoint}/${id}`);
     return response.data;
   }
 
-  /**
-   * Compte le nombre d'éléments
-   */
   async count(params?: Record<string, unknown>): Promise<number> {
     const response = await apiClient.get<{ count: number }>(
       `${this.endpoint}/count`,
@@ -110,9 +90,6 @@ export abstract class BaseService<TStrapi, TApp> {
     return response.data.count;
   }
 
-  /**
-   * Supprime plusieurs éléments en une seule requête
-   */
   async bulkDelete(ids: string[]): Promise<any> {
     const response = await apiClient.post(`${this.endpoint}/bulk-delete`, {
       ids,
@@ -120,9 +97,6 @@ export abstract class BaseService<TStrapi, TApp> {
     return response.data;
   }
 
-  /**
-   * Met à jour plusieurs éléments en une seule requête
-   */
   async bulkUpdate(ids: string[], data: Partial<TStrapi>): Promise<any> {
     const response = await apiClient.put(`${this.endpoint}/bulk-update`, {
       ids,
