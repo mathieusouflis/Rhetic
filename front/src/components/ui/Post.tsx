@@ -12,7 +12,6 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
-import Image from "next/image";
 import { ImageSet, SetImage } from "./ImageSet";
 import { API_CONFIG, ICONS } from "@/config";
 
@@ -62,8 +61,16 @@ export const Post = ({
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">
             <Small className="font-semibold text-[var(--black-100)]">
-              {/* TODO: Regarder si ça vient d'un sub ou si c'est un post de profile. */}
-              {post.author?.username}
+              {post.subrhetic ? (
+                <>
+                  r/{post.subrhetic.name} →{" "}
+                  <span className="text-[var(--black-200)]">
+                    {post.author?.username}
+                  </span>
+                </>
+              ) : (
+                post.author?.username
+              )}
             </Small>
             <Small className="text-[var(--black-100)]">
               {formatRelativeTime(post.publishedAt)}
@@ -73,7 +80,14 @@ export const Post = ({
         </div>
         <div className="flex flex-col gap-1.5 w-full">
           <H2>{post.title}</H2>
-          <Small className="text-[var(--black-200)]">{post.content}</Small>
+          <Small
+            className={classNames({
+              "text-[var(--black-200)]": post.title !== null,
+              "text-[var(--white)]": post.title === null,
+            })}
+          >
+            {post.content}
+          </Small>
         </div>
         <ImageSet>
           {post.Media?.map((image, index) => (

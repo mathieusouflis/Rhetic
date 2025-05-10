@@ -34,6 +34,9 @@ export default function Home() {
                 },
               },
             },
+            subrhetic: {
+              fields: ["name", "documentId"],
+            },
             saved_items: {
               filters: {
                 users_permissions_user: {
@@ -62,7 +65,7 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-col gap-2 5">
-        <PostWriter />
+        <PostWriter isSubrheticRequired={false} isTitleRequired={false} />
         <div className="w-full h-px bg-[var(--black-400)]"></div>
         <div className="flex flex-row gap-2.5">
           <DropdownSelect
