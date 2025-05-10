@@ -5,7 +5,7 @@ export default {
       path: '/posts/:id',
       handler: 'post.delete',
       config: {
-        policies: ['api::post.delete-permission'],
+        policies: [],
         middlewares: [],
       },
     },

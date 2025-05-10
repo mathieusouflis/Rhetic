@@ -103,66 +103,65 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       }
       
       const post = await strapi.entityService.findOne('api::post.post', id, {
-        populate: ['author', 'subrhetic']
+        populate: {
+          author: true,
+          subrhetic: {
+            populate: ['creator', 'moderators']
+          }
+        }
       });
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
-
+      
       const authorId = typeof post.author === 'object' ? post.author.id : post.author;
       
-      const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+      if (authorId === userId) {
+        const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+        return deletedEntity;
+      }
       
-      if (authorId !== userId) {
-        try {
-          const subrheticName = post.subrhetic && typeof post.subrhetic === 'object' 
-            ? post.subrhetic.name 
-            : 'la plateforme';
+      const userWithRole = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
+        populate: ['role']
+      });
+      
+      if (userWithRole?.role?.type === 'admin') {
+        const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+        return deletedEntity;
+      }
+      
+      if (post.subrhetic && typeof post.subrhetic === 'object') {
+        const subrhetic = post.subrhetic;
+        
+        if (subrhetic.creator) {
+          const creatorId = typeof subrhetic.creator === 'object' 
+            ? subrhetic.creator.id 
+            : subrhetic.creator;
+          
+          if (creatorId === userId) {
+            const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+            return deletedEntity;
+          }
+        }
+        
+        if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
+          const isModerator = subrhetic.moderators.some((moderator) => {
+            const moderatorId = typeof moderator === 'object' 
+              ? moderator.id 
+              : moderator;
             
-          const title = post.title || 'sans titre';
-
-          await strapi.entityService.create('api::notification.notification', {
-            data: {
-              type: 'mod_action',
-              content: JSON.stringify({
-                action: 'post_deleted',
-                postTitle: title,
-                subrheticName: subrheticName,
-                deletedBy: userId
-              }),
-              is_read: false,
-              users_permissions_user: authorId,
-              reference_type: 'post',
-              reference_id: id
-            }
+            return moderatorId === userId;
           });
           
-          if (post.subrhetic) {
-            const subrheticId = typeof post.subrhetic === 'object'
-              ? post.subrhetic.id
-              : post.subrhetic;
-              
-            await strapi.entityService.create('api::moderation-action.moderation-action', {
-              data: {
-                action_type: 'post_removed',
-                target_id: id,
-                target_type: 'post',
-                users_permissions_user: userId,
-                subrhetic: subrheticId,
-                details: JSON.stringify({
-                  postTitle: title,
-                  postAuthor: authorId
-                })
-              }
-            });
+          if (isModerator) {
+            const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+            return deletedEntity;
           }
-        } catch (error) {
-          console.error('Erreur lors de la création de la notification:', error);
         }
       }
       
-      return deletedEntity;
+      return ctx.forbidden("Vous n'avez pas la permission de supprimer ce post");
     } catch (error) {
       console.error("Erreur lors de la suppression du post:", error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);

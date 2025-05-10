@@ -5,6 +5,8 @@ interface PolicyContext {
   [key: string]: any;
 }
 
+console.log('Loading is-author policy');
+
 export default (policyContext: PolicyContext, config: any, { strapi }: { strapi: any }) => {
   return async (ctx: StrapiContext, next: () => Promise<any>) => {
     try {
