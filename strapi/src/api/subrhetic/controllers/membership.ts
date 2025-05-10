@@ -119,6 +119,67 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
     }
   },
   
+  async removeMember(ctx: StrapiContext) {
+    try {
+      const { id, userId } = ctx.params;
+      
+      const userIdNumber = parseInt(userId);
+      
+      if (isNaN(userIdNumber)) {
+        return ctx.badRequest("ID utilisateur invalide");
+      }
+      
+      const subrhetic = await strapi.entityService.findOne(
+        'api::subrhetic.subrhetic', 
+        id, 
+        { populate: ['members', 'creator', 'moderators'] }
+      ) as Subrhetic;
+      
+      if (!subrhetic) {
+        return ctx.notFound("Subrhetic introuvable");
+      }
+      
+      if (subrhetic.creator) {
+        const creatorId = typeof subrhetic.creator === 'object' 
+          ? subrhetic.creator.id 
+          : subrhetic.creator;
+          
+        if (creatorId === userIdNumber) {
+          return ctx.badRequest("Le créateur ne peut pas être supprimé du subrhetic");
+        }
+      }
+      
+      let isMember = false;
+      
+      if (subrhetic.members && Array.isArray(subrhetic.members)) {
+        isMember = subrhetic.members.some((member) => {
+          const memberId = typeof member === 'object' ? member.id : member;
+          return memberId === userIdNumber;
+        });
+      }
+      
+      if (!isMember) {
+        return ctx.badRequest("Cet utilisateur n'est pas membre du subrhetic");
+      }
+      
+      const updatedSubrhetic = await strapi.entityService.update(
+        'api::subrhetic.subrhetic', 
+        id, 
+        {
+          data: {
+            members: { disconnect: [userIdNumber] }
+          },
+          populate: ['members']
+        }
+      ) as Subrhetic;
+      
+      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du membre:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  },
+  
   async banUser(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -154,7 +215,6 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       }
       
-      // Vérifier si l'utilisateur à bannir est modérateur
       if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
         const isModerator = subrhetic.moderators.some((mod) => {
           const modId = typeof mod === 'object' ? mod.id : mod;
@@ -166,7 +226,6 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       }
       
-      // Vérifier si l'utilisateur est déjà banni
       if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
         const isBanned = subrhetic.banned_users.some((user) => {
           const bannedId = typeof user === 'object' ? user.id : user;
