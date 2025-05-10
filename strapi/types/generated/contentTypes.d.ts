@@ -2010,6 +2010,14 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+    followers: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    followings: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
     is_active: Schema.Attribute.Boolean;
     joined_subrhetics: Schema.Attribute.Relation<
       'manyToMany',

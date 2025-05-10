@@ -66,12 +66,12 @@
       "configurable": false
     },
     "avatar": {
-      "allowedTypes": [
-        "images"
-      ],
       "type": "media",
       "multiple": false,
-      "required": false
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "bio": {
       "type": "text"
@@ -231,6 +231,18 @@
       "relation": "manyToMany",
       "target": "api::subrhetic.subrhetic",
       "mappedBy": "fav_users"
+    },
+    "followings": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "followers"
+    },
+    "followers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "followings"
     }
   }
 }
