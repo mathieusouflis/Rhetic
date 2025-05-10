@@ -46,6 +46,21 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
       populate: ['members', 'creator', 'moderators']
     });
     
+    try {
+      await strapi.entityService.create('api::user-activity-log.user-activity-log', {
+        data: {
+          users_permissions_user: creatorId,
+          activity_type: 'subrhetic_create',
+          item_id: entity.id,
+          item_type: 'subrhetic',
+          ip_adress: ctx.request.ip,
+          user_agent: ctx.request.header['user-agent']
+        }
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création du log d'activité:", error);
+    }
+    
     return updatedEntity;
   }
 }));

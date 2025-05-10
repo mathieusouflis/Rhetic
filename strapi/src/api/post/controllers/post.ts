@@ -21,11 +21,6 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         postData.title = '';
       }
       
-      try {
-      } catch (error) {
-        console.error("Erreur lors de la modération IA:", error);
-      }
-      
       const entity = await strapi.entityService.create('api::post.post', {
         data: postData,
         populate: ['author', 'subrhetic', 'Media']
