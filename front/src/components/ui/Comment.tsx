@@ -78,7 +78,6 @@ export const Comment = ({
       }
     } catch (error) {
       console.error("Erreur lors de la suppression du commentaire:", error);
-      alert("Une erreur est survenue lors de la suppression du commentaire");
     }
   };
 

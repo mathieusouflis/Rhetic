@@ -79,7 +79,6 @@ export const Post = ({
       }
     } catch (error) {
       console.error("Erreur lors de la suppression du post:", error);
-      alert("Une erreur est survenue lors de la suppression du post");
     }
   };
 

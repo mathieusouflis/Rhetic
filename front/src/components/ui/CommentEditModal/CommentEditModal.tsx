@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MultiStepForm, Step } from "../MultiStepForm/MultiStepForm";
-import { TextInput } from "../TextInput";
 import { Body } from "../Typography";
 import Icon from "../Icons";
 import { API_PATHS } from "@/lib/api/config";
-import { API_CONFIG } from "@/config";
 import { CommentType } from "@/types/post";
 import { update } from "@/lib/api/apiClient";
 import { Textarea } from "../Textarea";
