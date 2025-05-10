@@ -1,5 +1,3 @@
-// src/api/post/routes/post-delete.ts
-
 export default {
   routes: [
     {
