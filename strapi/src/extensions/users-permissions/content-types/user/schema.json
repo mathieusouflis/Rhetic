@@ -69,7 +69,9 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "bio": {
       "type": "text"
@@ -235,6 +237,18 @@
       "relation": "manyToMany",
       "target": "api::anonymous-post-author.anonymous-post-author",
       "inversedBy": "followers"
+    },
+    "followed": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-follow.user-follow",
+      "mappedBy": "follower"
+    },
+    "followers": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-follow.user-follow",
+      "mappedBy": "following"
     }
   }
 }

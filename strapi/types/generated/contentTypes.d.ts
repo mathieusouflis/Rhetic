@@ -1406,6 +1406,46 @@ export interface ApiUserFlairUserFlair extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiUserFollowUserFollow extends Struct.CollectionTypeSchema {
+  collectionName: 'user_follows';
+  info: {
+    displayName: 'User Follow';
+    pluralName: 'user-follows';
+    singularName: 'user-follow';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    follower: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    following: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-follow.user-follow'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
+    strapi_stage: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::review-workflows.workflow-stage'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiUserOnlineStatusUserOnlineStatus
   extends Struct.CollectionTypeSchema {
   collectionName: 'user_online_statuses';
@@ -2017,6 +2057,14 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+    followed: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-follow.user-follow'
+    >;
+    followers: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::user-follow.user-follow'
+    >;
     following: Schema.Attribute.Relation<
       'manyToMany',
       'api::anonymous-post-author.anonymous-post-author'
@@ -2154,6 +2202,7 @@ declare module '@strapi/strapi' {
       'api::user-block.user-block': ApiUserBlockUserBlock;
       'api::user-flair-assignment.user-flair-assignment': ApiUserFlairAssignmentUserFlairAssignment;
       'api::user-flair.user-flair': ApiUserFlairUserFlair;
+      'api::user-follow.user-follow': ApiUserFollowUserFollow;
       'api::user-online-status.user-online-status': ApiUserOnlineStatusUserOnlineStatus;
       'api::user-preference.user-preference': ApiUserPreferenceUserPreference;
       'api::vote.vote': ApiVoteVote;
