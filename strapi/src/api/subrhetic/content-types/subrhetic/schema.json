@@ -28,11 +28,6 @@
       "unique": true,
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "description": {
       "type": "text",
       "maxLength": 300

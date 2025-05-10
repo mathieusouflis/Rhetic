@@ -491,6 +491,7 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::review-workflows.workflow-stage'
     >;
+    total_votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -737,7 +738,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::saved-item.saved-item'
     >;
-    slug: Schema.Attribute.String & Schema.Attribute.Unique;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
@@ -1114,9 +1114,6 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
-    slug: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
     strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
     strapi_stage: Schema.Attribute.Relation<
       'oneToOne',
@@ -2020,8 +2017,20 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+<<<<<<< HEAD
     followers: Schema.Attribute.Relation<
       'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    followings: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+=======
+    following: Schema.Attribute.Relation<
+    followers: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::anonymous-post-author.anonymous-post-author'
+>>>>>>> Intégration
       'plugin::users-permissions.user'
     >;
     followings: Schema.Attribute.Relation<

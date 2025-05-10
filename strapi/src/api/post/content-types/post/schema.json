@@ -19,11 +19,6 @@
       "type": "text",
       "required": true
     },
-    "slug": {
-      "type": "string",
-      "required": false,
-      "unique": true
-    },
     "upvotes": {
       "type": "integer",
       "default": 0
