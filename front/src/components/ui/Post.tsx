@@ -14,7 +14,7 @@ import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
 import Image from "next/image";
 import { ImageSet, SetImage } from "./ImageSet";
-import { API_CONFIG } from "@/config";
+import { API_CONFIG, ICONS } from "@/config";
 
 export interface PostProps {
   id: string;
@@ -57,11 +57,7 @@ export const Post = ({
       onClick={handlePostClick}
       {...props}
     >
-      <Avatar
-        src="https://images.unsplash.com/photo-1726066012604-a309bd0575df?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt="avatar"
-        size="md"
-      />
+      <Avatar src={ICONS.default_user} alt="avatar" size="md" />
       <div className="flex flex-col gap-3 w-full">
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">

@@ -422,6 +422,10 @@ export interface ApiAnonymousPostAuthorAnonymousPostAuthor
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    followers: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1073,7 +1077,10 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    description: Schema.Attribute.Text;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        maxLength: 300;
+      }>;
     fav_users: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'
@@ -2010,6 +2017,7 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::subrhetic.subrhetic'
     >;
+<<<<<<< HEAD
     followers: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'
@@ -2017,6 +2025,11 @@ export interface PluginUsersPermissionsUser
     followings: Schema.Attribute.Relation<
       'manyToMany',
       'plugin::users-permissions.user'
+=======
+    following: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::anonymous-post-author.anonymous-post-author'
+>>>>>>> Intégration
     >;
     is_active: Schema.Attribute.Boolean;
     joined_subrhetics: Schema.Attribute.Relation<

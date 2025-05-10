@@ -10,11 +10,11 @@ interface AvatarProps {
   className?: string;
 }
 
-const sizeMap: Record<AvatarSize, { width: number; height: number }> = {
-  sm: { width: 24, height: 24 },
-  md: { width: 35, height: 35 },
-  lg: { width: 40, height: 40 },
-  xl: { width: 70, height: 70 },
+const sizeMap: Record<AvatarSize, { minWidth: number; height: number }> = {
+  sm: { minWidth: 24, height: 24 },
+  md: { minWidth: 35, height: 35 },
+  lg: { minWidth: 40, height: 40 },
+  xl: { minWidth: 70, height: 70 }, // Changed back to 70px for proper display
 };
 
 export const Avatar = ({ src, alt, size = "md", className }: AvatarProps) => {
@@ -22,10 +22,20 @@ export const Avatar = ({ src, alt, size = "md", className }: AvatarProps) => {
 
   return (
     <div
-      className={classNames("relative rounded-full overflow-hidden", className)}
+      className={classNames(
+        "flex relative rounded-full overflow-hidden",
+        className
+      )}
       style={dimensions}
     >
-      <Image src={src} alt={alt} fill className="object-cover" unoptimized />
+      <Image
+        src={src}
+        alt={alt}
+        width={dimensions.minWidth}
+        height={dimensions.height}
+        className="object-cover"
+        unoptimized
+      />
     </div>
   );
 };

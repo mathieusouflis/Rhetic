@@ -29,7 +29,8 @@
       "required": true
     },
     "description": {
-      "type": "text"
+      "type": "text",
+      "maxLength": 300
     },
     "posts": {
       "type": "relation",
