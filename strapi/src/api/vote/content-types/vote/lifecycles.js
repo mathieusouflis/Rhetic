@@ -37,13 +37,12 @@ module.exports = {
 };
 
 async function recalculatePostVotes(postId) {
-  const upvotes = await strapi.db.query('api::vote.vote').count({
-    where: { post: postId, type: 'upvote' }
+  const votes = await strapi.db.query('api::vote.vote').findMany({
+    where: { post: postId }
   });
   
-  const downvotes = await strapi.db.query('api::vote.vote').count({
-    where: { post: postId, type: 'downvote' }
-  });
+  const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+  const downvotes = votes.filter(vote => vote.type === 'downvote').length;
   
   await strapi.entityService.update('api::post.post', postId, {
     data: {
@@ -55,13 +54,12 @@ async function recalculatePostVotes(postId) {
 }
 
 async function recalculateCommentVotes(commentId) {
-  const upvotes = await strapi.db.query('api::vote.vote').count({
-    where: { comment: commentId, type: 'upvote' }
+  const votes = await strapi.db.query('api::vote.vote').findMany({
+    where: { comment: commentId }
   });
   
-  const downvotes = await strapi.db.query('api::vote.vote').count({
-    where: { comment: commentId, type: 'downvote' }
-  });
+  const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+  const downvotes = votes.filter(vote => vote.type === 'downvote').length;
   
   await strapi.entityService.update('api::comment.comment', commentId, {
     data: {
