@@ -12,6 +12,7 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { CommentType } from "@/types/post";
 import { VotePannel } from "./VotePannel";
+import { ICONS } from "@/config";
 
 export interface CommentProps {
   id: string;
@@ -53,11 +54,7 @@ export const Comment = ({
       onClick={handleCommentClick}
       {...props}
     >
-      <Avatar
-        src="https://images.unsplash.com/photo-1726066012604-a309bd0575df?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        alt="avatar"
-        size="md"
-      />
+      <Avatar src={ICONS.default_user} alt="avatar" size="md" />
       <div className="flex flex-col gap-3 w-full">
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-row gap-3">
