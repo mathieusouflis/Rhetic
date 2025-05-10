@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BigBody, Tiny } from "@/components/ui/Typography";
 import type { NavItem, SidebarItems } from "./types";
 import { NavButton } from "@/components/ui/NavButton";
+import { useAuth } from "@/providers/AuthProvider";
 
 interface SidebarNavProps {
   title?: string;
@@ -13,6 +14,7 @@ interface SidebarNavProps {
 
 export function SidebarNav({ title, items }: SidebarNavProps) {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   const isSidebarItem = (items: SidebarItems): items is NavItem[] => {
     if (!items.length) return false;
@@ -30,6 +32,9 @@ export function SidebarNav({ title, items }: SidebarNavProps) {
   };
 
   const renderNavItem = (item: NavItem) => {
+    if (item.path === "/profile") {
+      item.path = `/users/${user?.id}`;
+    }
     return (
       <Link key={item.path} href={item.path}>
         <NavButton

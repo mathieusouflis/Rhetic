@@ -17,6 +17,7 @@ import Icon from "./Icons";
 import { SearchBar } from "./Searchbar";
 import { TextInput } from "./TextInput";
 import { Body } from "./Typography";
+import LittleAction from "./LittleAction";
 
 interface Media {
   type: "image" | "video";
@@ -248,7 +249,7 @@ const PostWriter: React.FC<
         size="md"
       />
       <div className="flex flex-col gap-4 w-full">
-        {type === "post" && isTitleRequired && (
+        {type === "post" && (
           <>
             <TextInput
               className="w-full"
@@ -375,8 +376,8 @@ const PostWriter: React.FC<
               <Icon name="eye_off" size={17} color="var(--yellow)" />
             </div>
           )}
-          <div className="flex flex-row gap-2.5">
-            {type === "post" && isSubrheticRequired && (
+          <div className="flex flex-row gap-2.5 items-center">
+            {type === "post" && (
               <div className="relative w-fit">
                 <Dropdown
                   isOpen={isSubrheticsDropdownOpen}
@@ -479,7 +480,7 @@ const PostWriter: React.FC<
               type="submit"
               leftIcon={false}
               variant="white"
-              className="self-end"
+              className="h-max"
               disabled={isPostDisabled}
             >
               <strong>

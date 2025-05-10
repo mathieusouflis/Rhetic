@@ -116,7 +116,12 @@ export const Post = ({
                     </span>
                   </>
                 ) : (
-                  post.author?.username
+                  <Link
+                    onClick={(e) => e.stopPropagation()}
+                    href={"/users/" + post.author?.id}
+                  >
+                    {post.author?.username}
+                  </Link>
                 )}
               </Small>
               <Small className="text-[var(--black-100)]">
