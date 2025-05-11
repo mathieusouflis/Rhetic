@@ -1,1 +1,0 @@
-// Variables d'environnement typées
