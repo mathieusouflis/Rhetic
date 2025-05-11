@@ -114,9 +114,14 @@ export const Comment = ({
         <div className="flex flex-col gap-3 w-full">
           <div className="flex flex-row justify-between w-full">
             <div className="flex flex-row gap-3">
-              <Small className="font-semibold text-[var(--black-100)]">
-                {comment.author?.username}
-              </Small>
+              <Link
+                href={"/users/" + comment.author?.id}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Small className="font-semibold text-[var(--black-100)] hover:underline">
+                  {comment.author?.username}
+                </Small>
+              </Link>
               <Small className="text-[var(--black-100)]">
                 {formatRelativeTime(comment.publishedAt)}
               </Small>

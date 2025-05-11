@@ -113,18 +113,24 @@ export const Post = ({
                     <Link
                       onClick={(e) => e.stopPropagation()}
                       href={"/communities/" + post.subrhetic.documentId}
+                      className="hover:underline"
                     >
                       r/{post.subrhetic.name}
                     </Link>{" "}
                     →{" "}
-                    <span className="text-[var(--black-200)]">
+                    <Link
+                      onClick={(e) => e.stopPropagation()}
+                      href={"/users/" + post.author?.id}
+                      className="text-[var(--black-200)] hover:underline"
+                    >
                       {post.author?.username}
-                    </span>
+                    </Link>
                   </>
                 ) : (
                   <Link
                     onClick={(e) => e.stopPropagation()}
                     href={"/users/" + post.author?.id}
+                    className="hover:underline"
                   >
                     {post.author?.username}
                   </Link>

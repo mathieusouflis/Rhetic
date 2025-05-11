@@ -37,7 +37,7 @@ export const Community = ({
     <Link
       href={`/communities/${id}`}
       className={classNames(
-        "flex flex-row w-ful justify-between gap-2.5 items-center",
+        "flex flex-row w-ful justify-between gap-2.5 items-center group",
         className
       )}
     >
@@ -64,7 +64,9 @@ export const Community = ({
             </Small>
           </div>
         )}
-        {variant !== "developed" && <Body>rh/{name.toLowerCase()}</Body>}
+        {variant !== "developed" && (
+          <Body className="group-hover:underline">rh/{name.toLowerCase()}</Body>
+        )}
       </div>
     </Link>
   );
