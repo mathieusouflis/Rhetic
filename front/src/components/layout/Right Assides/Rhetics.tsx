@@ -11,7 +11,6 @@ import { CommunityCreationForm } from "@/components/ui/CommunityCreationForm";
 import { useAuth } from "@/providers/AuthProvider";
 import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
-import Link from "next/link";
 import { ICONS } from "@/config";
 
 interface SidebarProps {

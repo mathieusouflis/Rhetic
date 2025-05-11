@@ -108,7 +108,7 @@ export default function Page() {
       post?.comments &&
       post.comments.length > 0 ? (
         post.comments.map((comment) => {
-          return <Comment comment={comment} />;
+          return <Comment key={comment.documentId} comment={comment} />;
         })
       ) : (
         <Body className="text-center text-[var(--black-300)]">

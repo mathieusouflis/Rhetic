@@ -112,7 +112,7 @@ export default function Page() {
         comment.childrens.map((children) => {
           return (
             <>
-              <Comment comment={children} />;
+              <Comment key={children.documentId} comment={children} />;
             </>
           );
         })
