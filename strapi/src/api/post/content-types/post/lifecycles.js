@@ -1,42 +1,27 @@
 module.exports = {
-  async beforeDelete(event) {
-    const { params } = event;
-    const postId = params.where.id;
+  beforeDelete: async function (event) {
+    const { id } = event.params;
     
-    const post = await strapi.entityService.findOne('api::post.post', postId, {
-      populate: ['votes', 'comments', 'saved_items', 'reports', 'post_flair_assignments'],
-    });
-    
-    if (!post) return;
-    
-    if (post.votes && post.votes.length > 0) {
-      for (const vote of post.votes) {
-        await strapi.entityService.delete('api::vote.vote', vote.id);
+    try {
+      console.log(`=== DÉBUT SUPPRESSION POST ${id} ===`);
+      
+      const comments = await strapi.db.query('api::comment.comment').findMany({
+        where: { post: id }
+      });
+      
+      console.log(`${comments.length} commentaires trouvés pour le post ${id}`);
+      
+      if (comments && comments.length > 0) {
+        for (const comment of comments) {
+          console.log(`Suppression du commentaire ${comment.id}...`);
+          await strapi.entityService.delete('api::comment.comment', comment.id);
+          console.log(`Commentaire ${comment.id} supprimé`);
+        }
       }
-    }
-    
-    if (post.saved_items && post.saved_items.length > 0) {
-      for (const savedItem of post.saved_items) {
-        await strapi.entityService.delete('api::saved-item.saved-item', savedItem.id);
-      }
-    }
-    
-    if (post.reports && post.reports.length > 0) {
-      for (const report of post.reports) {
-        await strapi.entityService.delete('api::report.report', report.id);
-      }
-    }
-    
-    if (post.post_flair_assignments && post.post_flair_assignments.length > 0) {
-      for (const assignment of post.post_flair_assignments) {
-        await strapi.entityService.delete('api::post-flair-assignment.post-flair-assignment', assignment.id);
-      }
-    }
-    
-    if (post.comments && post.comments.length > 0) {
-      for (const comment of post.comments) {
-        await strapi.entityService.delete('api::comment.comment', comment.id);
-      }
+      
+      console.log(`=== FIN SUPPRESSION POST ${id} ===`);
+    } catch (error) {
+      console.error('Erreur dans beforeDelete du post:', error);
     }
   }
 };
