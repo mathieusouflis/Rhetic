@@ -117,17 +117,12 @@ export function Rhetics({ className = "" }: SidebarProps) {
           </Body>
         ) : filteredCommunities.length > 0 ? (
           filteredCommunities.map((community) => (
-            <Link
-              href={`/communities/${community.documentId}`}
+            <Community
               key={community.documentId}
-              className="block"
-            >
-              <Community
-                id={community.documentId}
-                iconUrl={ICONS.default_rhetic}
-                name={community.name}
-              />
-            </Link>
+              id={community.documentId}
+              iconUrl={ICONS.default_rhetic}
+              name={community.name}
+            />
           ))
         ) : (
           <Body className="text-[var(--black-200)]">
