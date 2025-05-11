@@ -71,7 +71,7 @@ export const Post = ({
     }
 
     try {
-      await remove(API_PATHS.POSTS, post.documentId);
+      await remove(API_PATHS.POSTS, post.id);
       if (fullPage) {
         router.push("/");
       } else {
@@ -110,7 +110,13 @@ export const Post = ({
               <Small className="font-semibold text-[var(--black-100)]">
                 {post.subrhetic ? (
                   <>
-                    r/{post.subrhetic.name} →{" "}
+                    <Link
+                      onClick={(e) => e.stopPropagation()}
+                      href={"/communities/" + post.subrhetic.documentId}
+                    >
+                      r/{post.subrhetic.name}
+                    </Link>{" "}
+                    →{" "}
                     <span className="text-[var(--black-200)]">
                       {post.author?.username}
                     </span>
