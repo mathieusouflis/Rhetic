@@ -70,7 +70,7 @@ export const Comment = ({
     }
 
     try {
-      await remove(API_PATHS.COMMENTS, comment.documentId);
+      await remove(API_PATHS.COMMENTS, comment.id);
       if (fullPage) {
         router.push("/");
       } else {
