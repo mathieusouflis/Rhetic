@@ -20,6 +20,8 @@ export interface User {
   updatedAt: string;
   fav_subrhetics?: number[];
   joined_subrhetics?: any;
+  avatar?: string;
+  bio?: string;
 }
 
 export interface AuthResponse {

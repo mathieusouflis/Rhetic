@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsButton, SettingsSwitch } from "@/components/ui/SettingsItem";
+import { SettingsSwitch } from "@/components/ui/SettingsItem";
 import { H1 } from "@/components/ui/Typography";
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ export default function Page() {
       <SettingsSwitch
         label="Communities Posts"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -19,6 +20,7 @@ export default function Page() {
       <SettingsSwitch
         label="Users Posts"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -26,6 +28,7 @@ export default function Page() {
       <SettingsSwitch
         label="Comments"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -33,6 +36,7 @@ export default function Page() {
       <SettingsSwitch
         label="Like Achievements"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -40,6 +44,7 @@ export default function Page() {
       <SettingsSwitch
         label="Message"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -47,6 +52,7 @@ export default function Page() {
       <SettingsSwitch
         label="Role Promotion"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -54,6 +60,7 @@ export default function Page() {
       <SettingsSwitch
         label="Moderation"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}

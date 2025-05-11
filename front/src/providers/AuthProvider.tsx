@@ -17,7 +17,6 @@ import type {
   LoginCredentials,
   RegisterData,
 } from "@/features/auth/types/auth.types";
-import { apiClient } from "@/lib/api/apiClient";
 
 interface AuthContextType {
   user: User | null;

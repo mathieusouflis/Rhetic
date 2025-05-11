@@ -53,9 +53,9 @@ export default function Page() {
           fields: ["id", "documentId", "username", "bio"],
           populate: {
             avatar: true,
-            // followers: {
-            //   count: true,
-            // },
+            followers: {
+              count: true,
+            },
             posts: {
               populate: {
                 Media: true,

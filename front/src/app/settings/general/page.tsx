@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsButton, SettingsSwitch } from "@/components/ui/SettingsItem";
+import { SettingsSwitch } from "@/components/ui/SettingsItem";
 import { H1, H2 } from "@/components/ui/Typography";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ export default function Page() {
       <SettingsSwitch
         label="Dark Theme"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -21,6 +22,7 @@ export default function Page() {
       <SettingsSwitch
         label="Show votes numbers"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}
@@ -28,6 +30,7 @@ export default function Page() {
       <SettingsSwitch
         label="Show NSFC (Not safe for coders)"
         checked={isNotificationsEnabled}
+        disabled
         onChange={(checked) => {
           setIsNotificationsEnabled((old) => !old);
         }}

@@ -9,9 +9,10 @@ export default function Page() {
   return (
     <>
       <H1>Shortcuts</H1>
-      {SHORTCUTS_LIST.map((shortcutItem) => {
+      {SHORTCUTS_LIST.map((shortcutItem, index) => {
         return (
           <SettingsShortcut
+            key={index}
             label={shortcutItem.name}
             value={shortcutItem.shortcut}
           />

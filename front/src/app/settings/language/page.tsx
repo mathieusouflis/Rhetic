@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <H1>Language</H1>
       {LANGUAGES_LIST.map((shortcutItem) => {
-        return <SettingsRadio label={shortcutItem.name} />;
+        return <SettingsRadio disabled label={shortcutItem.name} />;
       })}
     </>
   );
