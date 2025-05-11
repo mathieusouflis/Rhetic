@@ -2,7 +2,6 @@
 
 import { ActionButton } from "@/components/ui/ActionButton";
 import { Comment } from "@/components/ui/Comment";
-import { Post } from "@/components/ui/Post";
 import PostWriter from "@/components/ui/PostWriter";
 import { Body } from "@/components/ui/Typography";
 import { fetchOne } from "@/lib/api/apiClient";

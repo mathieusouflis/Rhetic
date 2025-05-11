@@ -14,7 +14,7 @@ export default function Page() {
         label="Dark Theme"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -23,7 +23,7 @@ export default function Page() {
         label="Show votes numbers"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -31,7 +31,7 @@ export default function Page() {
         label="Show NSFC (Not safe for coders)"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />

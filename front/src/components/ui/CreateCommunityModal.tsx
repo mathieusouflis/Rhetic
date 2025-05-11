@@ -20,14 +20,10 @@ export const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
 }) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSuccess = () => {
-    setIsProcessing(true);
-
     setTimeout(() => {
       setIsOpen(false);
-      setIsProcessing(false);
       if (onCommunityCreated) {
         onCommunityCreated();
       }

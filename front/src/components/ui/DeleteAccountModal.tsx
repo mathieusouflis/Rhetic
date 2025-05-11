@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { H2, Body, H1 } from "./Typography";
+import { Body, H1 } from "./Typography";
 import { ActionButton } from "./ActionButton";
 import { useAuth } from "@/providers/AuthProvider";
 import { remove } from "@/lib/api/apiClient";

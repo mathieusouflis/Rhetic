@@ -55,7 +55,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
     Record<string | number, boolean>
   >({});
 
-  // Toggle category expansion
   const toggleCategory = (categoryId: string | number) => {
     setExpandedCategories((prev) => ({
       ...prev,
@@ -63,14 +62,12 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
     }));
   };
 
-  // Filter tags based on search term
   const filteredTags = searchTerm
     ? availableTags.filter((tag) =>
         tag.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : availableTags;
 
-  // Filter categories based on search term
   const filteredCategories = searchTerm
     ? tagCategories
         .map((category) => ({
@@ -82,27 +79,22 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         .filter((category) => category.tags.length > 0)
     : tagCategories;
 
-  // Toggle tag selection
   const toggleTag = (tag: Tag) => {
     const isSelected = selectedTags.some((t) => t.id === tag.id);
 
     if (isSelected) {
-      // Remove tag if already selected
       onTagsChange(selectedTags.filter((t) => t.id !== tag.id));
     } else {
-      // Check if we've reached max tags limit
       if (maxTags && selectedTags.length >= maxTags) {
-        return; // Don't add more tags if we hit the limit
+        return;
       }
-      // Add tag if not selected yet
+
       onTagsChange([...selectedTags, tag]);
     }
   };
 
-  // Check if a tag is selected
   const isTagSelected = (tag: Tag) => selectedTags.some((t) => t.id === tag.id);
 
-  // Render a tag button
   const renderTagButton = (tag: Tag) => (
     <button
       key={tag.id}
@@ -128,7 +120,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
 
   return (
     <div className={classNames("flex flex-col gap-3", className)}>
-      {/* Search bar for filtering tags */}
       <SearchBar
         placeholder={searchPlaceholder}
         value={searchTerm}
@@ -137,7 +128,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         className="w-full"
       />
 
-      {/* Display max tags limit message if applicable */}
       {maxTags && (
         <Body
           className={classNames("text-[var(--black-300)]", {
@@ -149,7 +139,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         </Body>
       )}
 
-      {/* Selected tags section */}
       {selectedTags.length > 0 && (
         <div className="flex flex-col gap-1.5">
           <Body className="font-medium">Selected topics:</Body>
@@ -173,7 +162,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         </div>
       )}
 
-      {/* Available tags section */}
       <div className="flex flex-col gap-1.5">
         <Body className="font-medium">Available topics:</Body>
 
@@ -185,7 +173,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
               <Body className="text-[var(--black-300)]">{loadingText}</Body>
             </div>
           ) : groupByCategory && filteredCategories.length > 0 ? (
-            // Afficher les tags regroupés par catégorie
             filteredCategories.map((category) => (
               <div
                 key={category.category.id}
@@ -212,7 +199,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
               </div>
             ))
           ) : filteredTags.length > 0 ? (
-            // Afficher tous les tags sans catégorie
             <div className="flex flex-wrap gap-2">
               {filteredTags.map(renderTagButton)}
             </div>

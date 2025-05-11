@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { MultiStepForm, Step } from "./MultiStepForm/MultiStepForm";
 import { TextInput } from "./TextInput";
-import { Body, H2 } from "./Typography";
-import Icon from "./Icons";
 import { useAuth } from "@/providers/AuthProvider";
 import { apiClient } from "@/lib/api/apiClient";
 
@@ -17,7 +15,6 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const { user } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

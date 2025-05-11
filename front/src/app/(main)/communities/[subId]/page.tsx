@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Post } from "@/components/ui/Post";
 import PostWriter from "@/components/ui/PostWriter";
 import { Body, H1 } from "@/components/ui/Typography";
-import { fetchOne, remove } from "@/lib/api/apiClient";
+import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { useAuth } from "@/providers/AuthProvider";
 import { PostType } from "@/types/post";

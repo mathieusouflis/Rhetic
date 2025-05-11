@@ -17,7 +17,6 @@ import Icon from "./Icons";
 import { SearchBar } from "./Searchbar";
 import { TextInput } from "./TextInput";
 import { Body } from "./Typography";
-import LittleAction from "./LittleAction";
 
 interface Media {
   type: "image" | "video";

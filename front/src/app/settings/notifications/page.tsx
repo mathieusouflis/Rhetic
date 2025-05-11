@@ -13,7 +13,7 @@ export default function Page() {
         label="Communities Posts"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -21,7 +21,7 @@ export default function Page() {
         label="Users Posts"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -29,7 +29,7 @@ export default function Page() {
         label="Comments"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -37,7 +37,7 @@ export default function Page() {
         label="Like Achievements"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -45,7 +45,7 @@ export default function Page() {
         label="Message"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -53,7 +53,7 @@ export default function Page() {
         label="Role Promotion"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />
@@ -61,7 +61,7 @@ export default function Page() {
         label="Moderation"
         checked={isNotificationsEnabled}
         disabled
-        onChange={(checked) => {
+        onChange={() => {
           setIsNotificationsEnabled((old) => !old);
         }}
       />

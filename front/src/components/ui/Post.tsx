@@ -12,7 +12,7 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
-import { ImageSet, SetImage } from "./ImageSet";
+import { SetImage } from "./ImageSet";
 import { API_CONFIG, ICONS } from "@/config";
 import {
   Dropdown,
@@ -22,7 +22,7 @@ import {
 } from "./Dropdown";
 import { useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
-import { remove, update } from "@/lib/api/apiClient";
+import { remove } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import PostEditModal from "./PostEditModal/PostEditModal";
 

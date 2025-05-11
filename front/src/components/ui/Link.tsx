@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 import NextLink from "next/link";
-import Icon, { IconName } from "./Icons";
 
 export interface LinkProps
   extends React.AnchorHTMLAttributes<HTMLAnchorElement> {

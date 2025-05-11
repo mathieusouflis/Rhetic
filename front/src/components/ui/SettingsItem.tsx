@@ -2,7 +2,6 @@ import React from "react";
 import Icon from "./Icons";
 import { Body, Small } from "./Typography";
 import classNames from "classnames";
-import { Select } from "./Select";
 import { Radio } from "./Radio";
 import { Switch } from "./Switch";
 import Shortcut from "./Shortcut";
@@ -36,18 +35,6 @@ interface SettingsShortcutProps extends BaseSettingsItemProps {
 interface SettingsRadioOption {
   label: string;
   value: string;
-}
-
-interface SettingsRadioProps extends BaseSettingsItemProps {
-  options: SettingsRadioOption[];
-  value: string;
-  onChange: (value: string) => void;
-}
-
-interface SettingsCheckboxProps extends BaseSettingsItemProps {
-  options: SettingsRadioOption[];
-  value: string[];
-  onChange: (value: string[]) => void;
 }
 
 interface SettingsSwitchProps extends BaseSettingsItemProps {

@@ -7,7 +7,7 @@ import { fetchMany, create, upload } from "@/lib/api/apiClient";
 import { MultiStepForm, Step } from "./MultiStepForm/MultiStepForm";
 import { TextInput } from "./TextInput";
 import { Textarea } from "./Textarea";
-import { TagSelector, Tag, Category, TagCategory } from "./TagSelector";
+import { TagSelector, Tag, TagCategory } from "./TagSelector";
 import { H2 } from "./Typography";
 import { z } from "zod";
 import { AvatarUploader } from "./AvatarUploader";

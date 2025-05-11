@@ -7,7 +7,7 @@ interface RadioProps
   onChange?: (checked: boolean) => void;
 }
 
-export function Radio({ checked, className, onChange, ...props }: RadioProps) {
+export function Radio({ checked, className, onChange }: RadioProps) {
   const handleClick = (event: React.MouseEvent) => {
     event.preventDefault();
     onChange?.(!checked);

@@ -1,9 +1,5 @@
 import classNames from "classnames";
-interface TinyButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  direction: "width" | "height";
-  className?: string;
-}
+
 export const Separator = ({ direction = "width", ...props }) => {
   return (
     <div

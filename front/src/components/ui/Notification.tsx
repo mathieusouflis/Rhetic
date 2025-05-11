@@ -1,5 +1,5 @@
 import React from "react";
-import { Body, Small } from "./Typography";
+import { Small } from "./Typography";
 
 type NotificationVariant = "white" | "red";
 type NotificationStatus = "default" | "active";

@@ -6,7 +6,7 @@ import Icon from "../Icons";
 import { API_PATHS } from "@/lib/api/config";
 import { API_CONFIG } from "@/config";
 import { PostType } from "@/types/post";
-import { fetchOne, update, upload } from "@/lib/api/apiClient";
+import { update, upload } from "@/lib/api/apiClient";
 import { useRouter } from "next/navigation";
 import { Textarea } from "../Textarea";
 
@@ -28,7 +28,6 @@ export const PostEditModal: React.FC<PostEditModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState(post.title || "");
   const [content, setContent] = useState(post.content || "");

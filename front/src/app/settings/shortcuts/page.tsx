@@ -3,7 +3,6 @@
 import { SettingsShortcut } from "@/components/ui/SettingsItem";
 import { H1 } from "@/components/ui/Typography";
 import { SHORTCUTS_LIST } from "@/config/shortcuts";
-import { useState } from "react";
 
 export default function Page() {
   return (

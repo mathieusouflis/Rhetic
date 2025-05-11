@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import { MultiStepForm, Step } from "./MultiStepForm/MultiStepForm";
 import { TextInput } from "./TextInput";
-import { H2 } from "./Typography";
-import Icon from "./Icons";
 import { useAuth } from "@/providers/AuthProvider";
 import { API_PATHS } from "@/lib/api/config";
 import { updateWithoutAxios } from "@/lib/api/helpers";

@@ -1,5 +1,4 @@
 import { SettingsSidebar } from "@/components/layout/Sidebar/SettingsSidebar";
-import { Sidebar } from "@/components/layout/Sidebar/Sidebar";
 import { SETTINGS_NAV_ITEMS } from "@/config/navigation";
 
 export default function MainLayout({

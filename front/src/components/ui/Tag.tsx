@@ -16,7 +16,7 @@ const iconsNames: Record<TagName, IconName> = {
   mod: "shield",
 };
 
-const Tag: React.FC<TagProps> = ({ name, variant = "default", ...props }) => {
+const Tag: React.FC<TagProps> = ({ name, variant = "default" }) => {
   return (
     <div className="flex flex-row gap-1 items-center w-fit justify-center uppercase text-[var(--white)] bg-[var(--yellow-bg-transparent)] border border-[var(--yellow-border-transparent)] rounded-[4px] px-1.5 py-1">
       <Icon name={iconsNames[name]} size={12} color="var(--white)" />

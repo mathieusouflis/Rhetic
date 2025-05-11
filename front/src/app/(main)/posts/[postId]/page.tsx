@@ -9,7 +9,6 @@ import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { useAuth } from "@/providers/AuthProvider";
 import { PostType } from "@/types/post";
-import { count } from "console";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

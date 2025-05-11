@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Icon from "./Icons";
-import { Body, Small } from "./Typography";
+import { Body } from "./Typography";
 import classNames from "classnames";
 
 interface SelectOption {

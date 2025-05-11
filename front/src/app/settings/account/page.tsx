@@ -1,18 +1,13 @@
 "use client";
 
-import {
-  SettingsButton,
-  SettingsRadio,
-  SettingsSwitch,
-} from "@/components/ui/SettingsItem";
+import { SettingsButton, SettingsSwitch } from "@/components/ui/SettingsItem";
 import { H1, H2, Body } from "@/components/ui/Typography";
 import { useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
-import { Modal } from "@/components/ui/Modal";
 import EmailChangeModal from "@/components/ui/EmailChangeModal";
 import PasswordChangeModal from "@/components/ui/PasswordChangeModal";
 import DeleteAccountModal from "@/components/ui/DeleteAccountModal";
-import { formatDate, formatRelativeTime } from "@/lib/utils/date";
+import { formatDate } from "@/lib/utils/date";
 
 export default function Page() {
   const { user } = useAuth();
