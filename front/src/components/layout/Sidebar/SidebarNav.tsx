@@ -31,18 +31,40 @@ export function SidebarNav({ title, items }: SidebarNavProps) {
     return pathname === path;
   };
 
+  const hasProfileLink = items.some((item) => {
+    if ("path" in item && item.path === "/profile") {
+      return true;
+    }
+
+    if ("items" in item) {
+      return item.items.some((subItem) => subItem.path === "/profile");
+    }
+    return false;
+  });
+
+  if (hasProfileLink && !user) {
+    return (
+      <div className="flex flex-col gap-2.5 animate-pulse">
+        <div className="h-8 bg-[var(--black-600)] rounded w-full"></div>
+        <div className="h-8 bg-[var(--black-600)] rounded w-full"></div>
+        <div className="h-8 bg-[var(--black-600)] rounded w-full"></div>
+      </div>
+    );
+  }
+
   const renderNavItem = (item: NavItem) => {
-    if (item.path === "/profile") {
-      item.path = `/users/${user?.id}`;
+    let path = item.path;
+    if (path === "/profile" && user) {
+      path = `/users/${user.id}`;
     }
     return (
-      <Link key={item.path} href={item.path}>
+      <Link key={path} href={path}>
         <NavButton
           leftIcon
           leftIconName={item.icon}
           disabled={item.isDisabled}
           className="w-full"
-          variant={isActiveRoute(item.path) ? "selected" : "black"}
+          variant={isActiveRoute(path) ? "selected" : "black"}
         >
           {item.label}
         </NavButton>
