@@ -1,7 +1,7 @@
 import { factories } from '@strapi/strapi';
 import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
-export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi, nexus }) => ({
+export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi }) => ({
   async join(ctx: StrapiContext) {
     try {
       const { id } = ctx.params;
@@ -54,7 +54,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       ) as Subrhetic;
       
-      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+      return { data: updatedSubrhetic };
     } catch (error) {
       console.error('Erreur lors de l\'adhésion au subrhetic:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -112,7 +112,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       ) as Subrhetic;
       
-      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+      return { data: updatedSubrhetic };
     } catch (error) {
       console.error('Erreur lors du départ du subrhetic:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -173,7 +173,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       ) as Subrhetic;
       
-      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+      return { data: updatedSubrhetic };
     } catch (error) {
       console.error('Erreur lors de la suppression du membre:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -249,7 +249,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       ) as Subrhetic;
       
-      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+      return { data: updatedSubrhetic };
     } catch (error) {
       console.error('Erreur lors du bannissement:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
@@ -303,91 +303,92 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         }
       ) as Subrhetic;
       
-      return nexus.sanitizeOutput(updatedSubrhetic, ctx);
+      return { data: updatedSubrhetic };
     } catch (error) {
       console.error('Erreur lors du débannissement:', error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
+  
   async autoJoin(ctx) {
-  try {
-    const { id } = ctx.params;
-    const userId = ctx.state.user?.id;
-    
-    if (!userId) {
-      return ctx.unauthorized("Vous devez être connecté pour rejoindre un subrhetic");
-    }
-    
-    const subrhetic = await strapi.entityService.findOne(
-      'api::subrhetic.subrhetic', 
-      id, 
-      { populate: ['members', 'banned_users'] }
-    );
-    
-    if (!subrhetic) {
-      return ctx.notFound("Subrhetic introuvable");
-    }
-    
-    if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
-      const isBanned = subrhetic.banned_users.some((user) => {
-        const bannedId = typeof user === 'object' ? user.id : user;
-        return bannedId === userId;
-      });
-      
-      if (isBanned) {
-        return ctx.forbidden("Vous êtes banni de ce subrhetic");
-      }
-    }
-    
-    if (subrhetic.members && Array.isArray(subrhetic.members)) {
-      const isMember = subrhetic.members.some((user) => {
-        const memberId = typeof user === 'object' ? user.id : user;
-        return memberId === userId;
-      });
-      
-      if (isMember) {
-        return ctx.badRequest("Vous êtes déjà membre de ce subrhetic");
-      }
-    }
-    
-    const currentMembers = subrhetic.members?.map(member => 
-      typeof member === 'object' ? member.id : member
-    ) || [];
-    
-    if (!currentMembers.includes(userId)) {
-      currentMembers.push(userId);
-    }
-    
-    const updatedSubrhetic = await strapi.entityService.update(
-      'api::subrhetic.subrhetic', 
-      id, 
-      {
-        data: {
-          members: currentMembers
-        },
-        populate: ['members']
-      }
-    );
-    
     try {
-      await strapi.entityService.create('api::user-activity-log.user-activity-log', {
-        data: {
-          users_permissions_user: userId,
-          activity_type: 'subrhetic_join',
-          item_id: id,
-          item_type: 'subrhetic',
-          ip_adress: ctx.request.ip,
-          user_agent: ctx.request.header['user-agent']
+      const { id } = ctx.params;
+      const userId = ctx.state.user?.id;
+      
+      if (!userId) {
+        return ctx.unauthorized("Vous devez être connecté pour rejoindre un subrhetic");
+      }
+      
+      const subrhetic = await strapi.entityService.findOne(
+        'api::subrhetic.subrhetic', 
+        id, 
+        { populate: ['members', 'banned_users'] }
+      );
+      
+      if (!subrhetic) {
+        return ctx.notFound("Subrhetic introuvable");
+      }
+      
+      if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+        const isBanned = subrhetic.banned_users.some((user) => {
+          const bannedId = typeof user === 'object' ? user.id : user;
+          return bannedId === userId;
+        });
+        
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic");
         }
-      });
+      }
+      
+      if (subrhetic.members && Array.isArray(subrhetic.members)) {
+        const isMember = subrhetic.members.some((user) => {
+          const memberId = typeof user === 'object' ? user.id : user;
+          return memberId === userId;
+        });
+        
+        if (isMember) {
+          return ctx.badRequest("Vous êtes déjà membre de ce subrhetic");
+        }
+      }
+      
+      const currentMembers = subrhetic.members?.map(member => 
+        typeof member === 'object' ? member.id : member
+      ) || [];
+      
+      if (!currentMembers.includes(userId)) {
+        currentMembers.push(userId);
+      }
+      
+      const updatedSubrhetic = await strapi.entityService.update(
+        'api::subrhetic.subrhetic', 
+        id, 
+        {
+          data: {
+            members: currentMembers
+          },
+          populate: ['members']
+        }
+      );
+      
+      try {
+        await strapi.entityService.create('api::user-activity-log.user-activity-log', {
+          data: {
+            users_permissions_user: userId,
+            activity_type: 'subrhetic_join',
+            item_id: id,
+            item_type: 'subrhetic',
+            ip_adress: ctx.request.ip,
+            user_agent: ctx.request.header['user-agent']
+          }
+        });
+      } catch (error) {
+        console.error("Erreur lors de la création du log d'activité:", error);
+      }
+      
+      return { data: updatedSubrhetic };
     } catch (error) {
-      console.error("Erreur lors de la création du log d'activité:", error);
+      console.error('Erreur lors de la rejointe automatique au subrhetic:', error);
+      return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    return updatedSubrhetic;
-  } catch (error) {
-    console.error('Erreur lors de la rejointe automatique au subrhetic:', error);
-    return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
   }
-}
 }));
