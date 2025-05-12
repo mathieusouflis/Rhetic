@@ -6,6 +6,8 @@ import { useAuth } from "@/providers/AuthProvider";
 import { API_PATHS } from "@/lib/api/config";
 import { Textarea } from "./Textarea";
 import { updateWithoutAxios } from "@/lib/api/helpers";
+import { useApiError } from "@/hooks/useApiError";
+import toast from "react-hot-toast";
 
 interface BioChangeModalProps {
   onClose: () => void;
@@ -20,8 +22,12 @@ export const BioChangeModal: React.FC<BioChangeModalProps> = ({
 }) => {
   const { user, setUser } = useAuth();
   const [newBio, setNewBio] = useState(currentBio);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    error,
+    setError,
+    isLoading: isSubmitting,
+    executeApiCall,
+  } = useApiError();
 
   const validateBio = () => {
     if (newBio && newBio.length > 500) {
@@ -36,30 +42,36 @@ export const BioChangeModal: React.FC<BioChangeModalProps> = ({
   const handleSubmit = async () => {
     if (!validateBio() || !user?.id) return;
 
-    try {
-      setIsSubmitting(true);
-      const response = await updateWithoutAxios(
-        API_PATHS.USERS,
-        user.id.toString(),
-        {
-          bio: newBio,
-        }
-      );
+    const toastId = toast.loading("Mise à jour de la bio...");
 
-      if (response) {
-        setUser({ ...user, bio: newBio });
-        onSuccess();
-      } else {
-        throw new Error("La mise à jour de la bio a échoué");
-      }
-    } catch (error: any) {
-      console.error("Erreur lors de la mise à jour de la bio:", error);
-      setError(
-        error.message ||
-          "Une erreur est survenue lors de la mise à jour de la bio"
+    try {
+      await executeApiCall(
+        async () => {
+          const response = await updateWithoutAxios(
+            API_PATHS.USERS,
+            user.id.toString(),
+            {
+              bio: newBio,
+            }
+          );
+
+          if (!response) {
+            throw new Error("La mise à jour de la bio a échoué");
+          }
+
+          return response;
+        },
+        (response) => {
+          setUser({ ...user, bio: newBio });
+          toast.success("Bio mise à jour avec succès", { id: toastId });
+          onSuccess();
+        },
+        "Une erreur est survenue lors de la mise à jour de la bio",
+        false
       );
-    } finally {
-      setIsSubmitting(false);
+    } catch (error: any) {
+      toast.error(error.message || "Une erreur est survenue", { id: toastId });
+      console.error("Erreur détaillée:", error.originalError);
     }
   };
 

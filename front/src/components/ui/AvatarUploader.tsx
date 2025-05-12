@@ -38,6 +38,7 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const displayUrl = selectedImageUrl || previewUrl;
 
   const sizeClasses = {
     sm: "w-16 h-16",
@@ -157,10 +158,17 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        {selectedImageUrl ? (
+        {isUploading ? (
+          <div className="flex flex-col items-center justify-center text-[var(--black-300)]">
+            <Icon name="loader" size={24} className="animate-spin" />
+            <Body className="text-center text-[var(--black-300)] mt-1">
+              Chargement...
+            </Body>
+          </div>
+        ) : displayUrl ? (
           <>
             <img
-              src={selectedImageUrl}
+              src={displayUrl}
               alt="Selected icon"
               className="w-full h-full object-cover"
             />
@@ -168,10 +176,6 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
               <Icon name="edit" size={24} className="text-white" />
             </div>
           </>
-        ) : isUploading ? (
-          <div className="flex flex-col items-center justify-center text-[var(--black-300)]">
-            <Icon name="loader" size={24} className="animate-spin" />
-          </div>
         ) : (
           <div className="flex flex-col items-center justify-center p-2 cursor-pointer">
             <Icon name="upload" size={20} className="text-[var(--black-300)]" />
@@ -193,10 +197,10 @@ export const AvatarUploader: React.FC<AvatarUploaderProps> = ({
 
       {error && <Body className="text-[var(--red-500)]">{error}</Body>}
 
-      {selectedImageUrl && (
-        <div className="flex gap-2">
+      {displayUrl && !isUploading && (
+        <div className="flex gap-2 mt-2">
           <ActionButton variant="gray" onClick={handleRemove} leftIcon={false}>
-            Remove
+            Supprimer
           </ActionButton>
         </div>
       )}

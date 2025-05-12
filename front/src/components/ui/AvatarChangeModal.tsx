@@ -7,6 +7,8 @@ import { upload } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { AvatarUploader } from "./AvatarUploader";
 import { updateWithoutAxios } from "@/lib/api/helpers";
+import { useApiError } from "@/hooks/useApiError";
+import toast from "react-hot-toast";
 
 interface AvatarChangeModalProps {
   onClose: () => void;
@@ -24,8 +26,12 @@ export const AvatarChangeModal: React.FC<AvatarChangeModalProps> = ({
   const [selectedImageUrl, setSelectedImageUrl] = useState<string>(
     currentAvatar || ""
   );
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    error,
+    setError,
+    isLoading: isSubmitting,
+    executeApiCall,
+  } = useApiError();
   const [isUploading, setIsUploading] = useState(false);
 
   const validateAvatar = () => {
@@ -40,43 +46,59 @@ export const AvatarChangeModal: React.FC<AvatarChangeModalProps> = ({
   const handleSubmit = async () => {
     if (!validateAvatar() || !user?.id) return;
 
+    const toastId = toast.loading("Mise à jour de l'avatar...");
+
     try {
-      setIsSubmitting(true);
+      await executeApiCall(
+        async () => {
+          if (selectedFile) {
+            setIsUploading(true);
+            const uploadedFiles = await upload(selectedFile);
+            setIsUploading(false);
 
-      if (selectedFile) {
-        const uploadedFiles = await upload(selectedFile);
-        if (!uploadedFiles || uploadedFiles.length === 0) {
-          throw new Error("Échec du téléchargement de l'image");
-        }
+            if (!uploadedFiles || uploadedFiles.length === 0) {
+              throw new Error("Échec du téléchargement de l'image");
+            }
 
-        const avatarId = uploadedFiles[0].id;
+            const avatarId = uploadedFiles[0].id;
 
-        const response = await updateWithoutAxios(
-          API_PATHS.USERS,
-          user.id.toString(),
-          {
-            avatar: avatarId,
+            const response = await updateWithoutAxios(
+              API_PATHS.USERS,
+              user.id.toString(),
+              {
+                avatar: avatarId,
+              }
+            );
+
+            if (response) {
+              setUser({
+                ...user,
+                avatar: uploadedFiles[0].url,
+              });
+              return response;
+            } else {
+              throw new Error("La mise à jour du profil a échoué");
+            }
           }
-        );
-
-        if (response) {
-          setUser({
-            ...user,
-            avatar: uploadedFiles[0].url,
-          });
-          onSuccess();
-        } else {
-          throw new Error("La mise à jour du profil a échoué");
-        }
-      }
-    } catch (error: any) {
-      console.error("Erreur lors de la mise à jour de l'avatar:", error);
-      setError(
-        error.message ||
-          "Une erreur est survenue lors de la mise à jour de l'avatar"
+          return null;
+        },
+        (response) => {
+          if (response) {
+            toast.success("Photo de profil mise à jour avec succès", {
+              id: toastId,
+            });
+            onSuccess();
+          } else {
+            toast.dismiss(toastId);
+            toast.error("Aucune modification effectuée");
+          }
+        },
+        "Une erreur est survenue lors de la mise à jour de l'avatar",
+        false
       );
-    } finally {
-      setIsSubmitting(false);
+    } catch (error: any) {
+      toast.error(error.message || "Une erreur est survenue", { id: toastId });
+      console.error("Erreur détaillée:", error.originalError);
     }
   };
 

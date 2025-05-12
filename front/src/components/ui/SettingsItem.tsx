@@ -49,7 +49,7 @@ const baseStyles = `
   w-full p-4 rounded-md
   hover:bg-[var(--black-700)]
   border border-transparent
-  transition-colors
+  transition-colors group
 `;
 
 export function SettingsButton({
@@ -76,14 +76,25 @@ export function SettingsButton({
       {...props}
     >
       <div className="flex flex-col gap-1">
-        <Body className={disabled ? "text-[var(--black-300)]" : ""}>
+        <Body
+          className={
+            disabled
+              ? "text-[var(--black-300)]"
+              : variant === "danger"
+              ? "text-red-400"
+              : "group-hover:text-[var(--white)] text-[var(--black-100)]"
+          }
+        >
           {label}
         </Body>
         {description && (
           <Small
             className={classNames(
-              disabled ? "text-[var(--black-400)]" : "text-[var(--black-300)]",
-              variant === "danger" && !disabled && "text-red-400"
+              disabled
+                ? "text-[var(--black-300)]"
+                : variant === "danger"
+                ? "text-red-400"
+                : "text-[var(--black-100)]"
             )}
           >
             {description}
@@ -92,7 +103,11 @@ export function SettingsButton({
       </div>
       <div className="flex items-center gap-2">
         {value && (
-          <Body className={disabled ? "text-[var(--black-300)]" : ""}>
+          <Body
+            className={
+              disabled ? "text-[var(--black-300)]" : "text-[var(--black-100)]"
+            }
+          >
             {value}
           </Body>
         )}
@@ -100,9 +115,10 @@ export function SettingsButton({
           <Icon
             name="chevron_right"
             size={20}
+            color="var(--black-100)"
             className={classNames(
-              variant === "danger" && !disabled ? "text-red-500" : "",
-              disabled && "text-[var(--black-400)]"
+              variant === "danger" && !disabled ? "text-red-400" : "",
+              disabled && "text-[var(--black-300)]"
             )}
           />
         )}
@@ -127,13 +143,19 @@ export function SettingsText({
       )}
     >
       <div className="flex flex-col gap-1">
-        <Body className={disabled ? "text-[var(--black-300)]" : ""}>
+        <Body
+          className={
+            disabled
+              ? "text-[var(--black-300)]"
+              : "text-[var(--black-100)] group-hover:text-[var(--white)]"
+          }
+        >
           {label}
         </Body>
         {description && (
           <Small
             className={
-              disabled ? "text-[var(--black-400)]" : "text-[var(--black-300)]"
+              disabled ? "text-[var(--black-300)]" : "text-[var(--black-300)]"
             }
           >
             {description}
@@ -142,7 +164,7 @@ export function SettingsText({
       </div>
       <Body
         className={
-          disabled ? "text-[var(--black-400)]" : "text-[var(--black-300)]"
+          disabled ? "text-[var(--black-300)]" : "text-[var(--black-300)]"
         }
       >
         {value}
@@ -167,13 +189,19 @@ export function SettingsShortcut({
       )}
     >
       <div className="flex flex-col gap-1">
-        <Body className={disabled ? "text-[var(--black-300)]" : ""}>
+        <Body
+          className={
+            disabled
+              ? "text-[var(--black-300)]"
+              : "text-[var(--black-100)] group-hover:text-[var(--white)]"
+          }
+        >
           {label}
         </Body>
         {description && (
           <Small
             className={
-              disabled ? "text-[var(--black-400)]" : "text-[var(--black-300)]"
+              disabled ? "text-[var(--black-300)]" : "text-[var(--black-300)]"
             }
           >
             {description}
@@ -197,11 +225,31 @@ export function SettingsSwitch({
   variant = "default",
 }: SettingsSwitchProps) {
   return (
-    <div className={classNames(baseStyles, className)}>
+    <div
+      className={classNames(
+        baseStyles,
+        disabled && "opacity-50 cursor-not-allowed hover:bg-transparent",
+        className
+      )}
+    >
       <div className="flex flex-col gap-1">
-        <Body>{label}</Body>
+        <Body
+          className={
+            disabled
+              ? "text-[var(--black-300)]"
+              : "text-[var(--black-100)] group-hover:text-[var(--white)]"
+          }
+        >
+          {label}
+        </Body>
         {description && (
-          <Small className="text-[var(--black-300)]">{description}</Small>
+          <Small
+            className={
+              disabled ? "text-[var(--black-300)]" : "text-[var(--black-300)]"
+            }
+          >
+            {description}
+          </Small>
         )}
       </div>
       <Switch
@@ -225,19 +273,29 @@ export const SettingsRadio: React.FC<{
   return (
     <div
       className={classNames(
-        "p-4 flex justify-between items-center gap-4 bg-[var(--black-700)] border border-[var(--black-500)] rounded-[10px]",
-        disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+        baseStyles,
+        "p-4 flex justify-between items-center gap-4 bg-[var(--black-700)] rounded-[10px]",
+        disabled
+          ? "opacity-50 cursor-not-allowed hover:bg-transparent"
+          : "cursor-pointer",
+        classNames
       )}
       onClick={() => !disabled && onChange?.(!checked)}
     >
       <div className="flex flex-col gap-1">
-        <Body className={disabled ? "text-[var(--black-300)]" : ""}>
+        <Body
+          className={
+            disabled
+              ? "text-[var(--black-300)]"
+              : "text-[var(--black-100)] group-hover:text-[var(--white)]"
+          }
+        >
           {label}
         </Body>
         {description && (
           <Small
             className={
-              disabled ? "text-[var(--black-400)]" : "text-[var(--black-100)]"
+              disabled ? "text-[var(--black-300)]" : "text-[var(--black-300)]"
             }
           >
             {description}

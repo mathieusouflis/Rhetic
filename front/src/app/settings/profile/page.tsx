@@ -1,7 +1,7 @@
 "use client";
 
 import { SettingsButton, SettingsSwitch } from "@/components/ui/SettingsItem";
-import { H1, Body } from "@/components/ui/Typography";
+import { H1 } from "@/components/ui/Typography";
 import { useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
 import UsernameChangeModal from "@/components/ui/UsernameChangeModal";
@@ -15,24 +15,10 @@ export default function Page() {
   const [isUsernameModalOpen, setIsUsernameModalOpen] = useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
-
-  const handleSuccess = (message: string) => {
-    setStatusMessage(message);
-    setTimeout(() => {
-      setStatusMessage("");
-    }, 3000);
-  };
 
   return (
     <>
       <H1>Mon Profil</H1>
-
-      {statusMessage && (
-        <div className="mb-4 p-3 bg-green-900/30 border border-green-800/50 rounded-md">
-          <Body className="text-green-400">{statusMessage}</Body>
-        </div>
-      )}
 
       <SettingsButton
         label="Nom d'utilisateur"
@@ -63,10 +49,7 @@ export default function Page() {
       {isUsernameModalOpen && (
         <UsernameChangeModal
           onClose={() => setIsUsernameModalOpen(false)}
-          onSuccess={() => {
-            setIsUsernameModalOpen(false);
-            handleSuccess("Nom d'utilisateur mis à jour avec succès");
-          }}
+          onSuccess={() => setIsUsernameModalOpen(false)}
           currentUsername={user?.username || ""}
         />
       )}
@@ -74,10 +57,7 @@ export default function Page() {
       {isAvatarModalOpen && (
         <AvatarChangeModal
           onClose={() => setIsAvatarModalOpen(false)}
-          onSuccess={() => {
-            setIsAvatarModalOpen(false);
-            handleSuccess("Photo de profil mise à jour avec succès");
-          }}
+          onSuccess={() => setIsAvatarModalOpen(false)}
           currentAvatar={user?.avatar || ""}
         />
       )}
@@ -85,10 +65,7 @@ export default function Page() {
       {isBioModalOpen && (
         <BioChangeModal
           onClose={() => setIsBioModalOpen(false)}
-          onSuccess={() => {
-            setIsBioModalOpen(false);
-            handleSuccess("Bio mise à jour avec succès");
-          }}
+          onSuccess={() => setIsBioModalOpen(false)}
           currentBio={user?.bio || ""}
         />
       )}

@@ -1,6 +1,13 @@
 import React, { forwardRef, useState } from "react";
 import LittleAction from "./LittleAction";
-import { create, remove, update } from "@/lib/api/apiClient";
+import {
+  upvotePost,
+  downvotePost,
+  removeVote,
+  remove,
+  update,
+  create,
+} from "@/lib/api/apiClient";
 import { Body } from "./Typography";
 import { API_PATHS } from "@/lib/api/config";
 import { VoteType } from "@/types/post";

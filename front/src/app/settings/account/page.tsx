@@ -27,7 +27,7 @@ export default function Page() {
   const userCreatedAt = user?.createdAt ? formatDate(user.createdAt) : "";
 
   return (
-    <>
+    <div className="flex flex-col gap-5">
       <H1>Account Settings</H1>
 
       {statusMessage && (
@@ -35,37 +35,39 @@ export default function Page() {
           <Body className="text-green-400">{statusMessage}</Body>
         </div>
       )}
+      <div className="flex flex-col gap-3">
+        <H2>Account</H2>
+        <SettingsButton
+          label="Email Address"
+          value={user?.email || ""}
+          onClick={() => setIsEmailModalOpen(true)}
+        />
 
-      <H2>Account</H2>
-      <SettingsButton
-        label="Email Address"
-        value={user?.email || ""}
-        onClick={() => setIsEmailModalOpen(true)}
-      />
+        <SettingsButton
+          label="Password"
+          onClick={() => setIsPasswordModalOpen(true)}
+        />
 
-      <SettingsButton
-        label="Password"
-        onClick={() => setIsPasswordModalOpen(true)}
-      />
+        <SettingsSwitch
+          label="2 Factor Authentification"
+          checked={isNotificationsEnabled}
+          disabled
+          onChange={(checked) => {
+            console.log("2FA changed: " + checked);
+            setIsNotificationsEnabled((old) => !old);
+          }}
+        />
 
-      <SettingsSwitch
-        label="2 Factor Authentification"
-        checked={isNotificationsEnabled}
-        onChange={(checked) => {
-          console.log("2FA changed: " + checked);
-          setIsNotificationsEnabled((old) => !old);
-        }}
-      />
-
-      <SettingsButton label="Account Created" value={userCreatedAt} />
-
-      <H2>Advanced</H2>
-      <SettingsButton
-        label="Delete Account"
-        variant="danger"
-        onClick={() => setIsDeleteModalOpen(true)}
-      />
-
+        <SettingsButton label="Account Created" value={userCreatedAt} />
+      </div>
+      <div className="flex flex-col gap-3">
+        <H2>Advanced</H2>
+        <SettingsButton
+          label="Delete Account"
+          variant="danger"
+          onClick={() => setIsDeleteModalOpen(true)}
+        />
+      </div>
       {isEmailModalOpen && (
         <EmailChangeModal
           onClose={() => setIsEmailModalOpen(false)}
@@ -90,6 +92,6 @@ export default function Page() {
       {isDeleteModalOpen && (
         <DeleteAccountModal onClose={() => setIsDeleteModalOpen(false)} />
       )}
-    </>
+    </div>
   );
 }

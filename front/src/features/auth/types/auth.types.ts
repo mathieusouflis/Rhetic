@@ -35,9 +35,3 @@ export interface StrapiError {
   message: string;
   details: Record<string, any>;
 }
-
-// export interface ResetPasswordData {
-//   code: string;
-//   password: string;
-//   passwordConfirmation: string;
-// }

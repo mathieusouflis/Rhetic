@@ -243,7 +243,7 @@ export default function Page() {
         {allCommunities.map((community) => (
           <Community
             key={community.id}
-            id={community.id.toString()}
+            id={community.documentId}
             name={community.name}
             variant="developed"
             membersCount={community.members?.count || 0}

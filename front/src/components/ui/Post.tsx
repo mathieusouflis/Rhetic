@@ -209,11 +209,11 @@ export const Post = ({
               itemId={post.id}
               upVotes={post.upvotes}
               downVotes={post.downvotes}
-              voteId={post.votes[0]?.documentId}
+              voteId={post.votes && post.votes[0]?.documentId}
               userVote={
-                post.votes[0]?.type === "downvote"
+                post.votes && post.votes[0]?.type === "downvote"
                   ? -1
-                  : post.votes[0]?.type === "upvote"
+                  : post.votes && post.votes[0]?.type === "upvote"
                   ? 1
                   : 0
               }

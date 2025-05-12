@@ -179,11 +179,11 @@ export const Comment = ({
               downVotes={comment.downvotes}
               upVotes={comment.upvotes}
               itemId={comment.documentId}
-              voteId={comment.votes[0]?.documentId}
+              voteId={comment.votes && comment.votes[0]?.documentId}
               userVote={
-                comment.votes[0]?.type === "downvote"
+                comment.votes && comment.votes[0]?.type === "downvote"
                   ? -1
-                  : comment.votes[0]?.type === "upvote"
+                  : comment.votes && comment.votes[0]?.type === "upvote"
                   ? 1
                   : 0
               }

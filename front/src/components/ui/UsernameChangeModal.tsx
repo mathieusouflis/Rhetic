@@ -6,6 +6,8 @@ import { TextInput } from "./TextInput";
 import { useAuth } from "@/providers/AuthProvider";
 import { API_PATHS } from "@/lib/api/config";
 import { updateWithoutAxios } from "@/lib/api/helpers";
+import { useApiError } from "@/hooks/useApiError";
+import toast from "react-hot-toast";
 
 interface UsernameChangeModalProps {
   onClose: () => void;
@@ -20,8 +22,12 @@ export const UsernameChangeModal: React.FC<UsernameChangeModalProps> = ({
 }) => {
   const { user, setUser } = useAuth();
   const [newUsername, setNewUsername] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    error,
+    setError,
+    isLoading: isSubmitting,
+    executeApiCall,
+  } = useApiError();
 
   const validateUsername = () => {
     if (!newUsername) {
@@ -46,30 +52,38 @@ export const UsernameChangeModal: React.FC<UsernameChangeModalProps> = ({
   const handleSubmit = async () => {
     if (!validateUsername() || !user?.id) return;
 
-    try {
-      setIsSubmitting(true);
-      const response = await updateWithoutAxios(
-        API_PATHS.USERS,
-        user.id.toString(),
-        {
-          username: newUsername,
-        }
-      );
+    const toastId = toast.loading("Mise à jour du nom d'utilisateur...");
 
-      if (response) {
-        setUser({ ...user, username: newUsername });
-        onSuccess();
-      } else {
-        throw new Error("La mise à jour du nom d'utilisateur a échoué");
-      }
-    } catch (error: any) {
-      console.error("Erreur lors du changement de nom d'utilisateur:", error);
-      setError(
-        error.message ||
-          "Une erreur est survenue lors du changement de nom d'utilisateur"
+    try {
+      await executeApiCall(
+        async () => {
+          const response = await updateWithoutAxios(
+            API_PATHS.USERS,
+            user.id.toString(),
+            {
+              username: newUsername,
+            }
+          );
+
+          if (!response) {
+            throw new Error("La mise à jour du nom d'utilisateur a échoué");
+          }
+
+          return response;
+        },
+        (response) => {
+          setUser({ ...user, username: newUsername });
+          toast.success("Nom d'utilisateur mis à jour avec succès", {
+            id: toastId,
+          });
+          onSuccess();
+        },
+        "Une erreur est survenue lors du changement de nom d'utilisateur",
+        false
       );
-    } finally {
-      setIsSubmitting(false);
+    } catch (error: any) {
+      toast.error(error.message || "Une erreur est survenue", { id: toastId });
+      console.error("Erreur détaillée:", error.originalError);
     }
   };
 
