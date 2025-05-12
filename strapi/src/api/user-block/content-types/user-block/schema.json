@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_blocks",
+  "info": {
+    "singularName": "user-block",
+    "pluralName": "user-blocks",
+    "displayName": "UserBlock",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "reason": {
+      "type": "string"
+    },
+    "blocker": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_blocks"
+    },
+    "blocked": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_blocks"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subrhetic_rules",
+  "info": {
+    "singularName": "subrhetic-rule",
+    "pluralName": "subrhetic-rules",
+    "displayName": "SubrheticRule",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "violation_reason": {
+      "type": "text"
+    },
+    "position": {
+      "type": "integer",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "subrhetic_rules"
+    },
+    "made_by": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "subrhetic_rules"
+    }
+  }
+}

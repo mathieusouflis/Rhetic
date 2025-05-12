@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_flair_assignments",
+  "info": {
+    "singularName": "user-flair-assignment",
+    "pluralName": "user-flair-assignments",
+    "displayName": "UserFlairAssignment",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "custom_text": {
+      "type": "string"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_flair_assignments"
+    },
+    "subrhetic": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "user_flair_assignments"
+    },
+    "user_flair": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-flair.user-flair",
+      "inversedBy": "user_flair_assignments"
+    },
+    "comment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::comment.comment",
+      "inversedBy": "user_flair_assignments"
+    }
+  }
+}

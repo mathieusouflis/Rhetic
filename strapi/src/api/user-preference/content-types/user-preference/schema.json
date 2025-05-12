@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_preferences",
+  "info": {
+    "singularName": "user-preference",
+    "pluralName": "user-preferences",
+    "displayName": "UserPreference",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "theme": {
+      "type": "enumeration",
+      "enum": [
+        "auto",
+        "light",
+        "dark"
+      ],
+      "default": "auto"
+    },
+    "show_nsfw": {
+      "type": "boolean",
+      "default": false
+    },
+    "email_notifications": {
+      "type": "json"
+    },
+    "push_notifications": {
+      "type": "json"
+    },
+    "content_preferences": {
+      "type": "json"
+    },
+    "language": {
+      "type": "string",
+      "default": "fr"
+    },
+    "timezone": {
+      "type": "string"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "user_preference"
+    }
+  }
+}
