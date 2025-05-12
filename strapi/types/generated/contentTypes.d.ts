@@ -591,7 +591,13 @@ export interface ApiNotificationNotification
       'plugin::review-workflows.workflow-stage'
     >;
     type: Schema.Attribute.Enumeration<
-      ['comment_reply', 'post_reply', 'mention', 'mod_action', 'system']
+      [
+        'new_comment',
+        'like_milestone',
+        'community_ban',
+        'promoted_to_moderator',
+        'new_post',
+      ]
     > &
       Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;

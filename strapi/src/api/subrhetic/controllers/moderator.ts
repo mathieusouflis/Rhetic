@@ -2,7 +2,7 @@ import { factories } from '@strapi/strapi';
 import { StrapiContext, Subrhetic, User } from '../../../../types/generated/custom';
 
 export default factories.createCoreController('api::subrhetic.subrhetic', ({ strapi, nexus }) => ({
-  async addModerator(ctx: StrapiContext) {
+  async addModerator(ctx) {
     try {
       const { id } = ctx.params;
       const { userId } = ctx.request.body?.data || ctx.request.body || {};
@@ -20,7 +20,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
       const user = await strapi.entityService.findOne(
         'plugin::users-permissions.user', 
         userIdNumber
-      ) as User;
+      );
       
       if (!user) {
         return ctx.notFound('User not found');
@@ -32,7 +32,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         {
           populate: ['moderators']
         }
-      ) as Subrhetic;
+      );
       
       if (!subrhetic) {
         return ctx.notFound('Subrhetic not found');
@@ -58,7 +58,17 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
           },
           populate: ['moderators']
         }
-      ) as Subrhetic;
+      );
+      
+      await strapi.notification.createNotification(
+        'promoted_to_moderator',
+        userIdNumber,
+        'subrhetic',
+        id,
+        {
+          subrheticId: id
+        }
+      );
       
       return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {
@@ -67,7 +77,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
     }
   },
   
-  async removeModerator(ctx: StrapiContext) {
+  async removeModerator(ctx) {
     try {
       const { id } = ctx.params;
       const { userId } = ctx.request.body?.data || ctx.request.body || {};
@@ -88,7 +98,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
         {
           populate: ['moderators', 'creator']
         }
-      ) as Subrhetic;
+      );
       
       if (!subrhetic) {
         return ctx.notFound('Subrhetic not found');
@@ -126,7 +136,7 @@ export default factories.createCoreController('api::subrhetic.subrhetic', ({ str
           },
           populate: ['moderators']
         }
-      ) as Subrhetic;
+      );
       
       return nexus.sanitizeOutput(updatedSubrhetic, ctx);
     } catch (error) {

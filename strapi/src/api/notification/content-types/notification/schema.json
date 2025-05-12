@@ -14,11 +14,11 @@
     "type": {
       "type": "enumeration",
       "enum": [
-        "comment_reply",
-        "post_reply",
-        "mention",
-        "mod_action",
-        "system"
+        "new_comment",
+        "like_milestone",
+        "community_ban",
+        "promoted_to_moderator",
+        "new_post"
       ],
       "required": true
     },

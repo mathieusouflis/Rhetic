@@ -1,6 +1,6 @@
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreController('api::vote.vote', ({ strapi }) => ({
+export default factories.createCoreController('api::post.post', ({ strapi }) => ({
   async upvote(ctx) {
     try {
       const { id } = ctx.params;
@@ -10,22 +10,30 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.db.query('api::post.post').findOne({
-        where: { id },
-        populate: ['subrhetic.banned_users']
-      });
+      const post = await strapi.entityService.findOne(
+        'api::post.post',
+        id,
+        { populate: ['author', 'subrhetic.banned_users'] }
+      );
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      if (post.subrhetic && post.subrhetic.banned_users) {
-        const isBanned = post.subrhetic.banned_users.some(
-          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
-        );
+      if (post.subrhetic && typeof post.subrhetic === 'object') {
+        const subrhetic = post.subrhetic;
         
-        if (isBanned) {
-          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+        if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+          const isBanned = subrhetic.banned_users.some(
+            (banned: any) => {
+              const bannedId = typeof banned === 'object' ? banned.id : banned;
+              return bannedId === userId;
+            }
+          );
+          
+          if (isBanned) {
+            return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+          }
         }
       }
       
@@ -38,17 +46,14 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
-          await strapi.db.query('api::vote.vote').delete({
-            where: { id: existingVote.id }
-          });
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
         } else {
-          await strapi.db.query('api::vote.vote').update({
-            where: { id: existingVote.id },
+          await strapi.entityService.update('api::vote.vote', existingVote.id, {
             data: { type: 'upvote' }
           });
         }
       } else {
-        await strapi.db.query('api::vote.vote').create({
+        await strapi.entityService.create('api::vote.vote', {
           data: {
             type: 'upvote',
             user: userId,
@@ -57,15 +62,14 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         });
       }
       
-      const votes = await strapi.db.query('api::vote.vote').findMany({
+      const allVotes = await strapi.db.query('api::vote.vote').findMany({
         where: { post: id }
       });
       
-      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
       
-      await strapi.db.query('api::post.post').update({
-        where: { id },
+      const updatedPost = await strapi.entityService.update('api::post.post', id, {
         data: {
           upvotes,
           downvotes,
@@ -73,14 +77,28 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         }
       });
       
-      const updatedPost = await strapi.db.query('api::post.post').findOne({
-        where: { id },
-      });
+      const milestones = [100, 500, 1000, 5000, 10000];
+      if (post.author) {
+        const authorId = typeof post.author === 'object' ? post.author.id : post.author;
+        
+        if (milestones.includes(upvotes)) {
+          await strapi.notification.createNotification(
+            'like_milestone',
+            authorId,
+            'post',
+            id,
+            {
+              contentType: 'post',
+              milestone: upvotes
+            }
+          );
+        }
+      }
       
       return updatedPost;
     } catch (error) {
       console.error('Error in post upvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message || error}`);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
   
@@ -93,22 +111,30 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.db.query('api::post.post').findOne({
-        where: { id },
-        populate: ['subrhetic.banned_users']
-      });
+      const post = await strapi.entityService.findOne(
+        'api::post.post',
+        id,
+        { populate: 'subrhetic.banned_users' }
+      );
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      if (post.subrhetic && post.subrhetic.banned_users) {
-        const isBanned = post.subrhetic.banned_users.some(
-          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
-        );
+      if (post.subrhetic && typeof post.subrhetic === 'object') {
+        const subrhetic = post.subrhetic;
         
-        if (isBanned) {
-          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+        if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
+          const isBanned = subrhetic.banned_users.some(
+            (banned: any) => {
+              const bannedId = typeof banned === 'object' ? banned.id : banned;
+              return bannedId === userId;
+            }
+          );
+          
+          if (isBanned) {
+            return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
+          }
         }
       }
       
@@ -121,17 +147,14 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
-          await strapi.db.query('api::vote.vote').delete({
-            where: { id: existingVote.id }
-          });
+          await strapi.entityService.delete('api::vote.vote', existingVote.id);
         } else {
-          await strapi.db.query('api::vote.vote').update({
-            where: { id: existingVote.id },
+          await strapi.entityService.update('api::vote.vote', existingVote.id, {
             data: { type: 'downvote' }
           });
         }
       } else {
-        await strapi.db.query('api::vote.vote').create({
+        await strapi.entityService.create('api::vote.vote', {
           data: {
             type: 'downvote',
             user: userId,
@@ -140,15 +163,14 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         });
       }
       
-      const votes = await strapi.db.query('api::vote.vote').findMany({
+      const allVotes = await strapi.db.query('api::vote.vote').findMany({
         where: { post: id }
       });
       
-      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
       
-      await strapi.db.query('api::post.post').update({
-        where: { id },
+      const updatedPost = await strapi.entityService.update('api::post.post', id, {
         data: {
           upvotes,
           downvotes,
@@ -156,14 +178,10 @@ export default factories.createCoreController('api::vote.vote', ({ strapi }) => 
         }
       });
       
-      const updatedPost = await strapi.db.query('api::post.post').findOne({
-        where: { id },
-      });
-      
       return updatedPost;
     } catch (error) {
       console.error('Error in post downvote:', error);
-      return ctx.badRequest(`An error occurred: ${error.message || error}`);
+      return ctx.badRequest(`An error occurred: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
 }));

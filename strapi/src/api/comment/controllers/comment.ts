@@ -18,6 +18,26 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       populate: ['author']
     });
     
+    if (entity.post) {
+      const post = await strapi.entityService.findOne('api::post.post', entity.post, {
+        populate: ['author']
+      });
+      
+      if (post && post.author && typeof post.author === 'object' && post.author.id !== userId) {
+        await strapi.notification.createNotification(
+          'new_comment',
+          post.author.id,
+          'comment',
+          entity.id,
+          {
+            commentId: entity.id,
+            postId: post.id,
+            preview: entity.content.substring(0, 100)
+          }
+        );
+      }
+    }
+    
     return entity;
   },
   

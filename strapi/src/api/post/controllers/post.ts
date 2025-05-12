@@ -40,6 +40,34 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       } catch (error) {
       }
       
+      if (entity.subrhetic) {
+        const subrheticId = typeof entity.subrhetic === 'object' ? entity.subrhetic.id : entity.subrhetic;
+        
+        const subrhetic = await strapi.entityService.findOne('api::subrhetic.subrhetic', subrheticId, {
+          populate: ['members']
+        });
+        
+        if (subrhetic && subrhetic.members && Array.isArray(subrhetic.members)) {
+          for (const member of subrhetic.members) {
+            const memberId = typeof member === 'object' ? member.id : member;
+            
+            if (memberId !== userId) {
+              await strapi.notification.createNotification(
+                'new_post',
+                memberId,
+                'post',
+                entity.id,
+                {
+                  postId: entity.id,
+                  subrheticId: subrheticId,
+                  postTitle: entity.title || 'Nouveau post'
+                }
+              );
+            }
+          }
+        }
+      }
+      
       return entity;
     } catch (error) {
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
