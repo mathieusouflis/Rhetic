@@ -1,4 +1,3 @@
-//TODO: FAIT
 import axios from "axios";
 import type { ApiConfig } from "@/types/api";
 import { handleUnauthorized } from "@/features/auth/utils/authUtils";
@@ -12,7 +11,15 @@ import { API_CONFIG } from "@/config";
 
 interface StrapiResponseStructure<T> {
   data: T;
-  meta: Record<string, any>;
+  meta: {
+    pagination?: {
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    };
+    [key: string]: any;
+  };
 }
 
 class ApiClient {
@@ -24,7 +31,6 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem("token");
@@ -36,16 +42,13 @@ class ApiClient {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        // Handle unauthorized errors
         if ([401, 403].includes(error.response?.status)) {
           handleUnauthorized();
         }
 
-        // Transform Strapi error format
         if (error.response?.data?.error) {
           const strapiError: StrapiError = error.response.data.error;
           return Promise.reject({
@@ -102,7 +105,10 @@ export async function fetchMany<T>(
 }
 
 export async function create<T>(endpoint: string, data: Partial<T>) {
-  const response = await apiClient.post<StrapiResponse<T>>(endpoint, { data });
+  const response =
+    data !== null
+      ? await apiClient.post<StrapiResponse<T>>(endpoint, { data })
+      : await apiClient.post<StrapiResponse<T>>(endpoint);
   return response.data;
 }
 
@@ -204,33 +210,31 @@ export async function bulkDelete(endpoint: string, ids: string[]) {
   return Promise.all(deletions);
 }
 
-// // Pagination avec curseur
-// export async function fetchWithCursor<T>(
-//   endpoint: string,
-//   cursor?: string,
-//   limit: number = 10
-// ) {
-//   const params = {
-//     pagination: {
-//       start: cursor,
-//       limit,
-//     },
-//   };
-//   return fetchMany<T>(endpoint, params);
-// }
+export async function joinCommunity(communityId: string) {
+  const response = await apiClient.post(`/subrhetics/${communityId}/join`);
+  return response.data;
+}
 
-// Helper pour les locales
-// export async function fetchLocalized<T>(
-//   endpoint: string,
-//   id: string,
-//   locale: string
-// ) {
-//   return fetchOne<T>(endpoint, id, {
-//     locale,
-//   });
-// }
+export async function leaveCommunity(communityId: string) {
+  const response = await apiClient.post(`/subrhetics/${communityId}/leave`);
+  return response.data;
+}
 
-// Export des utils de normalisation
+export async function upvotePost(postId: string) {
+  const response = await apiClient.post(`/posts/${postId}/upvote`);
+  return response.data;
+}
+
+export async function downvotePost(postId: string) {
+  const response = await apiClient.post(`/posts/${postId}/downvote`);
+  return response.data;
+}
+
+export async function removeVote(postId: string) {
+  const response = await apiClient.delete(`/posts/${postId}/vote`);
+  return response.data;
+}
+
 export {
   normalizeStrapiResponse,
   normalizeStrapiCollection,
