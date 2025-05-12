@@ -13,7 +13,7 @@ import Share from "./Share";
 import { CommentType } from "@/types/post";
 import { useState } from "react";
 import { VotePannel } from "./VotePannel";
-import { ICONS } from "@/config";
+import { ENV, ICONS } from "@/config";
 import {
   Dropdown,
   DropdownTrigger,
@@ -110,7 +110,15 @@ export const Comment = ({
         onClick={handleCommentClick}
         {...props}
       >
-        <Avatar src={ICONS.default_user} alt="avatar" size="md" />
+        <Avatar
+          src={
+            comment.author?.avatar
+              ? ENV.API_BASE_URL + comment.author?.avatar?.url
+              : ICONS.default_user
+          }
+          alt="avatar"
+          size="md"
+        />
         <div className="flex flex-col gap-3 w-full">
           <div className="flex flex-row justify-between w-full">
             <div className="flex flex-row gap-3">

@@ -9,6 +9,7 @@ import { AvatarUploader } from "./AvatarUploader";
 import { updateWithoutAxios } from "@/lib/api/helpers";
 import { useApiError } from "@/hooks/useApiError";
 import toast from "react-hot-toast";
+import { ENV, ICONS } from "@/config";
 
 interface AvatarChangeModalProps {
   onClose: () => void;
@@ -19,12 +20,14 @@ interface AvatarChangeModalProps {
 export const AvatarChangeModal: React.FC<AvatarChangeModalProps> = ({
   onClose,
   onSuccess,
-  currentAvatar = "",
+  currentAvatar = ICONS.default_user,
 }) => {
   const { user, setUser } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string>(
-    currentAvatar || ""
+    (user?.avatar?.url && ENV.API_BASE_URL + user?.avatar?.url) ||
+      currentAvatar ||
+      ""
   );
   const {
     error,

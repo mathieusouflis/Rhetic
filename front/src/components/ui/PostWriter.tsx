@@ -17,6 +17,7 @@ import Icon from "./Icons";
 import { SearchBar } from "./Searchbar";
 import { TextInput } from "./TextInput";
 import { Body } from "./Typography";
+import { ENV, ICONS } from "@/config";
 
 interface Media {
   type: "image" | "video";
@@ -61,11 +62,6 @@ const PostWriter: React.FC<
   className = "",
   ...props
 }) => {
-  console.log("PostWriter props:", {
-    type,
-    isTitleRequired,
-    isSubrheticRequired,
-  });
   const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -202,12 +198,6 @@ const PostWriter: React.FC<
           selectedSubrhetic && { subrhetic: selectedSubrhetic.id }),
       };
 
-      console.log("Submitting post data:", {
-        postData,
-        isTitleRequired,
-        isSubrheticRequired,
-      });
-
       await create(
         type === "post" ? API_PATHS.POSTS : API_PATHS.COMMENTS,
         postData
@@ -243,7 +233,11 @@ const PostWriter: React.FC<
       {...props}
     >
       <Avatar
-        src="https://images.unsplash.com/photo-1726066012604-a309bd0575df?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src={
+          user?.avatar
+            ? ENV.API_BASE_URL + user?.avatar?.url
+            : ICONS.default_user
+        }
         alt="User Avatar"
         size="md"
       />

@@ -101,10 +101,6 @@ export const CommunityCreationForm: React.FC<CommunityCreationFormProps> = ({
 
           setAvailableTags(allTags);
           setTagCategories(tagCats);
-
-          console.log(
-            `Loaded ${allTags.length} topics in ${tagCats.length} categories`
-          );
         }
       } catch (error) {
         console.error("Error fetching categories and topics:", error);

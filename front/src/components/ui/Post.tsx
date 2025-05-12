@@ -12,8 +12,8 @@ import { Bookmark } from "./Bookmark";
 import Share from "./Share";
 import { VotePannel } from "./VotePannel";
 import { PostType } from "@/types/post";
-import { SetImage } from "./ImageSet";
-import { API_CONFIG, ICONS } from "@/config";
+import { ImageSet, SetImage } from "./ImageSet";
+import { API_CONFIG, ENV, ICONS } from "@/config";
 import {
   Dropdown,
   DropdownTrigger,
@@ -103,7 +103,15 @@ export const Post = ({
         onClick={handlePostClick}
         {...props}
       >
-        <Avatar src={ICONS.default_user} alt="avatar" size="md" />
+        <Avatar
+          src={
+            post.author?.avatar?.url
+              ? ENV.API_BASE_URL + post.author?.avatar?.url
+              : ICONS.default_user
+          }
+          alt="avatar"
+          size="md"
+        />
         <div className="flex flex-col gap-3 w-full">
           <div className="flex flex-row justify-between w-full">
             <div className="flex flex-row gap-3">
@@ -194,15 +202,17 @@ export const Post = ({
               {post.content}
             </Small>
           </div>
-          {post.Media &&
-            post.Media.length > 0 &&
-            post.Media.map((image, index) => (
-              <SetImage
-                src={API_CONFIG.baseURL.split("/api")[0] + image.url}
-                alt={image.alt || "Post image"}
-                key={index}
-              />
-            ))}
+          <ImageSet>
+            {post.Media &&
+              post.Media.length > 0 &&
+              post.Media.map((image, index) => (
+                <SetImage
+                  src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+                  alt={image.alt || "Post image"}
+                  key={index}
+                />
+              ))}
+          </ImageSet>
           <div className="flex flex-row justify-between w-full">
             <VotePannel
               voteType="post"

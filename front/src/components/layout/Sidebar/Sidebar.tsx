@@ -15,7 +15,7 @@ interface SidebarProps {
 export function Sidebar({ items, className = "" }: SidebarProps) {
   return (
     <aside
-      className={`w-64 h-screen flex flex-col gap-6 py-4 sticky top-0 border-r border-[var(--black-500)] ${className}`}
+      className={`w-64 h-screen flex flex-col gap-6 py-4 sticky top-[64.5px] border-r border-[var(--black-500)] ${className}`}
     >
       <div className="flex flex-col gap-6 px-4">
         <SidebarNav items={items} />

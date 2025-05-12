@@ -11,9 +11,7 @@ export const updateWithoutAxios = async <T>(
       Authorization: `Bearer ${localStorage.getItem("token")}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      data,
-    }),
+    body: JSON.stringify(data),
   });
   return await response.json();
 };

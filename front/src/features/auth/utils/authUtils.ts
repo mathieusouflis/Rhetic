@@ -3,7 +3,6 @@ const isBrowser = typeof window !== "undefined";
 export const handleUnauthorized = () => {
   if (isBrowser) {
     localStorage.removeItem("token");
-    console.log("Token removed from local storage");
     window.location.href = "/login";
   }
 };

@@ -11,7 +11,10 @@ export const APP_CONFIG = {
 
 export const ENV = {
   NODE_ENV: process.env.NODE_ENV || "development",
-  API_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api",
+  API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:1337",
+  API_URL:
+    (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:1337") +
+      process.env.NEXT_PUBLIC_API_EXTENSION || "/api",
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   IS_PROD: process.env.NODE_ENV === "production",
 } as const;

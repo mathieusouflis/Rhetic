@@ -18,7 +18,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Subrhetic as BaseSubrhetic } from "../../explore/page";
 import { formatNumber } from "@/lib/utils/format";
-import { ICONS } from "@/config";
+import { ENV, ICONS } from "@/config";
 import { Modal } from "@/components/ui/Modal";
 import { Tabs, TabPanel } from "@/components/ui/Tabs";
 import { Comment } from "@/components/ui/Comment";
@@ -143,6 +143,9 @@ export default function Page() {
           Media: true,
           author: {
             fields: ["username"],
+            populate: {
+              avatar: true,
+            },
           },
           votes: {
             fields: ["type"],
@@ -213,6 +216,9 @@ export default function Page() {
         populate: {
           author: {
             fields: ["username", "id"],
+            populate: {
+              avatar: true,
+            },
           },
           votes: {
             fields: ["type"],
@@ -387,7 +393,7 @@ export default function Page() {
           size="xl"
           src={
             userProfile?.avatar?.url
-              ? "http://localhost:1337" + userProfile?.avatar?.url
+              ? ENV.API_BASE_URL + userProfile?.avatar?.url
               : ICONS.default_rhetic
           }
           alt="subIcon"

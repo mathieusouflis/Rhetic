@@ -4,7 +4,7 @@ import Image from "next/image";
 import Icon from "./Icons";
 
 interface ImageSetProps {
-  children: ReactNode[] & { length: 1 | 2 | 3 | 4 };
+  children: ReactNode[] & { length: 0 | 1 | 2 | 3 | 4 };
   className?: string;
 }
 

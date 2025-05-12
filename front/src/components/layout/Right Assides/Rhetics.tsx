@@ -11,7 +11,7 @@ import { CommunityCreationForm } from "@/components/ui/CommunityCreationForm";
 import { useAuth } from "@/providers/AuthProvider";
 import { fetchOne } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
-import { ICONS } from "@/config";
+import { API_CONFIG, ENV, ICONS } from "@/config";
 
 interface SidebarProps {
   className?: string;
@@ -76,8 +76,8 @@ export function Rhetics({ className = "" }: SidebarProps) {
   };
 
   return (
-    <div className={`flex flex-col gap-2.5 w-[505px] ${className}`}>
-      <div className="w-full flex flex-col gap-3 p-2.5 border border-[var(--black-500)] rounded-[10px]">
+    <div className={`flex flex-col gap-2.5 w-[505px]  ${className}`}>
+      <div className="sticky top-20 w-full flex flex-col gap-3 p-2.5 border border-[var(--black-500)] rounded-[10px]">
         <div className="flex flex-row justify-between items-center">
           <Body className="font-semibold">Mes communautés</Body>
         </div>
@@ -119,7 +119,7 @@ export function Rhetics({ className = "" }: SidebarProps) {
             <Community
               key={community.documentId}
               id={community.documentId}
-              iconUrl={ICONS.default_rhetic}
+              iconUrl={community.icon?.url || ICONS.default_rhetic}
               name={community.name}
             />
           ))

@@ -1,5 +1,5 @@
 import { API_PATHS } from "@/lib/api/config";
-import { apiClient } from "@/lib/api/apiClient";
+import { apiClient, fetchOne } from "@/lib/api/apiClient";
 import type {
   User,
   LoginCredentials,
@@ -9,8 +9,6 @@ import type {
 
 class AuthService {
   async login(credentials: LoginCredentials) {
-    console.log("URL" + API_PATHS.AUTH);
-
     const response = await apiClient.post<AuthResponse>(
       `${API_PATHS.AUTH}/local`,
       credentials
@@ -33,8 +31,19 @@ class AuthService {
   }
 
   async getProfile() {
-    const response = await apiClient.get<User>(`${API_PATHS.USERS}/me`);
-    return response.data;
+    let response = await fetchOne<User>(API_PATHS.USERS, "me", {
+      populate: {
+        avatar: true,
+      },
+    });
+
+    // await fetchOne<User>(API_PATHS.USERS, response.id.toString(), {
+    //   populate: {
+    //     avatar: true,
+    //   },
+    // });
+
+    return response;
   }
 
   async resetPassword(email: string) {

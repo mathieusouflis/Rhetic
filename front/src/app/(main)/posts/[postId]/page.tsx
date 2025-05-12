@@ -52,6 +52,11 @@ export default function Page() {
           Media: true,
           author: {
             fields: ["username"],
+            populate: {
+              avatar: {
+                fields: ["url"],
+              },
+            },
           },
           votes: {
             fields: ["type"],
@@ -62,6 +67,9 @@ export default function Page() {
                 },
               },
             },
+          },
+          comments: {
+            count: true,
           },
           saved_items: {
             filters: {
@@ -122,6 +130,11 @@ export default function Page() {
           childrens: true,
           author: {
             fields: ["username", "id"],
+            populate: {
+              avatar: {
+                fields: ["url"],
+              },
+            },
           },
           votes: {
             fields: ["type"],

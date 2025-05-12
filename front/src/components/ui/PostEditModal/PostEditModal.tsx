@@ -105,7 +105,7 @@ export const PostEditModal: React.FC<PostEditModalProps> = ({
 
       const mediaIds = [...existingMediaIds, ...newMediaIds];
 
-      await update(API_PATHS.POSTS, post.documentId, {
+      await update(API_PATHS.POSTS, post.id, {
         title,
         content,
         ...(mediaIds.length > 0 && { Media: mediaIds }),

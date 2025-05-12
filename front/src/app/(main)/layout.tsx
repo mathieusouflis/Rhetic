@@ -12,7 +12,7 @@ export default function MainLayout({
   return (
     <>
       <MainHeader />
-      <div className="flex">
+      <div className="flex ">
         <Sidebar items={MAIN_NAV_ITEMS} />
         <main className="flex-1 flex flex-row gap-2.5 justify-between px-[50px] py-4">
           <div className="flex-1 max-w-[700px]">{children}</div>

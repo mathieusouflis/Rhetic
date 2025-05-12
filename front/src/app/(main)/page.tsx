@@ -68,6 +68,11 @@ export default function Home() {
           Media: true,
           author: {
             fields: ["username"],
+            populate: {
+              avatar: {
+                fields: ["url"],
+              },
+            },
           },
           votes: {
             fields: ["type"],
@@ -168,7 +173,7 @@ export default function Home() {
                 { label: "Tous", value: "all" },
               ]}
               placeholder="Pour vous"
-              onChange={(value) => console.log("View change:", value)}
+              onChange={() => {}}
             />
             <DropdownSelect
               options={[

@@ -58,6 +58,9 @@ export default function Page() {
             childrens: true,
             author: {
               fields: ["username"],
+              populate: {
+                avatar: true,
+              },
             },
             votes: {
               fields: ["type"],
@@ -128,6 +131,9 @@ export default function Page() {
         populate: {
           author: {
             fields: ["username", "id"],
+            populate: {
+              avatar: true,
+            },
           },
           votes: {
             fields: ["type"],

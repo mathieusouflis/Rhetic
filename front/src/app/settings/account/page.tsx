@@ -53,7 +53,6 @@ export default function Page() {
           checked={isNotificationsEnabled}
           disabled
           onChange={(checked) => {
-            console.log("2FA changed: " + checked);
             setIsNotificationsEnabled((old) => !old);
           }}
         />

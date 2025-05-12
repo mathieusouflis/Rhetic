@@ -43,6 +43,7 @@ export const API_PATHS = {
   USER_ACTIVITY_LOG: "/user-activity-logs",
   USER_BLOCK: "/user-blocks",
   USER_FLAIR: "/user-flairs",
+  UPLOADS: "/uploads",
   USER_FLAIR_ASSIGNMENT: "/user-flair-assignments",
   USER_PREFERENCE: "/user-preferences",
   UPLOAD_FILE: "/upload-file",

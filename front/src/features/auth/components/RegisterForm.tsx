@@ -8,6 +8,7 @@ import { TextInput } from "@/components/ui/TextInput";
 import { BigButton } from "@/components/ui/BigButton";
 import { useState } from "react";
 import { Body } from "@/components/ui/Typography";
+import { toastUtils } from "@/lib/utils/toast";
 
 const usernameSchema = z
   .string()
@@ -52,6 +53,7 @@ export default function RegisterForm() {
       },
       onSubmit: async (values) => {
         console.log("SUBMITING");
+        const toastId = toastUtils.loading("Création de votre compte...");
 
         try {
           await register({
@@ -59,8 +61,14 @@ export default function RegisterForm() {
             email: values.email,
             password: values.password,
           });
-        } catch (error) {
+          toastUtils.success("Compte créé avec succès !", toastId);
+        } catch (error: any) {
           console.error("Registration error:", error);
+          toastUtils.error(
+            error?.message ||
+              "Échec de la création du compte. Veuillez réessayer.",
+            toastId
+          );
         }
       },
     });

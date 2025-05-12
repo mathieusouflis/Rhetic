@@ -99,10 +99,10 @@ export default function Page() {
         },
       };
 
-      response = await withToast(
-        async () =>
-          await fetchOne<Subrhetic>(API_PATHS.SUBRHETIC, subId, queryOptions),
-        { loading: "Loading Members...", success: "Members, loaded!" }
+      response = await fetchOne<Subrhetic>(
+        API_PATHS.SUBRHETIC,
+        subId,
+        queryOptions
       );
 
       setSubMembers(response.data.members.count);
@@ -244,20 +244,22 @@ export default function Page() {
         return;
       }
 
-      const toastId = toastUtils.loading(
-        userJoined ? "Désinscription en cours..." : "Inscription en cours..."
-      );
-
       const communityId = sub?.documentId || subId;
 
       if (userJoined) {
-        await leaveCommunity(sub?.id);
+        await withToast(async () => await leaveCommunity(sub?.id), {
+          loading: "Désinscription en cours...",
+          success: "Désinscription réussie !",
+          error: "Échec de la désinscription",
+        });
         setUserJoined(false);
-        toastUtils.success("Vous avez quitté la communauté", toastId);
       } else {
-        await joinCommunity(sub?.id);
+        await withToast(async () => await joinCommunity(sub?.id), {
+          loading: "Inscription en cours...",
+          success: "Inscription réussie !",
+          error: "Échec de l'inscription",
+        });
         setUserJoined(true);
-        toastUtils.success("Vous avez rejoint la communauté", toastId);
       }
 
       await loadCommunity(false);

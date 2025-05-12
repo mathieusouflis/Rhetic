@@ -3,11 +3,14 @@ import { Body, Small } from "./Typography";
 import { Avatar } from "./Avatar";
 import { formatNumber } from "@/lib/utils/format";
 import Link from "next/link";
+import { ENV, ICONS } from "@/config";
+import { API_PATHS } from "@/lib/api/config";
+import { SSG_FALLBACK_EXPORT_ERROR } from "next/dist/lib/constants";
 
 interface CommunityProps {
   id: string;
   name: string;
-  iconUrl: string;
+  iconUrl: string | null;
   desciption?: string;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string, isFavorite: boolean) => void;
@@ -49,7 +52,11 @@ export const Community = ({
         })}
       >
         <Avatar
-          src={iconUrl}
+          src={
+            iconUrl !== ICONS.default_rhetic && iconUrl !== null
+              ? ENV.API_BASE_URL + iconUrl
+              : ICONS.default_rhetic
+          }
           alt={name}
           size={variant === "developed" ? "lg" : "sm"}
         />
