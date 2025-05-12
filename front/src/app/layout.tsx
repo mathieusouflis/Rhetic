@@ -3,6 +3,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "@/providers/Providers";
 import "@/styles/globals.css";
+import { CursorsLayer } from "@/components/layout/CursorsLayer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <CursorsLayer>{children}</CursorsLayer>
+        </Providers>
       </body>
     </html>
   );

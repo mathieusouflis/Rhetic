@@ -2,6 +2,7 @@ import MainHeader from "@/components/layout/Header/MainHeader";
 import { Rhetics } from "@/components/layout/Right Assides/Rhetics";
 import { Sidebar } from "@/components/layout/Sidebar/Sidebar";
 import { MAIN_NAV_ITEMS } from "@/config/navigation";
+import { CursorsLayer } from "@/components/layout/CursorsLayer";
 
 export default function MainLayout({
   children,
