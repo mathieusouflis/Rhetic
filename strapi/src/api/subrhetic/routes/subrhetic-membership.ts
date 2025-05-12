@@ -23,7 +23,7 @@ export default {
       path: '/subrhetics/:id/members/:userId',
       handler: 'membership.removeMember',
       config: {
-        policies: ['api::subrhetic.is-moderator'],
+        policies: [],
         middlewares: [],
       },
     },
@@ -32,7 +32,7 @@ export default {
       path: '/subrhetics/:id/ban-user',
       handler: 'membership.banUser',
       config: {
-        policies: ['api::subrhetic.is-moderator'],
+        policies: [],
         middlewares: [],
       },
     },
@@ -41,7 +41,7 @@ export default {
       path: '/subrhetics/:id/unban-user',
       handler: 'membership.unbanUser',
       config: {
-        policies: ['api::subrhetic.is-moderator'],
+        policies: [],
         middlewares: [],
       },
     },
