@@ -38,12 +38,10 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
           }
         });
       } catch (error) {
-        console.error("Erreur lors de la création du log d'activité:", error);
       }
       
       return entity;
     } catch (error) {
-      console.error("Erreur lors de la création du post:", error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
@@ -88,7 +86,6 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       
       return updatedEntity;
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du post:", error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   },
@@ -103,68 +100,108 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       }
       
       const post = await strapi.entityService.findOne('api::post.post', id, {
-        populate: ['author', 'subrhetic']
+        populate: {
+          author: true,
+          subrhetic: {
+            populate: ['creator', 'moderators']
+          }
+        }
       });
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
-
+      
       const authorId = typeof post.author === 'object' ? post.author.id : post.author;
       
-      const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+      const deletePostAndRelatedContent = async () => {
+        const comments = await strapi.db.query('api::comment.comment').findMany({
+          where: { post: id }
+        });
+        
+        for (const comment of comments) {
+          await strapi.entityService.delete('api::comment.comment', comment.id);
+        }
+        
+        const postVotes = await strapi.db.query('api::vote.vote').findMany({
+          where: { post: id }
+        });
+        
+        for (const vote of postVotes) {
+          await strapi.entityService.delete('api::vote.vote', vote.id);
+        }
+        
+        const savedItems = await strapi.db.query('api::saved-item.saved-item').findMany({
+          where: { post: id }
+        });
+        
+        for (const savedItem of savedItems) {
+          await strapi.entityService.delete('api::saved-item.saved-item', savedItem.id);
+        }
+        
+        const reports = await strapi.db.query('api::report.report').findMany({
+          where: { post: id }
+        });
+        
+        for (const report of reports) {
+          await strapi.entityService.delete('api::report.report', report.id);
+        }
+        
+        const postFlairAssignments = await strapi.db.query('api::post-flair-assignment.post-flair-assignment').findMany({
+          where: { post: id }
+        });
+        
+        for (const assignment of postFlairAssignments) {
+          await strapi.entityService.delete('api::post-flair-assignment.post-flair-assignment', assignment.id);
+        }
+        
+        const deletedEntity = await strapi.entityService.delete('api::post.post', id);
+        
+        return deletedEntity;
+      };
       
-      if (authorId !== userId) {
-        try {
-          const subrheticName = post.subrhetic && typeof post.subrhetic === 'object' 
-            ? post.subrhetic.name 
-            : 'la plateforme';
+      if (authorId === userId) {
+        return await deletePostAndRelatedContent();
+      }
+      
+      const userWithRole = await strapi.entityService.findOne('plugin::users-permissions.user', userId, {
+        populate: ['role']
+      });
+      
+      if (userWithRole?.role?.type === 'admin') {
+        return await deletePostAndRelatedContent();
+      }
+      
+      if (post.subrhetic && typeof post.subrhetic === 'object') {
+        const subrhetic = post.subrhetic;
+        
+        if (subrhetic.creator) {
+          const creatorId = typeof subrhetic.creator === 'object' 
+            ? subrhetic.creator.id 
+            : subrhetic.creator;
+          
+          if (creatorId === userId) {
+            return await deletePostAndRelatedContent();
+          }
+        }
+        
+        if (subrhetic.moderators && Array.isArray(subrhetic.moderators)) {
+          const isModerator = subrhetic.moderators.some((moderator) => {
+            const moderatorId = typeof moderator === 'object' 
+              ? moderator.id 
+              : moderator;
             
-          const title = post.title || 'sans titre';
-
-          await strapi.entityService.create('api::notification.notification', {
-            data: {
-              type: 'mod_action',
-              content: JSON.stringify({
-                action: 'post_deleted',
-                postTitle: title,
-                subrheticName: subrheticName,
-                deletedBy: userId
-              }),
-              is_read: false,
-              users_permissions_user: authorId,
-              reference_type: 'post',
-              reference_id: id
-            }
+            return moderatorId === userId;
           });
           
-          if (post.subrhetic) {
-            const subrheticId = typeof post.subrhetic === 'object'
-              ? post.subrhetic.id
-              : post.subrhetic;
-              
-            await strapi.entityService.create('api::moderation-action.moderation-action', {
-              data: {
-                action_type: 'post_removed',
-                target_id: id,
-                target_type: 'post',
-                users_permissions_user: userId,
-                subrhetic: subrheticId,
-                details: JSON.stringify({
-                  postTitle: title,
-                  postAuthor: authorId
-                })
-              }
-            });
+          if (isModerator) {
+            return await deletePostAndRelatedContent();
           }
-        } catch (error) {
-          console.error('Erreur lors de la création de la notification:', error);
         }
       }
       
-      return deletedEntity;
+      return ctx.forbidden("Vous n'avez pas la permission de supprimer ce post");
     } catch (error) {
-      console.error("Erreur lors de la suppression du post:", error);
       return ctx.badRequest(`Une erreur est survenue: ${error instanceof Error ? error.message : String(error)}`);
     }
   }

@@ -69,9 +69,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "bio": {
       "type": "text"
@@ -235,14 +233,20 @@
     "followings": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "mappedBy": "followers"
+      "target": "api::anonymous-post-author.anonymous-post-author",
+      "inversedBy": "followers"
+    },
+    "followed": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::user-follow.user-follow",
+      "mappedBy": "follower"
     },
     "followers": {
       "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "mappedBy": "followings"
+      "relation": "oneToMany",
+      "target": "api::user-follow.user-follow",
+      "mappedBy": "following"
     }
   }
 }

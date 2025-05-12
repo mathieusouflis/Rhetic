@@ -14,7 +14,7 @@ export default {
       path: '/posts/:id',
       handler: 'post.update',
       config: {
-        policies: ['api::post.is-author'],
+        policies: [],
         middlewares: [],
       },
     },

@@ -42,19 +42,6 @@ export default () => {
       const isUpvote = ctx.request.url.includes('/upvote');
       const isDownvote = ctx.request.url.includes('/downvote');
       
-      if (post.votes && Array.isArray(post.votes)) {
-        const userVoteExists = post.votes.some((vote: Vote) => {
-          const voteUserId = typeof vote.user === 'object' ? vote.user.id : vote.user;
-          return voteUserId === user.id && 
-            ((isUpvote && vote.type === 'upvote') || 
-             (isDownvote && vote.type === 'downvote'));
-        });
-        
-        if (userVoteExists) {
-          return ctx.badRequest(`Vous avez déjà ${isUpvote ? 'upvoté' : 'downvoté'} ce post`);
-        }
-      }
-      
       ctx.state.vote = {
         postId: id,
         userId: user.id,

@@ -1,5 +1,3 @@
-// src/api/post/routes/post-delete.ts
-
 export default {
   routes: [
     {
@@ -7,7 +5,7 @@ export default {
       path: '/posts/:id',
       handler: 'post.delete',
       config: {
-        policies: ['api::post.delete-permission'],
+        policies: [],
         middlewares: [],
       },
     },
