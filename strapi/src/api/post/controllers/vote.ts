@@ -1,6 +1,6 @@
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreController('api::post.post', ({ strapi }) => ({
+export default factories.createCoreController('api::vote.vote', ({ strapi }) => ({
   async upvote(ctx) {
     try {
       const { id } = ctx.params;
@@ -10,30 +10,22 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne(
-        'api::post.post',
-        id,
-        { populate: 'subrhetic.banned_users' }
-      );
+      const post = await strapi.db.query('api::post.post').findOne({
+        where: { id },
+        populate: ['subrhetic.banned_users']
+      });
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      if (post.subrhetic && typeof post.subrhetic === 'object') {
-        const subrhetic = post.subrhetic;
+      if (post.subrhetic && post.subrhetic.banned_users) {
+        const isBanned = post.subrhetic.banned_users.some(
+          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
+        );
         
-        if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
-          const isBanned = subrhetic.banned_users.some(
-            (banned: any) => {
-              const bannedId = typeof banned === 'object' ? banned.id : banned;
-              return bannedId === userId;
-            }
-          );
-          
-          if (isBanned) {
-            return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
-          }
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
         }
       }
       
@@ -46,14 +38,17 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
-          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          await strapi.db.query('api::vote.vote').delete({
+            where: { id: existingVote.id }
+          });
         } else {
-          await strapi.entityService.update('api::vote.vote', existingVote.id, {
+          await strapi.db.query('api::vote.vote').update({
+            where: { id: existingVote.id },
             data: { type: 'upvote' }
           });
         }
       } else {
-        await strapi.entityService.create('api::vote.vote', {
+        await strapi.db.query('api::vote.vote').create({
           data: {
             type: 'upvote',
             user: userId,
@@ -62,19 +57,24 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         });
       }
       
-      const allVotes = await strapi.db.query('api::vote.vote').findMany({
+      const votes = await strapi.db.query('api::vote.vote').findMany({
         where: { post: id }
       });
       
-      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
       
-      const updatedPost = await strapi.entityService.update('api::post.post', id, {
+      await strapi.db.query('api::post.post').update({
+        where: { id },
         data: {
           upvotes,
           downvotes,
           total_votes: upvotes - downvotes
         }
+      });
+      
+      const updatedPost = await strapi.db.query('api::post.post').findOne({
+        where: { id },
       });
       
       return updatedPost;
@@ -93,30 +93,22 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const post = await strapi.entityService.findOne(
-        'api::post.post',
-        id,
-        { populate: 'subrhetic.banned_users' }
-      );
+      const post = await strapi.db.query('api::post.post').findOne({
+        where: { id },
+        populate: ['subrhetic.banned_users']
+      });
       
       if (!post) {
         return ctx.notFound("Post introuvable");
       }
       
-      if (post.subrhetic && typeof post.subrhetic === 'object') {
-        const subrhetic = post.subrhetic;
+      if (post.subrhetic && post.subrhetic.banned_users) {
+        const isBanned = post.subrhetic.banned_users.some(
+          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
+        );
         
-        if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
-          const isBanned = subrhetic.banned_users.some(
-            (banned: any) => {
-              const bannedId = typeof banned === 'object' ? banned.id : banned;
-              return bannedId === userId;
-            }
-          );
-          
-          if (isBanned) {
-            return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
-          }
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
         }
       }
       
@@ -129,14 +121,17 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
-          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          await strapi.db.query('api::vote.vote').delete({
+            where: { id: existingVote.id }
+          });
         } else {
-          await strapi.entityService.update('api::vote.vote', existingVote.id, {
+          await strapi.db.query('api::vote.vote').update({
+            where: { id: existingVote.id },
             data: { type: 'downvote' }
           });
         }
       } else {
-        await strapi.entityService.create('api::vote.vote', {
+        await strapi.db.query('api::vote.vote').create({
           data: {
             type: 'downvote',
             user: userId,
@@ -145,19 +140,24 @@ export default factories.createCoreController('api::post.post', ({ strapi }) => 
         });
       }
       
-      const allVotes = await strapi.db.query('api::vote.vote').findMany({
+      const votes = await strapi.db.query('api::vote.vote').findMany({
         where: { post: id }
       });
       
-      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
       
-      const updatedPost = await strapi.entityService.update('api::post.post', id, {
+      await strapi.db.query('api::post.post').update({
+        where: { id },
         data: {
           upvotes,
           downvotes,
           total_votes: upvotes - downvotes
         }
+      });
+      
+      const updatedPost = await strapi.db.query('api::post.post').findOne({
+        where: { id },
       });
       
       return updatedPost;

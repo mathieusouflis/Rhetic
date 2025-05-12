@@ -10,44 +10,22 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const comment = await strapi.entityService.findOne(
-        'api::comment.comment',
-        id,
-        { 
-          populate: {
-            post: {
-              populate: {
-                subrhetic: {
-                  populate: ['banned_users']
-                }
-              }
-            }
-          }
-        }
-      );
+      const comment = await strapi.db.query('api::comment.comment').findOne({
+        where: { id },
+        populate: ['post.subrhetic.banned_users']
+      });
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      if (comment.post && typeof comment.post === 'object') {
-        const post = comment.post;
+      if (comment.post && comment.post.subrhetic && comment.post.subrhetic.banned_users) {
+        const isBanned = comment.post.subrhetic.banned_users.some(
+          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
+        );
         
-        if (post.subrhetic && typeof post.subrhetic === 'object') {
-          const subrhetic = post.subrhetic;
-          
-          if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
-            const isBanned = subrhetic.banned_users.some(
-              (banned: any) => {
-                const bannedId = typeof banned === 'object' ? banned.id : banned;
-                return bannedId === userId;
-              }
-            );
-            
-            if (isBanned) {
-              return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
-            }
-          }
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
         }
       }
       
@@ -60,14 +38,17 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       
       if (existingVote) {
         if (existingVote.type === 'upvote') {
-          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          await strapi.db.query('api::vote.vote').delete({
+            where: { id: existingVote.id }
+          });
         } else {
-          await strapi.entityService.update('api::vote.vote', existingVote.id, {
+          await strapi.db.query('api::vote.vote').update({
+            where: { id: existingVote.id },
             data: { type: 'upvote' }
           });
         }
       } else {
-        await strapi.entityService.create('api::vote.vote', {
+        await strapi.db.query('api::vote.vote').create({
           data: {
             type: 'upvote',
             user: userId,
@@ -76,19 +57,24 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         });
       }
       
-      const allVotes = await strapi.db.query('api::vote.vote').findMany({
+      const votes = await strapi.db.query('api::vote.vote').findMany({
         where: { comment: id }
       });
       
-      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
       
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
+      await strapi.db.query('api::comment.comment').update({
+        where: { id },
         data: {
           upvotes,
           downvotes,
           total_votes: upvotes - downvotes
         }
+      });
+      
+      const updatedComment = await strapi.db.query('api::comment.comment').findOne({
+        where: { id }
       });
       
       return updatedComment;
@@ -107,44 +93,22 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         return ctx.unauthorized("Vous devez être connecté pour voter");
       }
       
-      const comment = await strapi.entityService.findOne(
-        'api::comment.comment',
-        id,
-        { 
-          populate: {
-            post: {
-              populate: {
-                subrhetic: {
-                  populate: ['banned_users']
-                }
-              }
-            }
-          }
-        }
-      );
+      const comment = await strapi.db.query('api::comment.comment').findOne({
+        where: { id },
+        populate: ['post.subrhetic.banned_users']
+      });
       
       if (!comment) {
         return ctx.notFound("Commentaire introuvable");
       }
       
-      if (comment.post && typeof comment.post === 'object') {
-        const post = comment.post;
+      if (comment.post && comment.post.subrhetic && comment.post.subrhetic.banned_users) {
+        const isBanned = comment.post.subrhetic.banned_users.some(
+          (banned) => typeof banned === 'object' ? banned.id === userId : banned === userId
+        );
         
-        if (post.subrhetic && typeof post.subrhetic === 'object') {
-          const subrhetic = post.subrhetic;
-          
-          if (subrhetic.banned_users && Array.isArray(subrhetic.banned_users)) {
-            const isBanned = subrhetic.banned_users.some(
-              (banned: any) => {
-                const bannedId = typeof banned === 'object' ? banned.id : banned;
-                return bannedId === userId;
-              }
-            );
-            
-            if (isBanned) {
-              return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
-            }
-          }
+        if (isBanned) {
+          return ctx.forbidden("Vous êtes banni de ce subrhetic et ne pouvez pas voter");
         }
       }
       
@@ -157,14 +121,17 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
       
       if (existingVote) {
         if (existingVote.type === 'downvote') {
-          await strapi.entityService.delete('api::vote.vote', existingVote.id);
+          await strapi.db.query('api::vote.vote').delete({
+            where: { id: existingVote.id }
+          });
         } else {
-          await strapi.entityService.update('api::vote.vote', existingVote.id, {
+          await strapi.db.query('api::vote.vote').update({
+            where: { id: existingVote.id },
             data: { type: 'downvote' }
           });
         }
       } else {
-        await strapi.entityService.create('api::vote.vote', {
+        await strapi.db.query('api::vote.vote').create({
           data: {
             type: 'downvote',
             user: userId,
@@ -173,19 +140,24 @@ export default factories.createCoreController('api::comment.comment', ({ strapi 
         });
       }
       
-      const allVotes = await strapi.db.query('api::vote.vote').findMany({
+      const votes = await strapi.db.query('api::vote.vote').findMany({
         where: { comment: id }
       });
       
-      const upvotes = allVotes.filter(vote => vote.type === 'upvote').length;
-      const downvotes = allVotes.filter(vote => vote.type === 'downvote').length;
+      const upvotes = votes.filter(vote => vote.type === 'upvote').length;
+      const downvotes = votes.filter(vote => vote.type === 'downvote').length;
       
-      const updatedComment = await strapi.entityService.update('api::comment.comment', id, {
+      await strapi.db.query('api::comment.comment').update({
+        where: { id },
         data: {
           upvotes,
           downvotes,
           total_votes: upvotes - downvotes
         }
+      });
+      
+      const updatedComment = await strapi.db.query('api::comment.comment').findOne({
+        where: { id }
       });
       
       return updatedComment;
