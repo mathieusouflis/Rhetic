@@ -26,7 +26,11 @@ export function Sidebar({ items, className = "" }: SidebarProps) {
             </BigButton>
           </Modal.Trigger>
           <Modal.Content className="w-3xl">
-            <PostWriter className="w-3xl" />
+            <PostWriter
+              isSubrheticRequired={false}
+              isTitleRequired={false}
+              className="w-3xl"
+            />
           </Modal.Content>
         </Modal>
       </div>

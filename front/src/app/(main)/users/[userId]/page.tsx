@@ -5,7 +5,12 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Post } from "@/components/ui/Post";
 import PostWriter from "@/components/ui/PostWriter";
 import { Body, H1 } from "@/components/ui/Typography";
-import { fetchOne, fetchMany } from "@/lib/api/apiClient";
+import {
+  fetchOne,
+  fetchMany,
+  followUser,
+  unfollowUser,
+} from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { useAuth } from "@/providers/AuthProvider";
 import { PostType } from "@/types/post";
@@ -80,6 +85,15 @@ export default function Page() {
           avatar: true,
           followers: {
             count: true,
+            filters: user
+              ? {
+                  follower: {
+                    id: {
+                      $eq: user.id,
+                    },
+                  },
+                }
+              : undefined,
           },
         },
       });
@@ -287,11 +301,35 @@ export default function Page() {
   }, [userId]);
 
   const handleSubrheticJoin = async () => {
-    if (followed) {
-      // remove(
-      //   API_PATHS.SUBRHETIC + "/" + userId + "/members",
-      //   user?.id as string
-      // );
+    try {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const toastId = toastUtils.loading(
+        followed ? "Désabonnement en cours..." : "Abonnement en cours..."
+      );
+
+      if (followed) {
+        await unfollowUser(userId);
+        setFollowed(false);
+        toastUtils.success("Vous vous êtes désabonné", toastId);
+      } else {
+        await followUser(userId);
+        setFollowed(true);
+        toastUtils.success("Vous vous êtes abonné", toastId);
+      }
+
+      await loadUserProfile(false);
+    } catch (error: any) {
+      console.error("Error following/unfollowing user:", error);
+      toastUtils.error(
+        error.message ||
+          (followed
+            ? "Erreur lors du désabonnement"
+            : "Erreur lors de l'abonnement")
+      );
     }
   };
 
@@ -359,7 +397,7 @@ export default function Page() {
             <div className="flex flex-col gap-1.5">
               <H1>{userProfile && userProfile.username}</H1>
               <Body className="text-[var(--black-300)]">
-                {formatNumber(userProfile?.followers?.count || 0)} members
+                {formatNumber(userProfile?.followers?.count || 0)} followers
               </Body>
             </div>
             <div className="flex flex-row gap-1.5">
@@ -382,16 +420,21 @@ export default function Page() {
                 </Modal.Content>
               </Modal>
 
-              <ActionButton
-                variant={followed ? "gray2" : "white"}
-                leftIcon={false}
-                className="h-fit"
-                onClick={handleSubrheticJoin}
-              >
-                <span className="font-semibold">
-                  {followed ? "Following" : "Follow"}
-                </span>
-              </ActionButton>
+              {user && user.id?.toString() !== userId && (
+                <ActionButton
+                  variant={followed ? "gray2" : "white"}
+                  leftIcon={false}
+                  className="h-fit group relative"
+                  onClick={handleSubrheticJoin}
+                >
+                  <span className="font-semibold group-hover:hidden">
+                    {followed ? "Following" : "Follow"}
+                  </span>
+                  <span className="font-semibold hidden group-hover:inline">
+                    {followed ? "Unfollow" : "Follow"}
+                  </span>
+                </ActionButton>
+              )}
             </div>
           </div>
           <Body className="w-full"> {userProfile?.bio} </Body>

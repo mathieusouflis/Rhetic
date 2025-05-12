@@ -25,6 +25,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { Button } from "@/components/ui/Button";
 import LoaderSkeleton from "@/components/ui/LoaderSkeleton";
 import { toastUtils } from "@/lib/utils/toast";
+import { withToast } from "@/lib/api/withToast";
 
 interface Subrhetic extends BaseSubrhetic {
   posts?: PostType[];
@@ -33,6 +34,7 @@ interface Subrhetic extends BaseSubrhetic {
 export default function Page() {
   const { subId }: { subId: string } = useParams();
   const [sub, setSub] = useState<Subrhetic | null>(null);
+  const [subMembers, setSubMembers] = useState<number>(0);
   const [userJoined, setUserJoined] = useState(false);
   const router = useRouter();
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -62,7 +64,7 @@ export default function Page() {
         ? toastUtils.loading("Actualisation de la communauté...")
         : undefined;
 
-      const queryOptions = {
+      let queryOptions = {
         fields: ["id", "documentId", "name", "description"],
         populate: {
           icon: true,
@@ -77,10 +79,10 @@ export default function Page() {
         },
       };
 
-      const response = (await fetchOne<Subrhetic>(
-        API_PATHS.SUBRHETIC,
-        subId,
-        queryOptions
+      let response = (await withToast(
+        async () =>
+          await fetchOne<Subrhetic>(API_PATHS.SUBRHETIC, subId, queryOptions),
+        { loading: "Loading sub...", success: "Sub loaded!" }
       )) as any;
 
       setSub(response.data);
@@ -88,6 +90,22 @@ export default function Page() {
       setUserJoined(
         Array.isArray(response.data.members) && response.data.members.length > 0
       );
+
+      queryOptions = {
+        populate: {
+          members: {
+            count: true,
+          },
+        },
+      };
+
+      response = await withToast(
+        async () =>
+          await fetchOne<Subrhetic>(API_PATHS.SUBRHETIC, subId, queryOptions),
+        { loading: "Loading Members...", success: "Members, loaded!" }
+      );
+
+      setSubMembers(response.data.members.count);
 
       await loadMorePosts(1, false);
 
@@ -280,7 +298,7 @@ export default function Page() {
             <div className="flex flex-col gap-1.5">
               <H1>{sub && sub.name}</H1>
               <Body className="text-[var(--black-300)]">
-                {formatNumber(sub?.members?.count || 0)} members
+                {formatNumber(subMembers || 0)} members
               </Body>
             </div>
             <div className="flex flex-row gap-1.5">
@@ -295,7 +313,7 @@ export default function Page() {
                   </ActionButton>
                 </Modal.Trigger>
                 <Modal.Content className="w-3xl">
-                  <PostWriter className="w-3xl" />
+                  <PostWriter initialSubrhetic={sub} className="w-3xl" />
                 </Modal.Content>
               </Modal>
 

@@ -235,6 +235,16 @@ export async function removeVote(postId: string) {
   return response.data;
 }
 
+export async function followUser(userId: string) {
+  const response = await apiClient.post(`/user-follows/${userId}/follow`);
+  return response.data;
+}
+
+export async function unfollowUser(userId: string) {
+  const response = await apiClient.delete(`/user-follows/${userId}/follow`);
+  return response.data;
+}
+
 export {
   normalizeStrapiResponse,
   normalizeStrapiCollection,

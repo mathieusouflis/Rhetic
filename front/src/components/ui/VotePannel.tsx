@@ -1,16 +1,7 @@
 import React, { forwardRef, useState } from "react";
 import LittleAction from "./LittleAction";
-import {
-  upvotePost,
-  downvotePost,
-  removeVote,
-  remove,
-  update,
-  create,
-} from "@/lib/api/apiClient";
+import { upvotePost, downvotePost, removeVote } from "@/lib/api/apiClient";
 import { Body } from "./Typography";
-import { API_PATHS } from "@/lib/api/config";
-import { VoteType } from "@/types/post";
 import { useAuth } from "@/providers/AuthProvider";
 
 type TypeVote = "post" | "comment";
@@ -68,21 +59,23 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       setVotes((prev) => ({ ...prev, pending: true }));
 
       try {
-        if (voteToSubmit === 0 && _voteId) {
-          await remove(API_PATHS.VOTES, _voteId);
-          setVoteId(undefined);
-        } else if (_voteId && voteToSubmit !== 0) {
-          await update(API_PATHS.VOTES, _voteId, {
-            type: voteToSubmit === 1 ? "upvote" : "downvote",
-          });
-        } else if (voteToSubmit !== 0) {
-          const response = (await create<VoteType>(API_PATHS.VOTES, {
-            type: voteToSubmit === 1 ? "upvote" : "downvote",
-            user: user?.id,
-            post: voteType === "post" ? itemId : undefined,
-            comment: voteType === "comment" ? itemId : undefined,
-          })) as VoteType;
-          setVoteId(response.data.documentId);
+        if (voteType === "post") {
+          if (voteToSubmit === 0) {
+            userVote === 1
+              ? await downvotePost(itemId)
+              : await upvotePost(itemId);
+            setVoteId(undefined);
+          } else if (voteToSubmit === 1) {
+            const response = await upvotePost(itemId);
+            if (response && response.id) {
+              setVoteId(response.id);
+            }
+          } else if (voteToSubmit === -1) {
+            const response = await downvotePost(itemId);
+            if (response && response.id) {
+              setVoteId(response.id);
+            }
+          }
         }
 
         const delta = calculateVoteDelta(votes.current, voteToSubmit);
