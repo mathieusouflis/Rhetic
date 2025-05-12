@@ -178,7 +178,7 @@ export const Comment = ({
               voteType="comment"
               downVotes={comment.downvotes}
               upVotes={comment.upvotes}
-              itemId={comment.documentId}
+              itemId={comment.id}
               voteId={comment.votes && comment.votes[0]?.documentId}
               userVote={
                 comment.votes && comment.votes[0]?.type === "downvote"

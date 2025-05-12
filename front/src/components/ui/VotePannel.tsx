@@ -1,6 +1,12 @@
 import React, { forwardRef, useState } from "react";
 import LittleAction from "./LittleAction";
-import { upvotePost, downvotePost, removeVote } from "@/lib/api/apiClient";
+import {
+  upvotePost,
+  downvotePost,
+  removeVote,
+  upvoteComment,
+  downvoteComment,
+} from "@/lib/api/apiClient";
 import { Body } from "./Typography";
 import { useAuth } from "@/providers/AuthProvider";
 
@@ -61,9 +67,11 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
       try {
         if (voteType === "post") {
           if (voteToSubmit === 0) {
-            userVote === 1
+            votes.current === 1
+              ? await upvotePost(itemId)
+              : votes.current === -1
               ? await downvotePost(itemId)
-              : await upvotePost(itemId);
+              : null;
             setVoteId(undefined);
           } else if (voteToSubmit === 1) {
             const response = await upvotePost(itemId);
@@ -72,6 +80,25 @@ export const VotePannel = forwardRef<HTMLDivElement, VotePannelProps>(
             }
           } else if (voteToSubmit === -1) {
             const response = await downvotePost(itemId);
+            if (response && response.id) {
+              setVoteId(response.id);
+            }
+          }
+        } else {
+          if (voteToSubmit === 0) {
+            votes.current === 1
+              ? await upvotePost(itemId)
+              : votes.current === -1
+              ? await downvotePost(itemId)
+              : null;
+            setVoteId(undefined);
+          } else if (voteToSubmit === 1) {
+            const response = await upvoteComment(itemId);
+            if (response && response.id) {
+              setVoteId(response.id);
+            }
+          } else if (voteToSubmit === -1) {
+            const response = await downvoteComment(itemId);
             if (response && response.id) {
               setVoteId(response.id);
             }

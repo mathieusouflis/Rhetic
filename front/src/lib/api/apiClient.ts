@@ -229,6 +229,15 @@ export async function downvotePost(postId: string) {
   const response = await apiClient.post(`/posts/${postId}/downvote`);
   return response.data;
 }
+export async function upvoteComment(postId: string) {
+  const response = await apiClient.post(`/comments/${postId}/upvote`);
+  return response.data;
+}
+
+export async function downvoteComment(postId: string) {
+  const response = await apiClient.post(`/comments/${postId}/downvote`);
+  return response.data;
+}
 
 export async function removeVote(postId: string) {
   const response = await apiClient.delete(`/posts/${postId}/vote`);
