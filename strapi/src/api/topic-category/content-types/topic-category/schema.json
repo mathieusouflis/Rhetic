@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "topic_categories",
+  "info": {
+    "singularName": "topic-category",
+    "pluralName": "topic-categories",
+    "displayName": "Topic Category"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "topics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::topic.topic",
+      "inversedBy": "topic_categories"
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}

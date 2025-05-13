@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "anonymous_post_authors",
+  "info": {
+    "singularName": "anonymous-post-author",
+    "pluralName": "anonymous-post-authors",
+    "displayName": "AnonymousPostAuthor",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "post": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::post.post",
+      "inversedBy": "anonymous_post_author"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "anonymous_post_authors"
+    },
+    "followers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "following"
+    }
+  }
+}

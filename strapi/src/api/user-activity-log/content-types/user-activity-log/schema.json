@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_activity_logs",
+  "info": {
+    "singularName": "user-activity-log",
+    "pluralName": "user-activity-logs",
+    "displayName": "UserActivityLog",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "activity_type": {
+      "type": "string",
+      "required": true
+    },
+    "item_id": {
+      "type": "uid"
+    },
+    "item_type": {
+      "type": "string"
+    },
+    "ip_adress": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "text"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "user_activity_logs"
+    }
+  }
+}

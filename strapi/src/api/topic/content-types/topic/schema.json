@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "topics",
+  "info": {
+    "singularName": "topic",
+    "pluralName": "topics",
+    "displayName": "Topic",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "subrhetics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::subrhetic.subrhetic",
+      "inversedBy": "topics"
+    },
+    "topic_categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::topic-category.topic-category",
+      "mappedBy": "topics"
+    }
+  }
+}
