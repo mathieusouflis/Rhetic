@@ -1,6 +1,4 @@
 "use client";
-import { DropdownSelect } from "@/components/ui/Dropdown";
-import PostWriter from "@/components/ui/PostWriter";
 import { useEffect, useState } from "react";
 import { Post } from "@/components/ui/Post";
 import { PostType } from "@/types/post";
@@ -53,6 +51,11 @@ export default function Home() {
           pageSize: PAGE_SIZE,
         },
         sort: ["upvotes:desc", "createdAt:desc"],
+        filters: {
+          createdAt: {
+            $gte: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          },
+        },
         populate: {
           Media: true,
           author: {
