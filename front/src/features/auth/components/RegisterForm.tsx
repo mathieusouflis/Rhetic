@@ -56,12 +56,17 @@ export default function RegisterForm() {
         const toastId = toastUtils.loading("Création de votre compte...");
 
         try {
-          await register({
+          const response = register({
             username: values.username,
             email: values.email,
             password: values.password,
           });
-          toastUtils.success("Compte créé avec succès !", toastId);
+          response === undefined
+            ? toastUtils.error(
+                "Échec de la création du compte. Nom d'utilisateur ou email déjà pris.",
+                toastId
+              )
+            : toastUtils.success("Compte créé avec succès !", toastId);
         } catch (error: any) {
           console.error("Registration error:", error);
           toastUtils.error(

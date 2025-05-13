@@ -50,11 +50,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   useEffect(() => {
+    console.log("AuthProvider: pathname", pathname);
+    console.log("AuthProvider: pathname", isLoading);
+
     if (!isLoading && pathname) {
       const token = getAuthToken();
       const isPublic = isPublicRoute(pathname);
+      console.log("AuthProvider: token", token);
+      console.log("AuthProvider: isPublic", isPublic);
 
       if (!token && !isPublic) {
+        console.log("AuthProvider: redirect to login");
         router.push(ROUTES.AUTH.LOGIN.path);
       }
     }
@@ -105,7 +111,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout: logoutMutation.mutate,
       }}
     >
-      {children}
+      {(!isPublicRoute(pathname) ? currentUser ?? user ?? null : true) &&
+        children}
     </AuthContext.Provider>
   );
 }

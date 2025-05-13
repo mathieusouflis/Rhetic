@@ -13,6 +13,7 @@ class AuthService {
       `${API_PATHS.AUTH}/local`,
       credentials
     );
+
     return {
       user: response.data.user,
       token: response.data.jwt,

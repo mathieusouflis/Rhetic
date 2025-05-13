@@ -8,6 +8,8 @@ import { TextInput } from "@/components/ui/TextInput";
 import { BigButton } from "@/components/ui/BigButton";
 import { Body } from "@/components/ui/Typography";
 import { toastUtils } from "@/lib/utils/toast";
+import { withToast } from "@/lib/api/withToast";
+import toast from "react-hot-toast";
 
 const loginSchema = z.object({
   identifier: emailSchema,
@@ -39,20 +41,19 @@ export function LoginForm() {
         return {};
       },
       onSubmit: async (values) => {
-        const toastId = toastUtils.loading("Connexion en cours...");
         try {
-          await login({
+          const toastId = toastUtils.loading("Logging in...");
+          const response = login({
             identifier: values.identifier,
             password: values.password,
           });
-          toastUtils.success("Connexion réussie !", toastId);
+
+          response === undefined &&
+            toastUtils.error("Invalid credentials", toastId);
+          response !== undefined &&
+            toastUtils.success("Login successful", toastId);
         } catch (error: any) {
           console.error("Login error:", error);
-          toastUtils.error(
-            error?.message ||
-              "Échec de la connexion. Veuillez vérifier vos identifiants.",
-            toastId
-          );
         }
       },
     });

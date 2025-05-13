@@ -103,43 +103,6 @@ export interface AdminApiTokenPermission extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface AdminAuditLog extends Struct.CollectionTypeSchema {
-  collectionName: 'strapi_audit_logs';
-  info: {
-    displayName: 'Audit Log';
-    pluralName: 'audit-logs';
-    singularName: 'audit-log';
-  };
-  options: {
-    draftAndPublish: false;
-    timestamps: false;
-  };
-  pluginOptions: {
-    'content-manager': {
-      visible: false;
-    };
-    'content-type-builder': {
-      visible: false;
-    };
-  };
-  attributes: {
-    action: Schema.Attribute.String & Schema.Attribute.Required;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    date: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'admin::audit-log'> &
-      Schema.Attribute.Private;
-    payload: Schema.Attribute.JSON;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-  };
-}
-
 export interface AdminPermission extends Struct.CollectionTypeSchema {
   collectionName: 'admin_permissions';
   info: {
@@ -434,11 +397,6 @@ export interface ApiAnonymousPostAuthorAnonymousPostAuthor
       Schema.Attribute.Private;
     post: Schema.Attribute.Relation<'oneToOne', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -486,11 +444,6 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::saved-item.saved-item'
     >;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     total_votes: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -536,11 +489,6 @@ export interface ApiModerationActionModerationAction
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -585,11 +533,6 @@ export interface ApiNotificationNotification
     read_at: Schema.Attribute.DateTime;
     reference_id: Schema.Attribute.UID;
     reference_type: Schema.Attribute.String;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     type: Schema.Attribute.Enumeration<
       ['comment_reply', 'post_reply', 'mention', 'mod_action', 'system']
     > &
@@ -632,11 +575,6 @@ export interface ApiPostFlairAssignmentPostFlairAssignment
       'api::post-flair.post-flair'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -679,11 +617,6 @@ export interface ApiPostFlairPostFlair extends Struct.CollectionTypeSchema {
       'api::post-flair-assignment.post-flair-assignment'
     >;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -737,11 +670,6 @@ export interface ApiPostPost extends Struct.CollectionTypeSchema {
     saved_items: Schema.Attribute.Relation<
       'oneToMany',
       'api::saved-item.saved-item'
-    >;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
     >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
@@ -799,11 +727,6 @@ export interface ApiPrivateMessagePrivateMessage
       'manyToOne',
       'plugin::users-permissions.user'
     >;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subject: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -854,11 +777,6 @@ export interface ApiReportReport extends Struct.CollectionTypeSchema {
     >;
     statu: Schema.Attribute.Enumeration<['pending', 'reviewed', 'resolve']> &
       Schema.Attribute.DefaultTo<'pending'>;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -897,11 +815,6 @@ export interface ApiSavedItemSavedItem extends Struct.CollectionTypeSchema {
     notes: Schema.Attribute.String;
     post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -935,11 +848,6 @@ export interface ApiSubrheticEmojiReactionSubrheticEmojiReaction
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -984,11 +892,6 @@ export interface ApiSubrheticEmojiSubrheticEmoji
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -1037,11 +940,6 @@ export interface ApiSubrheticRuleSubrheticRule
     >;
     position: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -1114,11 +1012,6 @@ export interface ApiSubrheticSubrhetic extends Struct.CollectionTypeSchema {
     posts: Schema.Attribute.Relation<'oneToMany', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
     reports: Schema.Attribute.Relation<'oneToMany', 'api::report.report'>;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic_emoji_reactions: Schema.Attribute.Relation<
       'oneToMany',
       'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
@@ -1174,11 +1067,6 @@ export interface ApiTopicCategoryTopicCategory
     >;
     Name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     topics: Schema.Attribute.Relation<'manyToMany', 'api::topic.topic'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1207,11 +1095,6 @@ export interface ApiTopicTopic extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetics: Schema.Attribute.Relation<
       'manyToMany',
       'api::subrhetic.subrhetic'
@@ -1253,11 +1136,6 @@ export interface ApiUserActivityLogUserActivityLog
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1300,11 +1178,6 @@ export interface ApiUserBlockUserBlock extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     reason: Schema.Attribute.String;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1336,11 +1209,6 @@ export interface ApiUserFlairAssignmentUserFlairAssignment
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -1386,11 +1254,6 @@ export interface ApiUserFlairUserFlair extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic: Schema.Attribute.Relation<
       'manyToOne',
       'api::subrhetic.subrhetic'
@@ -1435,11 +1298,6 @@ export interface ApiUserFollowUserFollow extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1470,11 +1328,6 @@ export interface ApiUserOnlineStatusUserOnlineStatus
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1513,11 +1366,6 @@ export interface ApiUserPreferenceUserPreference
     publishedAt: Schema.Attribute.DateTime;
     push_notifications: Schema.Attribute.JSON;
     show_nsfw: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     theme: Schema.Attribute.Enumeration<['auto', 'light', 'dark']> &
       Schema.Attribute.DefaultTo<'auto'>;
     timezone: Schema.Attribute.String;
@@ -1552,11 +1400,6 @@ export interface ApiVoteVote extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     post: Schema.Attribute.Relation<'manyToOne', 'api::post.post'>;
     publishedAt: Schema.Attribute.DateTime;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     type: Schema.Attribute.Enumeration<['upvote', 'downvote']> &
       Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -2120,11 +1963,6 @@ export interface PluginUsersPermissionsUser
       'oneToMany',
       'api::saved-item.saved-item'
     >;
-    strapi_assignee: Schema.Attribute.Relation<'oneToOne', 'admin::user'>;
-    strapi_stage: Schema.Attribute.Relation<
-      'oneToOne',
-      'plugin::review-workflows.workflow-stage'
-    >;
     subrhetic_emoji_reactions: Schema.Attribute.Relation<
       'oneToMany',
       'api::subrhetic-emoji-reaction.subrhetic-emoji-reaction'
@@ -2176,7 +2014,6 @@ declare module '@strapi/strapi' {
     export interface ContentTypeSchemas {
       'admin::api-token': AdminApiToken;
       'admin::api-token-permission': AdminApiTokenPermission;
-      'admin::audit-log': AdminAuditLog;
       'admin::permission': AdminPermission;
       'admin::role': AdminRole;
       'admin::transfer-token': AdminTransferToken;
