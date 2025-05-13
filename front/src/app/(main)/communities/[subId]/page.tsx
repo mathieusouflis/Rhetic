@@ -77,11 +77,11 @@ export default function Page() {
             fields: ["id"],
           },
         },
-      };
+      } as any;
 
       let response = (await withToast(
         async () =>
-          await fetchOne<Subrhetic>(API_PATHS.SUBRHETIC, subId, queryOptions),
+          await fetchOne<any>(API_PATHS.SUBRHETIC, subId, queryOptions),
         { loading: "Loading sub...", success: "Sub loaded!" }
       )) as any;
 
@@ -243,8 +243,6 @@ export default function Page() {
         router.push("/login");
         return;
       }
-
-      const communityId = sub?.documentId || subId;
 
       if (userJoined) {
         await withToast(async () => await leaveCommunity(sub?.id), {

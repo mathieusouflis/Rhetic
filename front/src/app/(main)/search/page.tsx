@@ -23,10 +23,10 @@ interface UserType {
   username: string;
   email?: string;
   bio?: string;
-  avatarUrl?: string;
   documentId: string;
   followers_count?: number;
   following?: boolean;
+  avatar?: any;
 }
 
 interface SubrheticType {
@@ -34,9 +34,9 @@ interface SubrheticType {
   name: string;
   description?: string;
   documentId: string;
-  memberCount?: number;
   icon?: { url: string };
   is_private?: boolean;
+  members?: any;
 }
 
 export default function Page() {

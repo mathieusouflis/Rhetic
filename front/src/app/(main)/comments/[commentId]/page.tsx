@@ -50,7 +50,7 @@ export default function Page() {
         ? toastUtils.loading("Actualisation des commentaires...")
         : undefined;
 
-      const response = await fetchOne<CommentType>(
+      const response = (await fetchOne<CommentType>(
         API_PATHS.COMMENTS,
         commentId,
         {
@@ -83,7 +83,7 @@ export default function Page() {
             },
           },
         }
-      );
+      )) as any;
 
       setComment(response.data);
 

@@ -6,9 +6,9 @@ import Link from "next/link";
 import { ENV, ICONS } from "@/config";
 
 interface CommunityProps {
-  id: string;
+  id: string | any;
   name: string;
-  iconUrl: string | null;
+  iconUrl: string | null | any;
   desciption?: string;
   isFavorite?: boolean;
   onToggleFavorite?: (id: string, isFavorite: boolean) => void;

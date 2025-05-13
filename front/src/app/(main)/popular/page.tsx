@@ -186,7 +186,6 @@ export default function Home() {
                 <p className="text-red-400 font-medium">Erreur de chargement</p>
                 <p className="text-red-300 text-sm mt-1">{error}</p>
                 <Button
-                  variant="outline"
                   size="sm"
                   className="mt-3"
                   onClick={() => refreshPosts()}

@@ -11,6 +11,9 @@ export type AuthorType = {
   documentId: string;
   provider: string;
   publishedAt: Date;
+  avatar?: {
+    url: string;
+  };
 };
 
 export type CommentsType = {

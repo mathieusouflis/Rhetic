@@ -47,7 +47,7 @@ export default function Page() {
         ? toastUtils.loading("Actualisation du post...")
         : undefined;
 
-      const response = await fetchOne<PostType>(API_PATHS.POSTS, postId, {
+      const response = (await fetchOne(API_PATHS.POSTS, postId, {
         populate: {
           Media: true,
           author: {
@@ -84,7 +84,7 @@ export default function Page() {
             fields: ["name", "documentId"],
           },
         },
-      });
+      })) as any;
 
       setPost(response.data);
 

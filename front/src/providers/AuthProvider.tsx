@@ -19,7 +19,7 @@ import type {
 } from "@/features/auth/types/auth.types";
 
 interface AuthContextType {
-  user: User | null;
+  user: User | null | any;
   setUser: (user: User) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -36,15 +36,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading } = useQuery<User, Error>({
     queryKey: ["user"],
     queryFn: authService.getProfile,
     enabled: !!getAuthToken(),
     retry: false,
-    onSuccess: (userData) => {
-      setCurrentUser(userData);
-    },
   });
+
+  useEffect(() => {
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!isLoading && pathname) {

@@ -2,11 +2,7 @@ import axios from "axios";
 import type { ApiConfig } from "@/types/api";
 import { handleUnauthorized } from "@/features/auth/utils/authUtils";
 import { buildStrapiQuery } from "./strapiHelpers";
-import type {
-  StrapiResponse,
-  StrapiCollectionResponse,
-  StrapiError,
-} from "@/types/api";
+import type { StrapiResponse, StrapiError } from "@/types/api";
 import { API_CONFIG } from "@/config";
 
 interface StrapiResponseStructure<T> {
@@ -183,7 +179,7 @@ export async function count<T>(
     },
     filters,
   });
-  return response.meta.pagination.total;
+  return response.meta.pagination?.total || 0;
 }
 
 export async function fetchWithRelations<T>(
@@ -210,12 +206,12 @@ export async function bulkDelete(endpoint: string, ids: string[]) {
   return Promise.all(deletions);
 }
 
-export async function joinCommunity(communityId: string) {
+export async function joinCommunity(communityId: string | number | any) {
   const response = await apiClient.post(`/subrhetics/${communityId}/join`);
   return response.data;
 }
 
-export async function leaveCommunity(communityId: string) {
+export async function leaveCommunity(communityId: string | number | any) {
   const response = await apiClient.post(`/subrhetics/${communityId}/leave`);
   return response.data;
 }

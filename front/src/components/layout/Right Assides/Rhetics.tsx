@@ -21,6 +21,7 @@ interface SubrheticItem {
   id: number;
   name: string;
   iconUrl?: string;
+  icon?: { url: string };
   documentId?: string;
 }
 
