@@ -233,11 +233,7 @@ const PostWriter: React.FC<
       {...props}
     >
       <Avatar
-        src={
-          user?.avatar
-            ? ENV.API_BASE_URL + user?.avatar?.url
-            : ICONS.default_user
-        }
+        src={user?.avatar ? user?.avatar?.url : ICONS.default_user}
         alt="User Avatar"
         size="md"
       />

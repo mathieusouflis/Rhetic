@@ -286,11 +286,7 @@ export default function Page() {
       <div className="flex flex-row gap-4">
         <Avatar
           size="xl"
-          src={
-            sub?.icon?.url
-              ? "http://localhost:1337" + sub?.icon?.url
-              : ICONS.default_rhetic
-          }
+          src={sub?.icon?.url ? sub?.icon?.url : ICONS.default_rhetic}
           alt="subIcon"
         />
         <div className="flex flex-col gap-4 w-full">

@@ -113,7 +113,7 @@ export const Comment = ({
         <Avatar
           src={
             comment.author?.avatar
-              ? ENV.API_BASE_URL + comment.author?.avatar?.url
+              ? comment.author?.avatar?.url
               : ICONS.default_user
           }
           alt="avatar"

@@ -471,11 +471,7 @@ export default function Page() {
         <div className="flex items-center justify-between p-4 border border-[var(--black-500)] rounded-lg bg-[var(--black-700)]">
           <div className="flex items-center gap-4">
             <Avatar
-              src={
-                user.avatar?.url
-                  ? ENV.API_BASE_URL + user.avatar?.url
-                  : ICONS.default_user
-              }
+              src={user.avatar?.url ? user.avatar?.url : ICONS.default_user}
               alt={user.username}
               size="md"
             />

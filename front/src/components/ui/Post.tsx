@@ -106,7 +106,7 @@ export const Post = ({
         <Avatar
           src={
             post.author?.avatar?.url
-              ? ENV.API_BASE_URL + post.author?.avatar?.url
+              ? post.author?.avatar?.url
               : ICONS.default_user
           }
           alt="avatar"

@@ -393,7 +393,7 @@ export default function Page() {
           size="xl"
           src={
             userProfile?.avatar?.url
-              ? ENV.API_BASE_URL + userProfile?.avatar?.url
+              ? userProfile?.avatar?.url
               : ICONS.default_rhetic
           }
           alt="subIcon"

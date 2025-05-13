@@ -52,7 +52,7 @@ export const Community = ({
         <Avatar
           src={
             iconUrl !== ICONS.default_rhetic && iconUrl !== null
-              ? ENV.API_BASE_URL + iconUrl
+              ? iconUrl
               : ICONS.default_rhetic
           }
           alt={name}

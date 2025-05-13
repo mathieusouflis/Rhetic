@@ -25,9 +25,7 @@ export const AvatarChangeModal: React.FC<AvatarChangeModalProps> = ({
   const { user, setUser } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string>(
-    (user?.avatar?.url && ENV.API_BASE_URL + user?.avatar?.url) ||
-      currentAvatar ||
-      ""
+    user?.avatar?.url || currentAvatar || ""
   );
   const {
     error,
