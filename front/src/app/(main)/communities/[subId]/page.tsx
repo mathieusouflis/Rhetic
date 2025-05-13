@@ -150,6 +150,9 @@ export default function Page() {
           Media: true,
           author: {
             fields: ["username"],
+            populate: {
+              avatar: true,
+            },
           },
           votes: user
             ? {

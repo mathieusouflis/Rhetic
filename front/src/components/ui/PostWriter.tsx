@@ -18,6 +18,7 @@ import { SearchBar } from "./Searchbar";
 import { TextInput } from "./TextInput";
 import { Body } from "./Typography";
 import { ENV, ICONS } from "@/config";
+import { Textarea } from "./Textarea";
 
 interface Media {
   type: "image" | "video";
@@ -259,7 +260,7 @@ const PostWriter: React.FC<
           </>
         )}
 
-        <TextInput
+        <Textarea
           className="w-full h-full"
           variant="black"
           value={content}
