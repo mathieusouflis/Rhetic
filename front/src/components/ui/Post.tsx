@@ -207,7 +207,7 @@ export const Post = ({
               post.Media.length > 0 &&
               post.Media.map((image, index) => (
                 <SetImage
-                  src={API_CONFIG.baseURL.split("/api")[0] + image.url}
+                  src={image.url}
                   alt={image.alt || "Post image"}
                   key={index}
                 />
