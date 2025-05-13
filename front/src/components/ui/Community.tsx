@@ -4,8 +4,6 @@ import { Avatar } from "./Avatar";
 import { formatNumber } from "@/lib/utils/format";
 import Link from "next/link";
 import { ENV, ICONS } from "@/config";
-import { API_PATHS } from "@/lib/api/config";
-import { SSG_FALLBACK_EXPORT_ERROR } from "next/dist/lib/constants";
 
 interface CommunityProps {
   id: string;

@@ -9,7 +9,6 @@ const MainHeader = () => {
         <Icon name="logo_text" size={38} />
       </div>
       <Search />
-      <SearchBar className="max-w-[650px]" />
     </nav>
   );
 };

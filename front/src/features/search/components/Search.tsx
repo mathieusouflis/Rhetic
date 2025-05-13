@@ -20,11 +20,12 @@ export default function Search() {
   };
 
   return (
-    <form onSubmit={handleSearch}>
+    <form onSubmit={handleSearch} className="w-[700px] flex">
       <SearchBar
         name="query"
         value={searchTerm}
         onChange={handleInputChange}
+        className="w-full"
         placeholder="Rechercher sur Rhetic"
       />
     </form>
