@@ -25,6 +25,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { remove } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import PostEditModal from "./PostEditModal/PostEditModal";
+import Tag from "./Tag";
 
 export interface PostProps {
   id: string;
@@ -114,7 +115,7 @@ export const Post = ({
         />
         <div className="flex flex-col gap-3 w-full">
           <div className="flex flex-row justify-between w-full">
-            <div className="flex flex-row gap-3">
+            <div className="flex flex-row gap-3 items-center">
               <Small className="font-semibold text-[var(--black-100)]">
                 {post.subrhetic ? (
                   <>
@@ -135,15 +136,20 @@ export const Post = ({
                     </Link>
                   </>
                 ) : (
-                  <Link
-                    onClick={(e) => e.stopPropagation()}
-                    href={"/users/" + post.author?.id}
-                    className="hover:underline"
-                  >
-                    {post.author?.username}
-                  </Link>
+                  <>
+                    <Link
+                      onClick={(e) => e.stopPropagation()}
+                      href={"/users/" + post.author?.id}
+                      className="hover:underline"
+                    >
+                      {post.author?.username}
+                    </Link>
+                  </>
                 )}
               </Small>
+              {["9", "10", 9, 10].includes(
+                post.author?.id ? post.author?.id : ""
+              ) && <Tag variant="default" name="king" />}
               <Small className="text-[var(--black-100)]">
                 {formatRelativeTime(post.publishedAt)}
               </Small>

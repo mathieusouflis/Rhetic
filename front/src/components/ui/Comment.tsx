@@ -25,6 +25,7 @@ import { remove } from "@/lib/api/apiClient";
 import { API_PATHS } from "@/lib/api/config";
 import { Body } from "./Typography";
 import CommentEditModal from "./CommentEditModal/CommentEditModal";
+import Tag from "./Tag";
 
 export interface CommentProps {
   id: string;
@@ -130,6 +131,9 @@ export const Comment = ({
                   {comment.author?.username}
                 </Small>
               </Link>
+              {["9", "10", 9, 10].includes(
+                comment.author?.id ? comment.author?.id : ""
+              ) && <Tag variant="default" name="king" />}
               <Small className="text-[var(--black-100)]">
                 {formatRelativeTime(comment.publishedAt)}
               </Small>

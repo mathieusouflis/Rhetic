@@ -26,6 +26,7 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import { Button } from "@/components/ui/Button";
 import LoaderSkeleton from "@/components/ui/LoaderSkeleton";
 import { toastUtils } from "@/lib/utils/toast";
+import Tag from "@/components/ui/Tag";
 
 interface Subrhetic extends BaseSubrhetic {
   posts?: PostType[];
@@ -401,7 +402,12 @@ export default function Page() {
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-row justify-between w-full">
             <div className="flex flex-col gap-1.5">
-              <H1>{userProfile && userProfile.username}</H1>
+              <div className="flex flex-row gap-2 items-center">
+                <H1>{userProfile && userProfile.username}</H1>
+                {["9", "10", 9, 10].includes(
+                  userProfile?.id ? userProfile?.id : ""
+                ) && <Tag variant="default" name="king" />}
+              </div>
               <Body className="text-[var(--black-300)]">
                 {formatNumber(userProfile?.followers?.count || 0)} followers
               </Body>
